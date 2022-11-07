@@ -354,11 +354,11 @@ export default defineComponent({
 	<main class="mt-3">
 		<div class="container">
 			<!-- <form action="register" method="post" @submit="userForm" novalidate="true"> -->
-				<MDBRow tag="form" class="g-3" @submit="userForm" novalidate="true">
-					<p class="h4 text-center mb-4">
+				<MDBRow tag="form" class="g-3 justify-content-center" @submit="userForm" novalidate="true">
+					<p class="h4 text-center mb-4 fw-bold">
 						{{ $t('form_title') }}
 					</p>
-					<MDBListGroup class="list-group-light" v-if="errors.length">
+					<MDBListGroup class="list-group-light col-6 mb-4" v-if="errors.length">
 						<MDBListGroupItem class="rounded-3 mb-2 border-0 px-3" >
 					      {{ $t('errorListTitle') }}
 					    </MDBListGroupItem>
@@ -372,7 +372,7 @@ export default defineComponent({
 							<li v-for="error in errors">{{ error }}</li>
 						</ul>
 					</p> -->
-					<MDBRow class="mb-6 d-flex justify-content-center">
+					<MDBRow class="mb-4 d-flex justify-content-center">
 						<RegisterContentItem
 							:label="$t('lastNameLabelText')"
 							@lastname="lastnameChanges"
@@ -400,7 +400,7 @@ export default defineComponent({
 							type="text"
 							size="3"/>
 					</MDBRow>
-					<MDBRow class="mb-6 d-flex justify-content-center">
+					<MDBRow class="mb-4 d-flex justify-content-center">
 						<RegisterContentItem
 							:label="$t('loginLabelText')"
 							@login="loginChanges"
@@ -416,7 +416,7 @@ export default defineComponent({
 							type="text"
 							size="6" />
 					</MDBRow>
-					<MDBRow class="mb-6 d-flex justify-content-center">
+					<MDBRow class="mb-4 d-flex justify-content-center">
 						<RegisterContentItem
 							:label="$t('emailLabelText')"
 							@email="emailChanges"
@@ -431,7 +431,7 @@ export default defineComponent({
 							type="email"
 							size="6"/>
 					</MDBRow>
-					<MDBRow class="mb-6 d-flex justify-content-center">
+					<MDBRow class="mb-4 d-flex justify-content-center">
 						<RegisterContentItem
 							:label="$t('emailConfirmLabelText')"
 							@email_confirm="emailConfirmChanges"
@@ -446,7 +446,7 @@ export default defineComponent({
 							type="email"
 							size="6"/>
 					</MDBRow>
-					<MDBRow class="mb-6 d-flex justify-content-center">
+					<MDBRow class="mb-4 d-flex justify-content-center">
 						<RegisterContentItem
 							:label="$t('passwordLabelText')"
 							@password="passwordChanges"
@@ -461,7 +461,7 @@ export default defineComponent({
 							type="password"
 							size="6"/>
 					</MDBRow>
-					<MDBRow class="mb-6 d-flex justify-content-center">
+					<MDBRow class="mb-4 d-flex justify-content-center">
 						<RegisterContentItem
 							:label="$t('passwordConfirmLabelText')"
 							@password_confirm="passwordConfirmChanges"
@@ -476,8 +476,8 @@ export default defineComponent({
 							type="password"
 							size="6"/>
 					</MDBRow>
-					<MDBRow class="mb-6 d-flex justify-content-center">
-						<MDBCol md="6" class="justify-content-center mb-6" style="text-align: center;">
+					<MDBRow class="mb-4 d-flex justify-content-center">
+						<MDBCol col="6" class="justify-content-center mb-4  text-center" style="text-align: center;">
 							<MDBBtn color="primary" type="submit">
 								{{ $t('submit_buttonText') }}
 							</MDBBtn>
