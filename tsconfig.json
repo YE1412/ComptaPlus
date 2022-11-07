@@ -1,0 +1,45 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.config.json"
+    },
+    // {
+    //   "path": "./tsconfig.app.json"
+    // },
+    {
+      "path": "./tsconfig.vitest.json"
+    }
+  ],
+  "extends": "@vue/tsconfig/tsconfig.web.json",
+  "include": ["env.d.ts", "src/**/*.tx", "src/**/*.vue", "src/**/*.json"],
+  "exclude": ["src/**/__tests__/*", "node_modules/*"],
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "composite": true,
+    "moduleResolution": "node",
+    "moduleSuffixes": [".d", ""],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ],
+    "types": [
+      "webpack-env",
+      "node",
+      "json"
+    ],
+  }
+}

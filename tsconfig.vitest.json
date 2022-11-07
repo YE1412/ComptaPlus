@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.app.json",
+  "include": ["src/**/*.json"],
+  "exclude": [],
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "module": "esnext",
+    "composite": true,
+    "lib": [],
+    "types": ["node", "jsdom"]
+  }
+}

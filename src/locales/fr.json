@@ -1,0 +1,20 @@
+{
+  "welcomeMsg": "Bienvenu(e) dans ton application Vue.js",
+  "helloWorldMsg": {
+    "msg": "Vous l'avez fait {login}!"
+  },
+  "startLinkName": "Départ",
+  "startLinkTarget": "/depart",
+  "homeLinkName": "Accueil",
+  "homeLinkTarget": "/accueil",
+  "aboutLinkName": "À Propos",
+  "aboutLinkTarget": "/a-propos",
+  "registerLinkName": "Inscription",
+  "registerLinkTarget": "/inscription",
+  "flagsDropdownHead1": "Défaut",
+  "flagsDropdownHead2": "Pays et langues",
+  "countryLabel1": "France (Français)",
+  "countryDefaultLabel1": "(Français)",
+  "countryLabel2": "États-Unis (Anglais)",
+  "countryDefaultLabel2": "(Anglais)"
+}
