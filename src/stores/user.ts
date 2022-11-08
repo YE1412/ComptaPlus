@@ -17,12 +17,12 @@ const useUserStore = defineStore("user", {
   },
   actions: {
     registerUser(login: string, password: string) {
-      console.log("Login...");
+      // console.log("Login...");
       return new Promise((resolve, reject) => {
         userAxiosService
           .get(login, password)
           .then((res) => {
-            console.log(res);
+            // console.log(res);
             if (res.data.length) {
               resolve(res.data[0]);
             } else {

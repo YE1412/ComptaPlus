@@ -14,13 +14,13 @@ export default () => {
   router.get("/type/:type", users.findAllOfType);
 
   // Retrieve a single User with email and password
-  router.get("/login/:login/pass/:pass", users.findOne);
+  router.get("/login", users.findOne);
 
   // Retrieve a single User with email
-  router.get("/email/:login", users.checkOne);
+  router.get("/email/", users.checkOne);
 
   // Retrieve a single User with login
-  router.get("/login/:login", users.checkOne);
+  // router.get("/login/", users.checkOne);
 
   // Update a User with id
   router.put("/:id", users.update);

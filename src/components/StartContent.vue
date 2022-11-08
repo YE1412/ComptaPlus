@@ -7,12 +7,16 @@ import StartContentLoginItem from "./StartContentLoginItem.vue";
 import UserIcon from "./icons/IconUser.vue";
 import LockIcon from "./icons/IconLock.vue";
 import ModalItem from "./ModalItem.vue";
+import "../globals";
 
+// console.log(__KEY__);
+// console.log(__GENKEYAPI__);
+// console.log(__SECRET__);
+// console.log(__CRYPTAPI__);
 export default defineComponent({
 	name: "StartContent",
 	setup() {
   	const store = useUserStore();
-
   	return { store };
 	},
 	components: {
@@ -32,8 +36,10 @@ export default defineComponent({
 	methods: {
 		register(e: Event) {
 			if (this.login !== "" && this.password !== ""){
+				const login = this.transformObj(this.login);
+				const pass = this.transformObj(this.password); 
 				this.store
-				.registerUser(this.login, this.password)
+				.registerUser(login, pass)
 				.then((res) => {
 				    this.store.connected = true;
 				    this.store.user = res;
@@ -50,13 +56,17 @@ export default defineComponent({
 					// console.log(this.store);
 				});
 			}else{
-				console.log("empty strings !");
+				// console.log("empty strings !");
 				this.loginModal = true;
 			}
 		},
 		modalChange(val: Boolean){
 			this.loginModal = val;
-		}
+		},
+		transformObj(obj: string){
+			return __CRYPTAPI__.crypt(obj, __KEY__);
+			// console.log(obj);
+		},
 	}
 });
 </script>
@@ -65,7 +75,7 @@ export default defineComponent({
 {
   "en": {
     "login_submit_text": "Sign In",
-    "login_placeholder": "Login",
+    "login_placeholder": "Login or email",
     "password_placeholder": "Password",
     "not_yet": "Not registred yet?",
     "register": "Sign Up",
@@ -76,7 +86,7 @@ export default defineComponent({
   },
   "fr": {
     "login_submit_text": "Se connecter",
-    "login_placeholder": "Login",
+    "login_placeholder": "Login ou email",
     "password_placeholder": "Mot de passe",
     "not_yet": "Pas encore inscrit ?",
     "register": "S'inscrire",

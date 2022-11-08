@@ -7,15 +7,28 @@ class UserDataService {
   }
 
   get(login: string, password: string) {
-    return http.get(`/users/login/${login}/pass/${password}`);
+    return http.get(`/users/login`, {
+      params: {
+        login: login, 
+        password: password
+      }
+    });
   }
 
   checkEmail(email: string) {
-    return http.get(`/users/email/${email}`);
+    return http.get(`/users/email/`, {
+      params: {
+        login: email
+      }
+    });
   }
 
   checkLogin(login: string) {
-    return http.get(`/users/login/${login}`);
+    return http.get(`/users/email/`, {
+      params: {
+        login: login
+      }
+    });
   }
 
   create(data: any) {

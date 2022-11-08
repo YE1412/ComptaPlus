@@ -33,7 +33,30 @@ const findAll = (req, res) => {};
 
 const findOne = (req, res) => {
   const params = req.params;
-  console.log(params);
+  const body = req.body;
+  const query = req.query;
+  // console.log(params);
+  // console.log(body);
+  // console.log(query);
+  let whereClause = {};
+  if (query.password !== undefined && query.login !== undefined){
+  	whereClause = {
+  		pass: query.password,
+  		[Op.or]: [
+        {
+          login: query.login,
+        },
+        {
+          email: query.login,
+        },
+      ],
+  	};
+  }else{
+  	res.status(500).send({
+      message: "Some error occured while retrieving user.",
+    });
+    return;
+  }
 
   user
   .findAll({
@@ -46,17 +69,7 @@ const findOne = (req, res) => {
     // 	'pass',
     // 	'type'
     // ],
-    where: {
-      pass: params.pass,
-      [Op.or]: [
-        {
-          login: params.login,
-        },
-        {
-          email: params.login,
-        },
-      ],
-    },
+    where: whereClause,
   })
   .then((data) => {
     res.send(data);
@@ -70,17 +83,19 @@ const findOne = (req, res) => {
 
 const checkOne = (req, res) => {
   const params = req.params;
-  console.log(params);
+  const body = req.body;
+  const query = req.query;
+  // console.log(params);
 
   user
     .findAll({
       where: {
         [Op.or]: [
           {
-            login: params.login,
+            login: query.login,
           },
           {
-            email: params.login,
+            email: query.login,
           },
         ],
       },

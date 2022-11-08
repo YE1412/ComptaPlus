@@ -27,6 +27,7 @@
     "moduleResolution": "node",
     "moduleSuffixes": [".d", ""],
     "baseUrl": ".",
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     "paths": {
       "@/*": ["./src/*"]
     },

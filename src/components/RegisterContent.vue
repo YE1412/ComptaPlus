@@ -6,17 +6,7 @@ import userAxiosService from "../services/user.service";
 import ModalItem from "./ModalItem.vue";
 import router from "@/router/index";
 import { genMod, cryptMod } from "../WasmModules";
-
-var cryptAPI = null;
-var genKeyAPI = null;
-var key = null;
-genMod.then((e) => {
-	genKeyAPI = e;
-	key = genKeyAPI.generate_key("myLittleSecret");
-});
-cryptMod.then((e) => {
-	cryptAPI = e;
-});
+import "../globals";
 
 export default defineComponent({
 	name: "RegisterContent",
@@ -200,7 +190,7 @@ export default defineComponent({
 
 			if (!this.errors.length) {
 				const ret = await this.registerNewUser();
-				console.log(ret);
+				// console.log(ret);
 				if (ret){
 					router.push("/");
 				}
@@ -227,25 +217,27 @@ export default defineComponent({
 	      	return re.test(this.password);
 	    },
 	    checkExistingEmail() {
-	    	return userAxiosService.checkEmail(this.email)
+	    	const email = this.transformValue(this.email);
+	    	return userAxiosService.checkEmail(email)
 	    	.then((res) => {
 	    		if (res.data.length) return true;
 	    		else return false;
 	    	})
 	    	.catch((err) => {
 	    		console.log(err);
-	    		return false;
+	    		return true;
 	    	});
 	    },
 	    checkExistingLogin: function() {
-	    	return userAxiosService.checkLogin(this.login)
+	    	const login = this.transformValue(this.login);
+	    	return userAxiosService.checkLogin(login)
 	    	.then((res) => {
 	    		if (res.data.length) return true;
 	    		else return false;
 	    	})
 	    	.catch((err) => {
 	    		console.log(err);
-	    		return false;
+	    		return true;
 	    	});
 	    },
 	    registerNewUser() {
@@ -260,14 +252,14 @@ export default defineComponent({
 	    	this.transformObject(obj);
 	    	return userAxiosService.create(obj)
 	    	.then((res) => {
-	    		console.log(res);
+	    		// console.log(res);
 	    		this.modalTitle = this.$i18n.t('modalTitleOk');
 				this.modalContent = this.$i18n.t('modalContentOk');
 				this.registerModal = true;
 				return true;
 	    	})
 	    	.catch((err) => {
-	    		console.log(err);
+	    		// console.log(err);
 	    		this.modalTitle = this.$i18n.t('modalTitleKo');
 				this.modalContent = this.$i18n.t('modalContentKo', {err: err.response.data.message || err.message });
 				this.registerModal = true;
@@ -278,17 +270,15 @@ export default defineComponent({
 			this.registerModal = val;
 		},
 		transformObject(obj){
-			// const form = new FormData(); 
-			// console.log(`generated key: - ${key}`);
 			for (const k in obj){
 				if (typeof obj[k] === 'string'){
-					obj[k] = cryptAPI.crypt(obj[k], key);
-				}
-				// form.append(k, obj[k]);	
+					obj[k] = __CRYPTAPI__.crypt(obj[k], __KEY__);
+				}	
 			}
-			// console.log(obj);
-			// console.log(form);
-			// return form;
+		},
+		transformValue(val: string){
+			const ret = __CRYPTAPI__.crypt(val, __KEY__);
+			return ret;
 		},
 	},
 });
