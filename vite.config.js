@@ -85,6 +85,7 @@ let config = defineConfig(({ command, mode }) => {
       alias: {
         "@": path.join(__dirname, "/src"),
         "~": path.join(__dirname, "/node_modules/"),
+        "Utilities": path.join(__dirname, "/src/plugins/modules/"),
       },
       extensions: [
         '.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'

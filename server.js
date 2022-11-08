@@ -3,15 +3,7 @@ import path from "path";
 import { fileURLToPath } from "node:url";
 import express from "express";
 import { createServer } from "vite";
-import cors from "cors";
 import db from "./src/models/index.js";
-// const fs = require("fs");
-// const path = require("path");
-// const { fileURLToPath } = require("node:url");
-// const express = require("express");
-// const { createServer } = require("vite");
-// const cors = require("cors");
-// const db = require("./src/models/index.ts");
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const env = process.env.CTX;
@@ -50,8 +42,8 @@ async function createViteServer() {
     });
 
     // use vite's connect instance as middleware
-    // if you use own ewpress router (express.Router()), you should
-    // use route.use
+    // if you use own express router (express.Router()), you should
+    // use router.use
     app.use(vite.middlewares);
   }
 
@@ -107,14 +99,6 @@ async function createViteServer() {
     }
   });
 
-  app.use(cors(corsOptions));
-
-  // parse requests of content-type - application/json
-  app.use(express.json());
-
-  // parse requests of content-type - application/x-www-form-urlencoded
-  app.use(express.urlencoded({ extended: true }));
-
   if (env === "production")
     app.use(express.static("./app", "./dist/prod/client"));
 
@@ -131,9 +115,11 @@ async function createViteServer() {
     );
   }
 
-  // console.log(userRouter);
+  // parse requests of content-type - application/x-www-form-urlencoded
+  app.use(express.urlencoded({ extended: true }));
+  // parse requests of content-type - application/json
+  app.use(express.json());
   app.use("/api/users", userRouter.default());
-
   app.listen(port, () => {
     console.log(`app listening on port ${port}`);
   });

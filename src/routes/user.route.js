@@ -1,7 +1,6 @@
 import users from "../controllers/user.controller.js";
 import express from "express";
 export default () => {
-  // const users = require("../controllers/user.controller.js");
 
   var router = express.Router();
 

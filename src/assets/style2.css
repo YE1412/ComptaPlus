@@ -8,7 +8,7 @@
 html, body {
   /*font-size: 62.5%;*/
   height: 100%;
-  overflow-y: scroll;
+  /*overflow-y: scroll;*/
 }
 @media (max-width: 768px) {
   html, body {

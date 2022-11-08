@@ -4,6 +4,19 @@ import { MDBCol, MDBRow, MDBBtn, MDBListGroup, MDBListGroupItem } from 'mdb-vue-
 import RegisterContentItem from "./RegisterContentItem.vue";
 import userAxiosService from "../services/user.service";
 import ModalItem from "./ModalItem.vue";
+import router from "@/router/index";
+import { genMod, cryptMod } from "../WasmModules";
+
+var cryptAPI = null;
+var genKeyAPI = null;
+var key = null;
+genMod.then((e) => {
+	genKeyAPI = e;
+	key = genKeyAPI.generate_key("myLittleSecret");
+});
+cryptMod.then((e) => {
+	cryptAPI = e;
+});
 
 export default defineComponent({
 	name: "RegisterContent",
@@ -186,10 +199,11 @@ export default defineComponent({
 			}
 
 			if (!this.errors.length) {
-				this.modalTitle = this.$i18n.t('modalTitleOk');
-				this.modalContent = this.$i18n.t('modalContentOk');
-				this.registerModal = true;
-				return true;
+				const ret = await this.registerNewUser();
+				console.log(ret);
+				if (ret){
+					router.push("/");
+				}
 			}
 		},
 		validEmail: function () {
@@ -235,30 +249,47 @@ export default defineComponent({
 	    	});
 	    },
 	    registerNewUser() {
-	    	return userAxiosService.create({
+	    	const obj = {
 	    		lastname: this.lastname,
 	    		firstname: this.firstname,
 	    		login: this.login,
 	    		email: this.email,
 	    		password: this.password,
 	    		type: 2
-	    	})
+	    	};
+	    	this.transformObject(obj);
+	    	return userAxiosService.create(obj)
 	    	.then((res) => {
 	    		console.log(res);
-	    		this.modalTitle = this.$i18n.t('modalTitleKo');
+	    		this.modalTitle = this.$i18n.t('modalTitleOk');
 				this.modalContent = this.$i18n.t('modalContentOk');
 				this.registerModal = true;
-				router.push("/");
+				return true;
 	    	})
 	    	.catch((err) => {
+	    		console.log(err);
 	    		this.modalTitle = this.$i18n.t('modalTitleKo');
-				this.modalContent = this.$i18n.t('modalContentKo', {err: err.message});
+				this.modalContent = this.$i18n.t('modalContentKo', {err: err.response.data.message || err.message });
 				this.registerModal = true;
+				return false;
 	    	});
 	    },
 	    modalChange(val: Boolean){
 			this.registerModal = val;
-		}
+		},
+		transformObject(obj){
+			// const form = new FormData(); 
+			// console.log(`generated key: - ${key}`);
+			for (const k in obj){
+				if (typeof obj[k] === 'string'){
+					obj[k] = cryptAPI.crypt(obj[k], key);
+				}
+				// form.append(k, obj[k]);	
+			}
+			// console.log(obj);
+			// console.log(form);
+			// return form;
+		},
 	},
 });
 </script>
@@ -353,7 +384,6 @@ export default defineComponent({
 <template>
 	<main class="mt-3">
 		<div class="container">
-			<!-- <form action="register" method="post" @submit="userForm" novalidate="true"> -->
 				<MDBRow tag="form" class="g-3 justify-content-center" @submit="userForm" novalidate="true">
 					<p class="h4 text-center mb-4 fw-bold">
 						{{ $t('form_title') }}
@@ -366,12 +396,6 @@ export default defineComponent({
 					      {{ error }}
 					    </MDBListGroupItem>
 					</MDBListGroup>
-					<!-- <p v-if="errors.length">
-						<b>{{ $t('errorListTitle') }}</b>
-						<ul>
-							<li v-for="error in errors">{{ error }}</li>
-						</ul>
-					</p> -->
 					<MDBRow class="mb-4 d-flex justify-content-center">
 						<RegisterContentItem
 							:label="$t('lastNameLabelText')"
