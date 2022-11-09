@@ -15,7 +15,7 @@ export default defineComponent({
   methods: {
     logoutClick(e) {
       e.preventDefault();
-      console.log("logout click !");
+      // console.log("logout click !");
       this.store.user = {};
       this.store.connected = false;
       router.push("/");

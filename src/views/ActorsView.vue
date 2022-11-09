@@ -20,6 +20,6 @@ export default defineComponent({
 <template>
   <main>
     <TheToolbarIn />
-    <Sidenav />
+    <Sidenav :actorsState="true" />
   </main>
 </template>

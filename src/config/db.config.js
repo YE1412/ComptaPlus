@@ -2,7 +2,7 @@ const config = {
   HOST: "localhost",
   USER: "root",
   PASSWORD: null,
-  DB: "easy_compta",
+  DB: "easy_compta_v2",
   dialect: "mysql",
   PORT: 3308,
   pool: {

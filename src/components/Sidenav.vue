@@ -4,6 +4,38 @@ import SidenavItem from "./SidenavItem.vue";
 
 export default defineComponent({
   name: "side-nav",
+  props: {
+    servicesState: {
+      type: Boolean,
+      required: false,
+      default: () => (false),
+    },
+    actorsState: {
+      type: Boolean,
+      required: false,
+      default: () => (false),
+    },
+    ordersState: {
+      type: Boolean,
+      required: false,
+      default: () => (false),
+    },
+    paymentsState: {
+      type: Boolean,
+      required: false,
+      default: () => (false),
+    },
+    invoicesState: {
+      type: Boolean,
+      required: false,
+      default: () => (false),
+    },
+    exportState: {
+      type: Boolean,
+      required: false,
+      default: () => (false),
+    },
+  },
   setup() {},
   mounted() {},
   components: {
@@ -51,37 +83,37 @@ export default defineComponent({
       <li>
         <ul class="collapsible collapsible-accordion">
           <SidenavItem
-            :state="false"
+            :state="servicesState"
             icon="bi-layout-text-sidebar"
             :title="$t('servicesTitle')"
             :link="$t('servicesPath')"
           />
           <SidenavItem
-            :state="false"
+            :state="actorsState"
             icon="bi-people-fill"
             :title="$t('actorsTitle')"
             :link="$t('actorsPath')"
           />
           <SidenavItem
-            :state="false"
+            :state="ordersState"
             icon="bi-list-ul"
             :title="$t('ordersTitle')"
             :link="$t('ordersPath')"
           />
           <SidenavItem
-            :state="false"
+            :state="paymentsState"
             icon="bi-credit-card-fill"
             :title="$t('paymentsTitle')"
             :link="$t('paymentsPath')"
           />
           <SidenavItem
-            :state="false"
+            :state="invoicesState"
             icon="bi-receipt"
             :title="$t('invoicesTitle')"
             :link="$t('invoicesPath')"
           />
           <SidenavItem
-            :state="false"
+            :state="exportState"
             icon="bi-file-earmark-pdf-fill"
             :title="$t('exportTitle')"
             :link="$t('exportPath')"

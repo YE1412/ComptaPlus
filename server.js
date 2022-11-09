@@ -20,17 +20,25 @@ const app = express();
 
 async function createViteServer() {
   // Testing db connection
-  db.sequelize
-    .authenticate()
-    .then(() => {
-      db.sequelize.sync();
-      // db.sequelize.close();
-      console.log("Database connection has been established !");
-    })
-    .catch((err) => {
-      console.error("Unable to conntect to the database !");
-      console.error(err);
-    });
+  let opt = {force:true};
+  if (env === "production")
+    opt.logging = false;
+  let ret = await db.sequelize
+  .authenticate()
+  .then(() => {
+    db.sequelize.sync(opt);
+    // db.sequelize.close();
+    console.log("Database connection has been established !");
+    return true;
+  })
+  .catch((err) => {
+    console.error("Unable to conntect to the database !");
+    console.error(err);
+    return false;
+  });
+  if (!ret)
+    return
+
   var vite = null;
   if (env === "development") {
     // Create Vite server in middleware mode and configure the app type as

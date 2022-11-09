@@ -18,9 +18,6 @@ export default () => {
   // Retrieve a single User with email
   router.get("/email/", users.checkOne);
 
-  // Retrieve a single User with login
-  // router.get("/login/", users.checkOne);
-
   // Update a User with id
   router.put("/:id", users.update);
 

@@ -19,6 +19,6 @@ export default defineComponent({
 <template>
   <main>
     <TheToolbarIn />
-    <Sidenav />
+    <Sidenav :servicesState="true"/>
   </main>
 </template>

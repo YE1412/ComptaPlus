@@ -1,29 +1,37 @@
+import { DataTypes } from "sequelize";
+
 const model = (sequelize, Sequelize) => {
   const user = sequelize.define(
     "user",
     {
       userId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
+        allowNull: false,
       },
       firstName: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       lastName: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       login: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       email: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       pass: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       type: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
     },
     {
