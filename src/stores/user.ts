@@ -16,7 +16,7 @@ const useUserStore = defineStore("user", {
     },
   },
   actions: {
-    registerUser(login: string, password: string) {
+    loginUser(login: string, password: string) {
       // console.log("Login...");
       return new Promise((resolve, reject) => {
         userAxiosService

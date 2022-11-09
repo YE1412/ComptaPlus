@@ -13,9 +13,9 @@ console.log(`\n\nEnvironment - ${env}\n`);
 var port = env === "development" ? 3000 : null;
 port = env === "validate" ? 9000 : port;
 port = env === "production" ? 0 : port;
-var corsOptions = {
-  origin: `http://localhost:${port}`,
-};
+// var corsOptions = {
+//   origin: `http://localhost:${port}`,
+// };
 const app = express();
 
 async function createViteServer() {

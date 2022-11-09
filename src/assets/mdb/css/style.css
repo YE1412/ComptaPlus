@@ -1,0 +1,135 @@
+/* Your custom styles */
+
+span.error{
+    color: #f44336;
+    opacity: 1;
+    display: block;
+    -webkit-transition: .2s opacity ease-out,.2s color ease-out;
+    transition: .2s opacity ease-out,.2s color ease-out;
+    margin-left: 2.5rem;
+}
+div.has-error label{
+    color: #f44336;
+}
+div.has-error input[type="text"], div.has-error input[type="password"]{
+    border-bottom: 1px solid #f44336;
+}
+.side-nav{
+    max-width: 350px;
+    background-color: #009688;
+    border-right: 0.063em solid #e3e3e3;
+    height: calc(100% - 80px);
+    margin-top: 80px;
+    position: fixed;
+    /*width: 240px;*/
+    left: 0;
+    top: 0;
+    height: -webkit-calc(100% - 80px);
+    height: -moz-calc(100% - 80px);
+    padding-bottom: 60px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    list-style-type: none;
+    padding: 0;
+    z-index: 1040;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    overflow: hidden;
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+.side-nav ul{
+    list-style-type: none;
+    list-style: none;
+    padding-left: 0;
+}
+
+.side-nav > ul{
+    max-height: 100vh;
+}
+
+.side-nav ul ul {
+    margin-top: 20px;
+}
+
+.side-nav ul ul > li {
+    padding-bottom: 10px;
+}
+
+.side-nav ul .logo-wrapper {
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+}
+
+/*.side-nav .logo-wrapper {
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+}
+*/
+.side-nav .logo-wrapper a{
+    display: block;
+    font-size: 1rem;
+    height: 56px;
+    line-height: 56px;
+}
+
+.side-nav .logo-wrapper img {
+    height: 38px;
+    vertical-align: middle;
+    border-style: none;
+}
+.side-nav .collapsible a{
+    color: #FFF;
+    font-weight: 300;
+    font-size: 1rem;
+    height: 36px;
+    line-height: 36px;
+    display: flex;
+    padding-left: 20px;
+    padding-right: 20px;
+    justify-content: space-between;
+}
+
+.side-nav .collapsible a div {
+    display: flex;
+}
+
+.side-nav .collapsible a div i {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.side-nav .collapsible a i {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.side-nav .collapsible a span{
+    padding: 0 5px;
+}
+
+.hidden {
+    display: none;
+}
+
+/*.side-nav .collapsible .collapsible-body{
+    display: none;
+}*/
+
+/*.side-nav .collapsible .bi{
+    font-size: 1.2rem;
+    margin-right: 13px;
+}
+
+.side-nav .rotate-icon{
+    position: absolute;
+    right: 0;
+    top: 13px;
+    margin-right: 20px;
+}*/

@@ -1,7 +1,6 @@
 import http from "../http.common";
 
 class UserDataService {
-
   getAll() {
     return http.get("/users");
   }
@@ -9,25 +8,25 @@ class UserDataService {
   get(login: string, password: string) {
     return http.get(`/users/login`, {
       params: {
-        login: login, 
-        password: password
-      }
+        login: login,
+        password: password,
+      },
     });
   }
 
   checkEmail(email: string) {
     return http.get(`/users/email/`, {
       params: {
-        login: email
-      }
+        login: email,
+      },
     });
   }
 
   checkLogin(login: string) {
     return http.get(`/users/email/`, {
       params: {
-        login: login
-      }
+        login: login,
+      },
     });
   }
 

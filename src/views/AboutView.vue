@@ -1,20 +1,31 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useUserStore } from "@/stores/user";
+import TheToolbarIn from "../components/TheToolbarIn.vue";
+
 export default defineComponent({
   name: "HomeView",
   setup() {
     const store = useUserStore();
-    console.log(store);
+    // console.log(store);
     return { store };
+  },
+  mounted() {
+    
+  },
+  components: {
+    TheToolbarIn
   },
 });
 </script>
 
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
+  <main>
+    <TheToolbarIn />
+    <div class="about">
+      <h1>This is an about page</h1>
+    </div>
+  </main>
 </template>
 
 <style>

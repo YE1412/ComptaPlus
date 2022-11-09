@@ -2,8 +2,9 @@
 import { defineComponent } from "vue";
 import TheWelcome from "../components/TheWelcome.vue";
 import TheToolbarIn from "../components/TheToolbarIn.vue";
+import Sidenav from "../components/Sidenav.vue";
 import { useUserStore } from "@/stores/user";
-import { RouterLink, RouterView } from "vue-router";
+import { RouterLink } from "vue-router";
 
 export default defineComponent({
   name: "HomeView",
@@ -15,13 +16,14 @@ export default defineComponent({
   components: {
     TheWelcome,
     TheToolbarIn,
-    // TheToolbarOut,
+    Sidenav,
   },
 });
 </script>
 <template>
   <main>
     <TheToolbarIn />
+    <Sidenav />
     <TheWelcome />
     <RouterLink to="/a-propos"> A-propos </RouterLink>
   </main>

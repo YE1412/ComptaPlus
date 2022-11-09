@@ -19,17 +19,20 @@
     "module": "esnext",
     "strict": true,
     "jsx": "preserve",
+    "downlevelIteration": true,
     "importHelpers": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "composite": true,
     "moduleResolution": "node",
-    "moduleSuffixes": [".d", ""],
     "baseUrl": ".",
     "typeRoots": ["./node_modules/@types", "./src/types"],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "vue": ["node_modules/vue/index.js"],
+      "pinia": ["node_modules/pinia/index.js"],
+      "vue-i18n": ["node_modules/vue-i18n/index.js"],
     },
     "lib": [
       "esnext",

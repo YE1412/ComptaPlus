@@ -1,0 +1,3 @@
+src/plugins/modules/*
+.gitignore
+vite.config.js

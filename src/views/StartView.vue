@@ -14,7 +14,7 @@ export default defineComponent({
   components: {
     TheToolbarOut,
     StartContent,
-  }
+  },
 });
 </script>
 <template>

@@ -116,6 +116,22 @@ input, button {
   padding-top: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
+.login__row input[type] {
+    color: #FFF;
+    font-family: SenRegular, sans-serif;
+}
+.login__row input[type]::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #bdbdbd;
+  opacity: 1; /* Firefox */
+}
+
+.login__row input[type]:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: #bdbdbd;
+}
+
+.login__row input[type="text"]::-ms-input-placeholder { /* Microsoft Edge */
+  color: #bdbdbd;
+}
 .login__icon {
   margin-bottom: -0.4rem;
   margin-right: 0.5rem;

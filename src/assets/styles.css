@@ -71,10 +71,7 @@ h2, h3 {
 body {
     margin: 0;
 }
-body, input[type="text"] {
-    color: #333;
-    font-family: SenRegular, sans-serif;
-}
+
 button {
     background-color: #7F1519;
     border-width: 1px;
@@ -200,6 +197,7 @@ main.mt-3{
     font-size: 0.5rem;
     color:  #333;
     display: inline-block;
+    vertical-align: middle;
 }
 
 .toolbar > div:nth-child(2) > div > button > span > span {
@@ -897,6 +895,9 @@ button.scrollToTopButton:hover {
     .toolbar > div:nth-child(2) > div > button > span {
         font-size: larger;
     }
+    .toolbar > div:nth-child(2) > div > button > span > i {
+        font-size: 0.7rem;
+    }
     .toolbar > div:nth-child(2) > div > button > span:before {
         content: "";
         vertical-align: middle;
@@ -940,7 +941,7 @@ button.scrollToTopButton:hover {
         color: #333;
     }
     /*CONTENT*/
-    .app-messages {
+    /*.app-messages {
         margin-top: 80px;
     }
     .messages > div {
@@ -1090,7 +1091,7 @@ button.scrollToTopButton:hover {
     }
     .panel4 > div > div:first-child > div > span > a > button {
         font-size: medium;
-    }
+    }*/
 }
 
 @media screen and (max-width: 900px) {
@@ -1144,6 +1145,9 @@ button.scrollToTopButton:hover {
     .toolbar > div:nth-child(2) > div > button > span {
         font-size: large;
     }
+    .toolbar > div:nth-child(2) > div > button > span > i {
+        font-size: 0.7rem;
+    }
     .toolbar > div:nth-child(2) > div > button > span:before {
         content: "";
         vertical-align: middle;
@@ -1184,13 +1188,14 @@ button.scrollToTopButton:hover {
         text-align: right;
     }
     .navBar > ul > li a {
+        font-size: 16px;
         padding: 0;
     }
     .navBar > ul > li a.selected {
         color:  #333;
     }
     /*CONTENT*/
-    .app-messages {
+    /*.app-messages {
         margin-top: 66px;
     }
     .messages > div {
@@ -1374,7 +1379,7 @@ button.scrollToTopButton:hover {
     }
     .panel4 > div > div:first-child > div > span > a > button {
         font-size: medium;
-    }
+    }*/
 }
 
 @media screen and (max-width: 560px){
@@ -1412,7 +1417,7 @@ button.scrollToTopButton:hover {
         vertical-align: middle;
         height: 100%;
     }
-    .toolbar > div:first-child > div > div {
+    .toolbar > div:first-child > div > div:first-child {
         display: inline-block;
         height: 100%;
         vertical-align: middle;
@@ -1478,6 +1483,9 @@ button.scrollToTopButton:hover {
     }
     .toolbar > div:nth-child(2) > div > button > span {
         font-size: medium;
+    }
+    .toolbar > div:nth-child(2) > div > button > span > i {
+        font-size: 1rem;
     }
     .toolbar > div:nth-child(2) > div > div.dropdown > span:first-child {
         font-size: small;
@@ -1581,7 +1589,7 @@ button.scrollToTopButton:hover {
         color: #7F1519;
     }
     /*CONTENT*/
-    .app-messages {
+    /*.app-messages {
         margin-top: 66px;
     }
     .messages > div {
@@ -1751,7 +1759,7 @@ button.scrollToTopButton:hover {
     }
     .panel4 > div > div:first-child > div > span > a > button {
         font-size: smaller;
-    }
+    }*/
     /* FOOTER */
     .footer > div {
         background-size: 100% 170px;

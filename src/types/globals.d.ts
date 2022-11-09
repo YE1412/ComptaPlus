@@ -1,8 +1,7 @@
-declare global {
-	var __KEY__: string;
-	var __GENKEYAPI__: any;
-	var __CRYPTAPI__: any;
-	var __SECRET__: string;
-}
+/* eslint-disable no-var */
 
-export {};
+declare var __KEY__: string;
+declare var __GENKEYAPI__: any;
+declare var __CRYPTAPI__: any;
+declare var __DECRYPTAPI__: any;
+declare var __SECRET__: string;

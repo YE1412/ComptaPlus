@@ -75,30 +75,28 @@ export default defineComponent({
 </script>
 
 <template>
-	<MDBModal
-	  	:id="id"
-	  	:tabindex="tabIndex"
-	  	:labelledby="labelledBy"
-	  	:modelValue="model"
-	  	:centered="centered"
-	  	:staticBackdrop="staticBackdrop"
-	>
-  	<MDBModalHeader>
-  		<MDBModalTitle :id="labelledBy">
-  			{{ modalTitle }}
-  		</MDBModalTitle>
-  	</MDBModalHeader>
-  	<MDBModalBody>
-  		<p>
-  			{{ modalContent }}
-  		</p>
-  	</MDBModalBody>
-  	<MDBModalFooter>
-  		<MDBBtn
-  			color="secondary"
-  			@click="inputChanges($event)">
-  			{{ modalCloseBtnText }}
-  		</MDBBtn>
-  	</MDBModalFooter>
+  <MDBModal
+    :id="id"
+    :tabindex="tabIndex"
+    :labelledby="labelledBy"
+    :modelValue="model"
+    :centered="centered"
+    :staticBackdrop="staticBackdrop"
+  >
+    <MDBModalHeader>
+      <MDBModalTitle :id="labelledBy">
+        {{ modalTitle }}
+      </MDBModalTitle>
+    </MDBModalHeader>
+    <MDBModalBody>
+      <p>
+        {{ modalContent }}
+      </p>
+    </MDBModalBody>
+    <MDBModalFooter>
+      <MDBBtn color="secondary" @click="inputChanges($event)">
+        {{ modalCloseBtnText }}
+      </MDBBtn>
+    </MDBModalFooter>
   </MDBModal>
 </template>

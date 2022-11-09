@@ -1,5 +1,5 @@
 <template>
-  <RouterLink to="/">
+  <RouterLink :to="$t('homeLinkTarget')">
     <slot name="icon"></slot>
   </RouterLink>
 </template>

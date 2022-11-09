@@ -1,7 +1,6 @@
 import users from "../controllers/user.controller.js";
 import express from "express";
 export default () => {
-
   var router = express.Router();
 
   // Create a new User

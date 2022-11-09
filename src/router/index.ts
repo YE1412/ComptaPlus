@@ -16,17 +16,29 @@ const history = isServer
 
 const pathsObj = [
   {
-    path: t('startLinkTarget', 'en'),
-    component: 'StartView',
-    name: t('startLinkName', 'en'),
-    auth: false
+    path: t("startLinkTarget", "en"),
+    component: "StartView",
+    name: t("startLinkName", "en"),
+    auth: false,
   },
   {
-    path: t('registerLinkTarget', 'en'),
-    component: 'RegisterView',
-    name: t('registerLinkName', 'en'),
-    auth: false
-  }
+    path: t("registerLinkTarget", "en"),
+    component: "RegisterView",
+    name: t("registerLinkName", "en"),
+    auth: false,
+  },
+  {
+    path: t("homeLinkTarget", "en"),
+    component: "HomeView",
+    name: t("homeLinkName", "en"),
+    auth: true,
+  },
+  {
+    path: t("aboutLinkTarget", "en"),
+    component: "AboutView",
+    name: t("aboutLinkName", "en"),
+    auth: true,
+  },
 ];
 
 router = createRouter({
@@ -93,12 +105,19 @@ router.beforeEach((to: any, from: any, next: any) => {
   // current running app
   const userStore = useUserStore();
   const accessiblePath = isRealPath(to.fullPath);
+  // console.log(`-----------------------\nto`);
   // console.log(to);
+  // console.log(`userStore connected ?`);
   // console.log(userStore.connected);
+  // console.log(`startLinkTarget`);
   // console.log(t("startLinkTarget"));
+  // console.log(`Router getRoutes`);
   // console.log(router.getRoutes());
+  // console.log(`Accessible Path`);
   // console.log(accessiblePath);
+  // console.log(`Paths Obj`);
   // console.log(pathsObj);
+  // console.log(`-----------------------\n`);
   if (to.meta.requiresAuth && !userStore.connected) next(t("startLinkTarget"));
   else if (!hasNecessaryRoute(to) && accessiblePath !== null) {
     generateRoute(to, accessiblePath);
@@ -107,10 +126,10 @@ router.beforeEach((to: any, from: any, next: any) => {
   } else next();
 });
 
-function isRealPath(to: string){
-  let ret = null;
-  for (const obj of pathsObj){
-    if (to === obj.path){
+function isRealPath(to: string) {
+  const ret = null;
+  for (const obj of pathsObj) {
+    if (to === obj.path) {
       return obj;
     }
   }

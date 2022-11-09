@@ -1,6 +1,6 @@
 <script lang="ts">
 // import { useI18n } from 'vue-i18n';
-import { RouterLink, RouterView } from "vue-router";
+import { RouterLink } from "vue-router";
 import { defineComponent } from "vue";
 // const { t } = i18n_toolbar.global;
 export default defineComponent({
@@ -18,7 +18,7 @@ export default defineComponent({
     "not_yet": "Not registred yet?",
     "register": "Sign Up",
     "logout": "Logout",
-    "login_path": "/",
+    "login_path": "/home",
     "register_path": "/register"
   },
   "fr": {
@@ -26,7 +26,7 @@ export default defineComponent({
     "not_yet": "Pas encore inscrit ?",
     "register": "S'inscrire",
     "logout": "Se déconnecter",
-    "login_path": "/",
+    "login_path": "/accueil",
     "register_path": "/inscription"
   }
 }
