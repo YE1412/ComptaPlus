@@ -18,6 +18,14 @@ const model = (sequelize, Sequelize) => {
 				type: DataTypes.FLOAT,
 				allowNull: false,
 			},
+			paymentType: {
+				type: DataTypes.FLOAT,
+				allowNull: false,
+				reference: {
+					model: "payment_type",
+					key: "paymentTypeId",
+				},
+			},
 			factureId: {
 				type: DataTypes.INTEGER,
 				reference: {

@@ -43,7 +43,7 @@ const model = (sequelize, Sequelize) => {
 				allowNull: false,
 			},
 			type: {
-				type: DataTypes.INTEGER,
+				type: DataTypes.INTEGER(1),
 			},
 			ville: {
 				type: DataTypes.CHAR,

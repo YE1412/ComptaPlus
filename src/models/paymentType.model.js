@@ -14,13 +14,13 @@ const model = (sequelize, Sequelize) => {
 				type: DataTypes.STRING,
 				allowNull: false,
 			},
-			paymentId: {
-		       type: DataTypes.INTEGER,
-		       references: {
-		          model: 'payment', 
-		          key: 'paymentId', 
-		       }
-		    }
+			// paymentId: {
+		 //       type: DataTypes.INTEGER,
+		 //       references: {
+		 //          model: 'payment', 
+		 //          key: 'paymentId', 
+		 //       }
+		 //    }
 		},
 		{
 			freezeTableName: true,

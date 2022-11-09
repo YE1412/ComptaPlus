@@ -39,72 +39,72 @@ const paymentModelObj = payment(sequelize, Sequelize);
 const paymentTypeModelObj = paymentType(sequelize, Sequelize);
 
 // ASSOCIATIONS
-paymentModelObj.hasOne(paymentTypeModelObj, {
+paymentTypeModelObj.payments = paymentTypeModelObj.hasMany(paymentModelObj, {
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
-  foreignKey: 'paymentId'
+  foreignKey: 'paymentTypeId'
 });
-paymentTypeModelObj.belongsTo(paymentModelObj, {
-  foreignKey: 'paymentId',
+paymentModelObj.paymentType = paymentModelObj.belongsTo(paymentTypeModelObj, {
+  foreignKey: 'paymentTypeId',
 });
-invoiceModelObj.hasMany(paymentModelObj, {
-  onDelete: 'CASCADE',
-  onUpdate: 'CASCADE',
-  foreignKey: 'factureId'
-});
-paymentModelObj.belongsTo(invoiceModelObj, {
-  foreignKey: 'factureId',
-});
-invoiceModelObj.hasMany(deviseModelObj, {
+invoiceModelObj.payments = invoiceModelObj.hasMany(paymentModelObj, {
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
   foreignKey: 'factureId'
 });
-deviseModelObj.belongsTo(invoiceModelObj, {
+paymentModelObj.invoice = paymentModelObj.belongsTo(invoiceModelObj, {
   foreignKey: 'factureId',
 });
-actorModelObj.hasMany(invoiceModelObj, {
+invoiceModelObj.devises = invoiceModelObj.hasMany(deviseModelObj, {
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+  foreignKey: 'factureId'
+});
+deviseModelObj.invoice = deviseModelObj.belongsTo(invoiceModelObj, {
+  foreignKey: 'factureId',
+});
+actorModelObj.invoices = actorModelObj.hasMany(invoiceModelObj, {
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
   foreignKey: 'buyerId'
 });
-invoiceModelObj.belongsTo(actorModelObj, {
+invoiceModelObj.actor = invoiceModelObj.belongsTo(actorModelObj, {
   foreignKey: 'buyerId',
 });
-actorModelObj.hasMany(invoiceModelObj, {
+actorModelObj.invoices = actorModelObj.hasMany(invoiceModelObj, {
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
   foreignKey: 'sellerId'
 });
-invoiceModelObj.belongsTo(actorModelObj, {
+invoiceModelObj.actor = invoiceModelObj.belongsTo(actorModelObj, {
   foreignKey: 'sellerId',
 });
-invoiceModelObj.hasMany(orderModelObj, {
+invoiceModelObj.orders = invoiceModelObj.hasMany(orderModelObj, {
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
   foreignKey: 'factureId'
 });
-orderModelObj.belongsTo(invoiceModelObj, {
+orderModelObj.invoice = orderModelObj.belongsTo(invoiceModelObj, {
   foreignKey: 'factureId',
 });
-orderModelObj.belongsToMany(serviceModelObj, {
+orderModelObj.services = orderModelObj.belongsToMany(serviceModelObj, {
   through: 'contains',
   foreignKey: 'serviceId',
   onUpdate: 'CASCADE',
   onDelete: 'CASCADE',
 });
-serviceModelObj.belongsToMany(orderModelObj, {
+serviceModelObj.orders = serviceModelObj.belongsToMany(orderModelObj, {
   through: 'contains',
   foreignKey: 'orderId',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
-langueModelObj.hasOne(invoiceModelObj, {
+langueModelObj.invoices = langueModelObj.hasMany(invoiceModelObj, {
   onDelete: 'SET NULL',
   onUpdate: 'CASCADE',
   foreignKey: 'languageId'
 });
-invoiceModelObj.belongsTo(langueModelObj, {
+invoiceModelObj.langue = invoiceModelObj.belongsTo(langueModelObj, {
   foreignKey: 'languageId',
 });
 // -------------
