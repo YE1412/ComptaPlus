@@ -12,7 +12,7 @@
     }
   ],
   "extends": "@vue/tsconfig/tsconfig.web.json",
-  "include": ["env.d.ts", "src/**/*.tx", "src/**/*.vue", "src/**/*.json"],
+  "include": ["env.d.ts", "src/**/*.tx", "src/**/*.ts", "src/**/*.vue", "src/**/*.json"],
   "exclude": ["src/**/__tests__/*", "node_modules/*"],
   "compilerOptions": {
     "target": "esnext",
@@ -26,13 +26,12 @@
     "allowSyntheticDefaultImports": true,
     "composite": true,
     "moduleResolution": "node",
+    "allowJs": true,
+    "checkJs": false,
     "baseUrl": ".",
     "typeRoots": ["./node_modules/@types", "./src/types"],
     "paths": {
-      "@/*": ["./src/*"],
-      "vue": ["node_modules/vue/index.js"],
-      "pinia": ["node_modules/pinia/index.js"],
-      "vue-i18n": ["node_modules/vue-i18n/index.js"],
+      "@/*": ["./src/*"]
     },
     "lib": [
       "esnext",
@@ -43,7 +42,9 @@
     "types": [
       "webpack-env",
       "node",
-      "json"
+      "json",
+      "vue",
+      "express"
     ],
   }
 }

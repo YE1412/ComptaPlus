@@ -1,30 +1,27 @@
 // import { ref, computed } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
-import userAxiosService from "../services/user.service";
+import serviceAxiosService from "../services/service.service";
 
-const useUserStore = defineStore("user", {
+const useServiceStore = defineStore("service", {
   state: () => ({
-    connected: false,
-    user: {},
+    services: [],
   }),
   getters: {
-    getConnected(state) {
-      return state.connected;
-    },
-    getUser(state) {
-      return state.user;
+    getServices(state) {
+      return state.services;
     },
   },
   actions: {
-    loginUser(login: string, password: string) {
+    getAllServices() {
       // console.log("Login...");
       return new Promise((resolve, reject) => {
-        userAxiosService
-          .get(login, password)
+        serviceAxiosService
+          .getAll()
           .then((res) => {
             // console.log(res);
             if (res.data.length) {
-              resolve(res.data[0]);
+              resolve(res.data);
+              this.services = res.data;
             } else {
               reject(false);
             }

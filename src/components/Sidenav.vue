@@ -8,35 +8,40 @@ export default defineComponent({
     servicesState: {
       type: Boolean,
       required: false,
-      default: () => (false),
+      default: () => false,
     },
     actorsState: {
       type: Boolean,
       required: false,
-      default: () => (false),
+      default: () => false,
     },
     ordersState: {
       type: Boolean,
       required: false,
-      default: () => (false),
+      default: () => false,
     },
     paymentsState: {
       type: Boolean,
       required: false,
-      default: () => (false),
+      default: () => false,
     },
     invoicesState: {
       type: Boolean,
       required: false,
-      default: () => (false),
+      default: () => false,
     },
     exportState: {
       type: Boolean,
       required: false,
-      default: () => (false),
+      default: () => false,
     },
   },
-  setup() {},
+  // data (){
+
+  // },
+  setup() {
+    type exportState = any;
+  },
   mounted() {},
   components: {
     SidenavItem,

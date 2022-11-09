@@ -20,24 +20,22 @@ const app = express();
 
 async function createViteServer() {
   // Testing db connection
-  let opt = {force:true};
-  if (env === "production")
-    opt.logging = false;
+  let opt = { force: true };
+  if (env === "production") opt.logging = false;
   let ret = await db.sequelize
-  .authenticate()
-  .then(() => {
-    db.sequelize.sync(opt);
-    // db.sequelize.close();
-    console.log("Database connection has been established !");
-    return true;
-  })
-  .catch((err) => {
-    console.error("Unable to conntect to the database !");
-    console.error(err);
-    return false;
-  });
-  if (!ret)
-    return
+    .authenticate()
+    .then(() => {
+      db.sequelize.sync(opt);
+      // db.sequelize.close();
+      console.log("Database connection has been established !");
+      return true;
+    })
+    .catch((err) => {
+      console.error("Unable to conntect to the database !");
+      console.error(err);
+      return false;
+    });
+  if (!ret) return;
 
   var vite = null;
   if (env === "development") {
@@ -110,24 +108,27 @@ async function createViteServer() {
   if (env === "production")
     app.use(express.static("./app", "./dist/prod/client"));
 
-  var userRouter;
+  var userRouter, serviceRouter;
+  let prefix = "./";
   // console.log(import("./src/routes/user.route.js")(app));
   if (env === "development") {
-    userRouter = await import("./src/routes/user.route.js");
     app.use("./", express.static(path.join(__dirname, "src/assets")));
     // app.use('/public-assets', express.static(path.join(__dirname, 'assets')));
   } else {
+    prefix = "./dist/prod/client/";
     app.use(
       "./",
       express.static(path.join(__dirname, "./dist/prod/client/src/assets"))
     );
   }
-
+  userRouter = await import(`${prefix}src/routes/user.route.js`);
+  serviceRouter = await import(`${prefix}src/routes/service.route.js`);
   // parse requests of content-type - application/x-www-form-urlencoded
   app.use(express.urlencoded({ extended: true }));
   // parse requests of content-type - application/json
   app.use(express.json());
   app.use("/api/users", userRouter.default());
+  app.use("/api/services", serviceRouter.default());
   app.listen(port, () => {
     console.log(`app listening on port ${port}`);
   });
