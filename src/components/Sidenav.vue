@@ -3,14 +3,11 @@ import { defineComponent } from "vue";
 import SidenavItem from "./SidenavItem.vue";
 
 export default defineComponent({
-  name: "Sidenav",
-  setup() {
-  },
-  mounted() {
-    
-  },
+  name: "side-nav",
+  setup() {},
+  mounted() {},
   components: {
-  	SidenavItem
+    SidenavItem,
   },
 });
 </script>
@@ -19,78 +16,78 @@ export default defineComponent({
 {
   "fr": {
     "servicesTitle": "Gestion des services",
-    "servicesPath": "#",
+    "servicesPath": "/services",
     "actorsTitle": "Gestion des acteurs",
-    "actorsPath": "#",
+    "actorsPath": "/acteurs",
     "ordersTitle": "Gestion des commandes",
-    "ordersPath": "#",
+    "ordersPath": "/commandes",
     "paymentsTitle": "Gestion des paiements",
-    "paymentsPath": "#",
+    "paymentsPath": "/paiements",
     "invoicesTitle": "Gestion des factures",
-    "invoicesPath": "#",
+    "invoicesPath": "/factures",
     "exportTitle": "Exportation",
-    "exportPath": "#",
+    "exportPath": "/exportation",
   },
   "en": {
     "servicesTitle": "Services management",
-    "servicesPath": "#",
+    "servicesPath": "/services",
     "actorsTitle": "Actors management",
-    "actorsPath": "#",
+    "actorsPath": "/actors",
     "ordersTitle": "Orders management",
-    "ordersPath": "#",
+    "ordersPath": "/orders",
     "paymentsTitle": "Payments management",
-    "paymentsPath": "#",
+    "paymentsPath": "/payments",
     "invoicesTitle": "Invoices management",
-    "invoicesPath": "#",
+    "invoicesPath": "/invoices",
     "exportTitle": "Export",
-    "exportPath": "#",
+    "exportPath": "/export",
   }
 }
 </i18n>
 
 <template>
-	<div id="slide-out" class="side-nav">
-		<ul class="custom-scrollbar list-unstyled">
-			<li>
-    			<ul class="collapsible collapsible-accordion">
-    				<SidenavItem 
-    					:state="false"
-    					icon="bi-layout-text-sidebar"
-    					:title="$t('servicesTitle')"
-    					:link="$t('servicesPath')"
-    				/>
-    				<SidenavItem 
-    					:state="false"
-    					icon="bi-people-fill"
-    					:title="$t('actorsTitle')"
-    					:link="$t('actorsPath')"
-    				/>
-    				<SidenavItem 
-    					:state="false"
-    					icon="bi-list-ul"
-    					:title="$t('ordersTitle')"
-    					:link="$t('ordersPath')"
-    				/>
-    				<SidenavItem 
-    					:state="false"
-    					icon="bi-credit-card-fill"
-    					:title="$t('paymentsTitle')"
-    					:link="$t('paymentsPath')"
-    				/>
-    				<SidenavItem 
-    					:state="false"
-    					icon="bi-receipt"
-    					:title="$t('invoicesTitle')"
-    					:link="$t('invoicesPath')"
-    				/>
-    				<SidenavItem 
-    					:state="false"
-    					icon="bi-file-earmark-pdf-fill"
-    					:title="$t('exportTitle')"
-    					:link="$t('exportPath')"
-    				/>
-    			</ul>
-    		</li>
-		</ul>
-	</div>
+  <div id="slide-out" class="side-nav">
+    <ul class="custom-scrollbar list-unstyled">
+      <li>
+        <ul class="collapsible collapsible-accordion">
+          <SidenavItem
+            :state="false"
+            icon="bi-layout-text-sidebar"
+            :title="$t('servicesTitle')"
+            :link="$t('servicesPath')"
+          />
+          <SidenavItem
+            :state="false"
+            icon="bi-people-fill"
+            :title="$t('actorsTitle')"
+            :link="$t('actorsPath')"
+          />
+          <SidenavItem
+            :state="false"
+            icon="bi-list-ul"
+            :title="$t('ordersTitle')"
+            :link="$t('ordersPath')"
+          />
+          <SidenavItem
+            :state="false"
+            icon="bi-credit-card-fill"
+            :title="$t('paymentsTitle')"
+            :link="$t('paymentsPath')"
+          />
+          <SidenavItem
+            :state="false"
+            icon="bi-receipt"
+            :title="$t('invoicesTitle')"
+            :link="$t('invoicesPath')"
+          />
+          <SidenavItem
+            :state="false"
+            icon="bi-file-earmark-pdf-fill"
+            :title="$t('exportTitle')"
+            :link="$t('exportPath')"
+          />
+        </ul>
+      </li>
+    </ul>
+  </div>
 </template>

@@ -16,7 +16,7 @@ export default defineComponent({
     const store = useUserStore();
     return { store };
   },
-  mounted(){
+  mounted() {
     // console.log(__KEY__);
     // console.log(__GENKEYAPI__);
     // console.log(__SECRET__);
@@ -42,27 +42,29 @@ export default defineComponent({
         const login = this.transformValue(this.login);
         const pass = this.transformValue(this.password);
         this.store
-        .loginUser(login, pass)
-        .then((res) => {
-            // console.log("OK !");
-            this.store.connected = true;
-            this.store.user = this.transformObj(res);
-            router.push(this.$i18n.t('home_path'));
-            // console.log(this.store);
-          },
-          () => {
-            // console.log("KO !");
+          .loginUser(login, pass)
+          .then(
+            (res) => {
+              // console.log("OK !");
+              this.store.connected = true;
+              this.store.user = this.transformObj(res);
+              router.push(this.$i18n.t("home_path"));
+              // console.log(this.store);
+            },
+            () => {
+              // console.log("KO !");
+              this.store.connected = false;
+              this.loginModal = true;
+              // console.log(this.store);
+            }
+          )
+          .catch((err) => {
+            // console.log("KO ! - catch");
+            // console.log(err);
             this.store.connected = false;
             this.loginModal = true;
             // console.log(this.store);
-        })
-        .catch((err) => {
-          // console.log("KO ! - catch");
-          // console.log(err);
-          this.store.connected = false;
-          this.loginModal = true;
-          // console.log(this.store);
-        });
+          });
       } else {
         // console.log("empty strings !");
         this.loginModal = true;
@@ -76,10 +78,10 @@ export default defineComponent({
     },
     transformObj(obj) {
       let ret = {};
-      for (const key in obj){
-        if(typeof obj[key] === "string"){
+      for (const key in obj) {
+        if (typeof obj[key] === "string") {
           ret[key] = __DECRYPTAPI__.decrypt(obj[key]);
-        }else{
+        } else {
           ret[key] = obj[key];
         }
       }
@@ -151,7 +153,11 @@ export default defineComponent({
               />
             </template>
           </StartContentLoginItem>
-          <button @click="loginUser($event)" type="button" class="login__submit">
+          <button
+            @click="loginUser($event)"
+            type="button"
+            class="login__submit"
+          >
             {{ $t("login_submit_text") }}
           </button>
           <p class="login__signup">

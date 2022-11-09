@@ -1,40 +1,39 @@
 <script lang="ts">
 import { defineComponent } from "vue";
+import { RouterLink } from "vue-router";
 
 export default defineComponent({
-  name: "SidenavItem",
+  name: "side-navItem",
   props: {
     state: {
       type: Boolean,
-      required: true
+      required: true,
     },
     icon: {
       type: String,
-      required: true
+      required: true,
     },
     title: {
       type: String,
-      required: true
+      required: true,
     },
     link: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
-  setup() {
-  },
+  setup() {},
   data() {
     return {
-      biClass: 'bi',
+      biClass: "bi",
       customClass: this.icon,
-      caretUpClass: 'bi-caret-up-fill',
-      caretDownClass: 'bi-caret-down-fill',
-    }
+      caretUpClass: "bi-caret-up-fill",
+      caretDownClass: "bi-caret-down-fill",
+    };
   },
-  mounted() {
-    
-  },
+  mounted() {},
   components: {
+    RouterLink,
   },
 });
 </script>
@@ -54,26 +53,28 @@ export default defineComponent({
 
 <template>
   <li>
-    <a class="collapsible-header waves-effect arrow-r" :href="link">
+    <RouterLink class="collapsible-header waves-effect arrow-r" :to="link">
+      <!-- <a class="collapsible-header waves-effect arrow-r" :href="link"> -->
       <div>
-        <i :class="[biClass, customClass]"></i> 
+        <i :class="[biClass, customClass]"></i>
         <span>{{ title }}</span>
       </div>
       <i :class="[biClass, state ? caretUpClass : caretDownClass]"></i>
-    </a>
+      <!-- </a> -->
+    </RouterLink>
     <div class="collapsible-body" :class="{ hidden: !state }">
-        <ul>
-            <li>
-                <a href="#" class="waves-effect">
-                {{ $t('admin') }}
-                </a>
-            </li>
-            <li>
-                <a href="#" class="waves-effect">
-                {{ $t('display') }}
-                </a>
-            </li>
-        </ul>
+      <ul>
+        <li>
+          <a href="#" class="waves-effect">
+            {{ $t("admin") }}
+          </a>
+        </li>
+        <li>
+          <a href="#" class="waves-effect">
+            {{ $t("display") }}
+          </a>
+        </li>
+      </ul>
     </div>
   </li>
 </template>

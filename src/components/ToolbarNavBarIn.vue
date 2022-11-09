@@ -6,7 +6,7 @@ import { useUserStore } from "@/stores/user";
 export default defineComponent({
   name: "ToolbarNavBarIn",
   setup() {
-    const store = useUserStore()
+    const store = useUserStore();
     return { store };
   },
   components: {
@@ -18,9 +18,9 @@ export default defineComponent({
       console.log("logout click !");
       this.store.user = {};
       this.store.connected = false;
-      router.push('/');
-    }
-  }
+      router.push("/");
+    },
+  },
 });
 </script>
 

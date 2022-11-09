@@ -13,7 +13,7 @@ const isServer = typeof window === "undefined";
 const history = isServer
   ? createMemoryHistory()
   : createWebHistory(import.meta.env.BASE_URL);
-
+const icon = "/favicon.ico";
 const pathsObj = [
   {
     path: t("startLinkTarget", "en"),
@@ -39,6 +39,42 @@ const pathsObj = [
     name: t("aboutLinkName", "en"),
     auth: true,
   },
+  {
+    path: t("actorsLinkTarget", "en"),
+    component: "ActorsView",
+    name: t("actorsLinkName", "en"),
+    auth: true,
+  },
+  {
+    path: t("ordersLinkTarget", "en"),
+    component: "OrdersView",
+    name: t("ordersLinkName", "en"),
+    auth: true,
+  },
+  {
+    path: t("paymentsLinkTarget", "en"),
+    component: "PaymentsView",
+    name: t("paymentsLinkName", "en"),
+    auth: true,
+  },
+  {
+    path: t("invoicesLinkTarget", "en"),
+    component: "InvoicesView",
+    name: t("invoicesLinkName", "en"),
+    auth: true,
+  },
+  {
+    path: t("exportLinkTarget", "en"),
+    component: "ExportView",
+    name: t("exportLinkName", "en"),
+    auth: true,
+  },
+  {
+    path: t("profileLinkTarget", "en"),
+    component: "ProfileView",
+    name: t("profileLinkName", "en"),
+    auth: true,
+  },
 ];
 
 router = createRouter({
@@ -50,7 +86,7 @@ router = createRouter({
       component: HomeView,
       meta: {
         title: t("homeLinkName"),
-        icon: "/favicon.ico",
+        icon: icon,
         requiresAuth: true,
       },
     },
@@ -60,7 +96,7 @@ router = createRouter({
       component: HomeView,
       meta: {
         title: t("homeLinkName"),
-        icon: "/favicon.ico",
+        icon: icon,
         requiresAuth: true,
       },
     },
@@ -73,7 +109,7 @@ router = createRouter({
       component: () => import("../views/AboutView.vue"),
       meta: {
         title: t("aboutLinkName"),
-        icon: "/favicon.ico",
+        icon: icon,
         requiresAuth: true,
       },
     },
@@ -83,7 +119,7 @@ router = createRouter({
       component: () => import("../views/StartView.vue"),
       meta: {
         title: t("startLinkName"),
-        icon: "/favicon.ico",
+        icon: icon,
         requiresAuth: false,
       },
     },
@@ -93,7 +129,77 @@ router = createRouter({
       component: () => import("../views/RegisterView.vue"),
       meta: {
         title: t("registerLinkName"),
-        icon: "/favicon.ico",
+        icon: icon,
+        requiresAuth: false,
+      },
+    },
+    {
+      path: t("servicesLinkTarget"),
+      name: t("servicesLinkName"),
+      component: () => import("../views/ServicesView.vue"),
+      meta: {
+        title: t("servicesLinkName"),
+        icon: icon,
+        requiresAuth: false,
+      },
+    },
+    {
+      path: t("actorsLinkTarget"),
+      name: t("actorsLinkName"),
+      component: () => import("../views/ActorsView.vue"),
+      meta: {
+        title: t("actorsLinkName"),
+        icon: icon,
+        requiresAuth: false,
+      },
+    },
+    {
+      path: t("ordersLinkTarget"),
+      name: t("ordersLinkName"),
+      component: () => import("../views/OrdersView.vue"),
+      meta: {
+        title: t("ordersLinkName"),
+        icon: icon,
+        requiresAuth: false,
+      },
+    },
+    {
+      path: t("paymentsLinkTarget"),
+      name: t("paymentsLinkName"),
+      component: () => import("../views/PaymentsView.vue"),
+      meta: {
+        title: t("paymentsLinkName"),
+        icon: icon,
+        requiresAuth: false,
+      },
+    },
+    {
+      path: t("invoicesLinkTarget"),
+      name: t("invoicesLinkName"),
+      component: () => import("../views/InvoicesView.vue"),
+      meta: {
+        title: t("invoicesLinkName"),
+        icon: icon,
+        requiresAuth: false,
+      },
+    },
+    {
+      path: t("exportLinkTarget"),
+      name: t("exportLinkName"),
+      component: () => import("../views/ExportView.vue"),
+      meta: {
+        title: t("exportLinkName"),
+        icon: icon,
+        requiresAuth: false,
+      },
+    },
+    {
+      path: t("profileLinkTarget"),
+      name: t("profileLinkName"),
+      component: () => import("../views/ProfileView.vue"),
+      meta: {
+        title: t("profileLinkName"),
+        icon: icon,
         requiresAuth: false,
       },
     },

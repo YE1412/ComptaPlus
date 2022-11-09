@@ -5,8 +5,7 @@ import logoURL from "@/assets/logo.svg";
 import "@/assets/mdb/css/style.css";
 export default defineComponent({
   name: "App",
-  setup() {
-  },
+  setup() {},
   data() {
     return {
       logoURL,
@@ -25,10 +24,9 @@ export default defineComponent({
       immediate: true,
     },
   },
-  methods: {
-  },
+  methods: {},
   mounted() {
-  //   console.log(`the component is now mounted.`);
+    //   console.log(`the component is now mounted.`);
   },
 });
 </script>

@@ -1,37 +1,25 @@
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useUserStore } from "@/stores/user";
 import TheToolbarIn from "../components/TheToolbarIn.vue";
+import Sidenav from "../components/Sidenav.vue";
+import { useUserStore } from "@/stores/user";
 
 export default defineComponent({
-  name: "HomeView",
+  name: "PaymentsView",
   setup() {
     const store = useUserStore();
-    // console.log(store);
+
     return { store };
   },
-  mounted() {},
   components: {
     TheToolbarIn,
+    Sidenav,
   },
 });
 </script>
-
 <template>
   <main>
     <TheToolbarIn />
-    <div class="about">
-      <h1>This is an about page</h1>
-    </div>
+    <Sidenav />
   </main>
 </template>
-
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
-</style>

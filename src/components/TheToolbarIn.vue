@@ -13,7 +13,7 @@ export default defineComponent({
     ToolbarLinkItem,
     IconCL,
     ToolbarFlagNav,
-    ToolbarNavBar
+    ToolbarNavBar,
   },
 });
 </script>
