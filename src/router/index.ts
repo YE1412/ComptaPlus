@@ -140,7 +140,7 @@ router = createRouter({
       meta: {
         title: t("servicesLinkName"),
         icon: icon,
-        requiresAuth: false,
+        requiresAuth: true,
       },
     },
     {
@@ -150,7 +150,7 @@ router = createRouter({
       meta: {
         title: t("actorsLinkName"),
         icon: icon,
-        requiresAuth: false,
+        requiresAuth: true,
       },
     },
     {
@@ -160,7 +160,7 @@ router = createRouter({
       meta: {
         title: t("ordersLinkName"),
         icon: icon,
-        requiresAuth: false,
+        requiresAuth: true,
       },
     },
     {
@@ -170,7 +170,7 @@ router = createRouter({
       meta: {
         title: t("paymentsLinkName"),
         icon: icon,
-        requiresAuth: false,
+        requiresAuth: true,
       },
     },
     {
@@ -180,7 +180,7 @@ router = createRouter({
       meta: {
         title: t("invoicesLinkName"),
         icon: icon,
-        requiresAuth: false,
+        requiresAuth: true,
       },
     },
     {
@@ -190,7 +190,7 @@ router = createRouter({
       meta: {
         title: t("exportLinkName"),
         icon: icon,
-        requiresAuth: false,
+        requiresAuth: true,
       },
     },
     {
@@ -200,7 +200,7 @@ router = createRouter({
       meta: {
         title: t("profileLinkName"),
         icon: icon,
-        requiresAuth: false,
+        requiresAuth: true,
       },
     },
   ],

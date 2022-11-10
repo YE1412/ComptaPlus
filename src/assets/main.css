@@ -15,13 +15,28 @@ a,
   transition: 0.4s;
 }
 
+body {
+    display: flex;
+    place-items: center;
+  }
+
+  #app {
+    margin: 0;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-content: center;
+    padding: 0 2rem;
+  }
+  
 @media (hover: hover) {
   a:hover {
     background-color: hsla(160, 100%, 37%, 0.2);
   }
 }
 
-@media (min-width: 1024px) {
+/*@media (min-width: 1024px) {
   body {
     display: flex;
     place-items: center;
@@ -36,4 +51,4 @@ a,
     align-content: center;
     padding: 0 2rem;
   }
-}
+}*/

@@ -389,7 +389,7 @@ main.mt-3{
 
 /* CONTENT */
 
-/*.app-messages {
+.app-messages {
     width:  100%;
     margin-top: 80px;
 }
@@ -442,6 +442,12 @@ main.mt-3{
 }
 
 .content {
+    display: flex;
+    margin-top: 135px;
+    padding-left: 265px;
+}
+
+/*.content {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -941,13 +947,13 @@ button.scrollToTopButton:hover {
         color: #333;
     }
     /*CONTENT*/
-    /*.app-messages {
+    .app-messages {
         margin-top: 80px;
     }
     .messages > div {
         padding-left: 150px;
     }
-    .head { 
+    /*.head { 
         background-size: 100% 830px;
         background-position: top;
         min-height: 830px;
@@ -1195,13 +1201,13 @@ button.scrollToTopButton:hover {
         color:  #333;
     }
     /*CONTENT*/
-    /*.app-messages {
+    .app-messages {
         margin-top: 66px;
     }
     .messages > div {
         padding-left: 100px;
     }
-    .head { 
+    /*.head { 
         background-size: 100% 830px;
         background-position: top;
         min-height: 830px;
@@ -1589,13 +1595,13 @@ button.scrollToTopButton:hover {
         color: #7F1519;
     }
     /*CONTENT*/
-    /*.app-messages {
+    .app-messages {
         margin-top: 66px;
     }
     .messages > div {
         padding-left: 100px;
     }
-    .head { 
+    /*.head { 
         background-size: 100% 830px;
         background-position: top;
         min-height: 830px;

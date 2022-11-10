@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
-import { MDBCol, MDBInput, MDBCheckbox } from "mdb-vue-ui-kit";
+import { MDBCol, MDBInput } from "mdb-vue-ui-kit";
 export default defineComponent({
   name: "RegisterContentItem",
   props: {

@@ -26,6 +26,12 @@ const create = (req, res) => {
 const findAll = (req, res) => {
   service
     .findAll({
+      attributes: [
+        'serviceId',
+        'nom',
+        'montantHt',
+        'quantite'
+      ],
       where: {},
     })
     .then((data) => {
@@ -100,8 +106,8 @@ const update = (req, res) => {
         serviceId: params.id,
       },
     })
-    .then((res) => {
-      if (res === 1) {
+    .then((result) => {
+      if (result === 1) {
         res.send({
           message: "User was updated successfully !",
         });
@@ -127,8 +133,8 @@ const deleteOne = (req, res) => {
         serviceId: params.id,
       },
     })
-    .then((res) => {
-      if (res === 1) {
+    .then((result) => {
+      if (result === 1) {
         res.send({
           message: "Service was deleted successfully !",
         });

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, Suspense } from "vue";
 import TheToolbarIn from "../components/TheToolbarIn.vue";
 import Sidenav from "../components/Sidenav.vue";
 import ServiceContent from "../components/ServiceContent.vue";
@@ -15,6 +15,7 @@ export default defineComponent({
     TheToolbarIn,
     Sidenav,
     ServiceContent,
+    Suspense
   },
 });
 </script>
@@ -22,6 +23,13 @@ export default defineComponent({
   <main>
     <TheToolbarIn />
     <Sidenav :servicesState="true" />
-    <ServiceContent />
+    <div class="content">
+      <Suspense>
+        <ServiceContent />
+        <template #fallback>
+          Loading...
+        </template>
+      </Suspense>
+    </div>
   </main>
 </template>

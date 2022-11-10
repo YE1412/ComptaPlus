@@ -12,7 +12,7 @@ import RegisterContentItem from "./RegisterContentItem.vue";
 import userAxiosService from "../services/user.service";
 import ModalItem from "./ModalItem.vue";
 import router from "@/router/index";
-import { genMod, cryptMod } from "../WasmModules";
+// import { genMod, cryptMod } from "../WasmModules";
 import "../globals";
 
 export default defineComponent({

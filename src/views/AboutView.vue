@@ -4,7 +4,7 @@ import { useUserStore } from "@/stores/user";
 import TheToolbarIn from "../components/TheToolbarIn.vue";
 
 export default defineComponent({
-  name: "HomeView",
+  name: "AboutView",
   setup() {
     const store = useUserStore();
     // console.log(store);

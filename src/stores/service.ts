@@ -1,6 +1,28 @@
 // import { ref, computed } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
 import serviceAxiosService from "../services/service.service";
+import "../globals";
+
+function transformObject(obj: any) {
+  for (const k in obj) {
+    // console.log("typeof")
+    // console.log(typeof obj[k])
+    // console.log("is Array")
+    // console.log(Array.isArray(obj[k]))
+    // console.log("obj")
+    // console.log(obj[k])
+    if (typeof obj[k] === "string") {
+      obj[k] = __DECRYPTAPI__.decrypt(obj[k]);
+    } else if (typeof obj[k] === "object" && !Array.isArray(obj[k])){
+      transformObject(obj[k]);
+    }
+  }
+};
+
+function transformValue(val: string) {
+  const ret = __DECRYPTAPI__.decrypt(val);
+  return ret;
+};
 
 const useServiceStore = defineStore("service", {
   state: () => ({
@@ -20,8 +42,9 @@ const useServiceStore = defineStore("service", {
           .then((res) => {
             // console.log(res);
             if (res.data.length) {
-              resolve(res.data);
+              transformObject(res.data);
               this.services = res.data;
+              resolve(res.data);
             } else {
               reject(false);
             }
@@ -56,7 +79,7 @@ const useServiceStore = defineStore("service", {
 
 // make sure to pass the right store definition, `useAuth` in this case.
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useUserStore, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(useServiceStore, import.meta.hot));
 }
 
-export { useUserStore };
+export { useServiceStore };

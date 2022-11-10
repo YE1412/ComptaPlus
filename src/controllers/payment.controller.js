@@ -119,8 +119,8 @@
 //       id: params.id,
 //     },
 //   })
-//   .then((res) => {
-//     if (res === 1) {
+//   .then((result) => {
+//     if (result === 1) {
 //       res.send({
 //         message: "User was updated successfully !",
 //       });
@@ -145,8 +145,8 @@
 //       id: params.id,
 //     },
 //   })
-//   .then((res) => {
-//     if (res === 1) {
+//   .then((result) => {
+//     if (result === 1) {
 //       res.send({
 //         message: "User was deleted successfully !",
 //       });

@@ -15,7 +15,7 @@ class UserDataService {
   }
 
   checkEmail(email: string) {
-    return http.get(`/users/email/`, {
+    return http.get(`/users/email`, {
       params: {
         login: email,
       },
@@ -23,7 +23,7 @@ class UserDataService {
   }
 
   checkLogin(login: string) {
-    return http.get(`/users/email/`, {
+    return http.get(`/users/email`, {
       params: {
         login: login,
       },

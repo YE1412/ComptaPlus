@@ -20,7 +20,7 @@ const app = express();
 
 async function createViteServer() {
   // Testing db connection
-  let opt = { force: true };
+  let opt = {};
   if (env === "production") opt.logging = false;
   let ret = await db.sequelize
     .authenticate()
@@ -53,7 +53,30 @@ async function createViteServer() {
     app.use(vite.middlewares);
   }
 
-  app.get(/(\/|\/start|\/depart)$/, async (req, res, next) => {
+  var userRouter, serviceRouter;
+  let prefix = "./";
+  // console.log(import("./src/routes/user.route.js")(app));
+  if (env === "development") {
+    app.use("./", express.static(path.join(__dirname, "src/assets")));
+    // app.use('/public-assets', express.static(path.join(__dirname, 'assets')));
+  } else {
+    prefix = "./dist/prod/client/";
+    app.use(
+      "./",
+      express.static(path.join(__dirname, "./dist/prod/client/src/assets"))
+    );
+  }
+  userRouter = await import(`${prefix}src/routes/user.route.js`);
+  serviceRouter = await import(`${prefix}src/routes/service.route.js`);
+  // parse requests of content-type - application/x-www-form-urlencoded
+  app.use(express.urlencoded({ extended: true }));
+  // parse requests of content-type - application/json
+  app.use(express.json());
+  app.use("/api/users", userRouter.default());
+  app.use("/api/services", serviceRouter.default());
+  // /(\/|\/start|\/depart)$/m
+  app.get("*", async (req, res, next) => {
+    // console.log("default Get");
     const url = req.originalUrl;
 
     try {
@@ -108,27 +131,6 @@ async function createViteServer() {
   if (env === "production")
     app.use(express.static("./app", "./dist/prod/client"));
 
-  var userRouter, serviceRouter;
-  let prefix = "./";
-  // console.log(import("./src/routes/user.route.js")(app));
-  if (env === "development") {
-    app.use("./", express.static(path.join(__dirname, "src/assets")));
-    // app.use('/public-assets', express.static(path.join(__dirname, 'assets')));
-  } else {
-    prefix = "./dist/prod/client/";
-    app.use(
-      "./",
-      express.static(path.join(__dirname, "./dist/prod/client/src/assets"))
-    );
-  }
-  userRouter = await import(`${prefix}src/routes/user.route.js`);
-  serviceRouter = await import(`${prefix}src/routes/service.route.js`);
-  // parse requests of content-type - application/x-www-form-urlencoded
-  app.use(express.urlencoded({ extended: true }));
-  // parse requests of content-type - application/json
-  app.use(express.json());
-  app.use("/api/users", userRouter.default());
-  app.use("/api/services", serviceRouter.default());
   app.listen(port, () => {
     console.log(`app listening on port ${port}`);
   });

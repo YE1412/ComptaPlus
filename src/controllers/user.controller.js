@@ -135,8 +135,8 @@ const update = (req, res) => {
         id: params.id,
       },
     })
-    .then((res) => {
-      if (res === 1) {
+    .then((result) => {
+      if (result === 1) {
         res.send({
           message: "User was updated successfully !",
         });
@@ -162,8 +162,8 @@ const deleteOne = (req, res) => {
         id: params.id,
       },
     })
-    .then((res) => {
-      if (res === 1) {
+    .then((result) => {
+      if (result === 1) {
         res.send({
           message: "User was deleted successfully !",
         });
