@@ -4,6 +4,7 @@ import { defineComponent } from "vue";
 import router from "@/router/index";
 import { RouterLink } from "vue-router";
 import { useUserStore } from "@/stores/user";
+import { useSessionStore } from "@/stores/session";
 import StartContentLoginItem from "./StartContentLoginItem.vue";
 import UserIcon from "./icons/IconUser.vue";
 import LockIcon from "./icons/IconLock.vue";
@@ -13,8 +14,9 @@ import "../globals";
 export default defineComponent({
   name: "StartContent",
   setup() {
-    const store = useUserStore();
-    return { store };
+    const userStore = useUserStore();
+    const sessionStore = useSessionStore();
+    return { userStore, sessionStore };
   },
   mounted() {
     // console.log(__KEY__);
@@ -41,35 +43,45 @@ export default defineComponent({
       if (this.login !== "" && this.password !== "") {
         const login = this.transformValue(this.login);
         const pass = this.transformValue(this.password);
-        this.store
+        this.userStore
           .loginUser(login, pass)
           .then(
             (res) => {
               // console.log("OK !");
-              this.store.connected = true;
-              this.store.user = this.transformObj(res);
+              // this.sessionStore
+              // .getSession()
+              // .then(
+              //   (res) => {
+              //     // this.sessionId = res;
+              //   },
+              //   (ret) => {}
+              // )
+              // .catch((err) => {});
+              this.userStore.connected = true;
+              this.userStore.user = this.transformObj(res);
               router.push(this.$i18n.t("home_path"));
-              // console.log(this.store);
+              // console.log(this.userStore);
             },
             () => {
               // console.log("KO !");
-              this.store.connected = false;
+              this.userStore.connected = false;
               this.loginModal = true;
-              // console.log(this.store);
+              // console.log(this.userStore);
             }
           )
           .catch((err) => {
             // console.log("KO ! - catch");
             // console.log(err);
-            this.store.connected = false;
+            this.userStore.connected = false;
             this.loginModal = true;
-            // console.log(this.store);
+            // console.log(this.userStore);
           });
       } else {
         // console.log("empty strings !");
         this.loginModal = true;
       }
     },
+    validateSession() {},
     modalChange(val: Boolean) {
       this.loginModal = val;
     },

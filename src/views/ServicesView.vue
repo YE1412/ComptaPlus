@@ -15,7 +15,7 @@ export default defineComponent({
     TheToolbarIn,
     Sidenav,
     ServiceContent,
-    Suspense
+    Suspense,
   },
 });
 </script>
@@ -26,9 +26,7 @@ export default defineComponent({
     <div class="content">
       <Suspense>
         <ServiceContent />
-        <template #fallback>
-          Loading...
-        </template>
+        <template #fallback> Loading... </template>
       </Suspense>
     </div>
   </main>

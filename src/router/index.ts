@@ -19,61 +19,61 @@ const pathsObj = [
     path: t("startLinkTarget", "en"),
     component: "StartView",
     name: t("startLinkName", "en"),
-    auth: false,
+    // auth: false,
   },
   {
     path: t("registerLinkTarget", "en"),
     component: "RegisterView",
     name: t("registerLinkName", "en"),
-    auth: false,
+    // auth: false,
   },
   {
     path: t("homeLinkTarget", "en"),
     component: "HomeView",
     name: t("homeLinkName", "en"),
-    auth: true,
+    // auth: true,
   },
   {
     path: t("aboutLinkTarget", "en"),
     component: "AboutView",
     name: t("aboutLinkName", "en"),
-    auth: true,
+    // auth: true,
   },
   {
     path: t("actorsLinkTarget", "en"),
     component: "ActorsView",
     name: t("actorsLinkName", "en"),
-    auth: true,
+    // auth: true,
   },
   {
     path: t("ordersLinkTarget", "en"),
     component: "OrdersView",
     name: t("ordersLinkName", "en"),
-    auth: true,
+    // auth: true,
   },
   {
     path: t("paymentsLinkTarget", "en"),
     component: "PaymentsView",
     name: t("paymentsLinkName", "en"),
-    auth: true,
+    // auth: true,
   },
   {
     path: t("invoicesLinkTarget", "en"),
     component: "InvoicesView",
     name: t("invoicesLinkName", "en"),
-    auth: true,
+    // auth: true,
   },
   {
     path: t("exportLinkTarget", "en"),
     component: "ExportView",
     name: t("exportLinkName", "en"),
-    auth: true,
+    // auth: true,
   },
   {
     path: t("profileLinkTarget", "en"),
     component: "ProfileView",
     name: t("profileLinkName", "en"),
-    auth: true,
+    // auth: true,
   },
 ];
 
@@ -87,7 +87,7 @@ router = createRouter({
       meta: {
         title: t("homeLinkName"),
         icon: icon,
-        requiresAuth: true,
+        // requiresAuth: true,
       },
     },
     {
@@ -97,7 +97,7 @@ router = createRouter({
       meta: {
         title: t("homeLinkName"),
         icon: icon,
-        requiresAuth: true,
+        // requiresAuth: true,
       },
     },
     {
@@ -110,7 +110,7 @@ router = createRouter({
       meta: {
         title: t("aboutLinkName"),
         icon: icon,
-        requiresAuth: true,
+        // requiresAuth: true,
       },
     },
     {
@@ -120,7 +120,7 @@ router = createRouter({
       meta: {
         title: t("startLinkName"),
         icon: icon,
-        requiresAuth: false,
+        // requiresAuth: false,
       },
     },
     {
@@ -130,7 +130,7 @@ router = createRouter({
       meta: {
         title: t("registerLinkName"),
         icon: icon,
-        requiresAuth: false,
+        // requiresAuth: false,
       },
     },
     {
@@ -140,7 +140,7 @@ router = createRouter({
       meta: {
         title: t("servicesLinkName"),
         icon: icon,
-        requiresAuth: true,
+        // requiresAuth: true,
       },
     },
     {
@@ -150,7 +150,7 @@ router = createRouter({
       meta: {
         title: t("actorsLinkName"),
         icon: icon,
-        requiresAuth: true,
+        // requiresAuth: true,
       },
     },
     {
@@ -160,7 +160,7 @@ router = createRouter({
       meta: {
         title: t("ordersLinkName"),
         icon: icon,
-        requiresAuth: true,
+        // requiresAuth: true,
       },
     },
     {
@@ -170,7 +170,7 @@ router = createRouter({
       meta: {
         title: t("paymentsLinkName"),
         icon: icon,
-        requiresAuth: true,
+        // requiresAuth: true,
       },
     },
     {
@@ -180,7 +180,7 @@ router = createRouter({
       meta: {
         title: t("invoicesLinkName"),
         icon: icon,
-        requiresAuth: true,
+        // requiresAuth: true,
       },
     },
     {
@@ -190,7 +190,7 @@ router = createRouter({
       meta: {
         title: t("exportLinkName"),
         icon: icon,
-        requiresAuth: true,
+        // requiresAuth: true,
       },
     },
     {
@@ -200,7 +200,7 @@ router = createRouter({
       meta: {
         title: t("profileLinkName"),
         icon: icon,
-        requiresAuth: true,
+        // requiresAuth: true,
       },
     },
   ],
@@ -258,8 +258,8 @@ function generateRoute(to: any, pathObj: any): void {
     component: () => import(`../views/${pathObj.component}.vue`),
     meta: {
       title: pathObj.name,
-      icon: "/favicon.ico",
-      requiresAuth: pathObj.auth,
+      icon: icon,
+      // requiresAuth: pathObj.auth,
     },
   });
 }

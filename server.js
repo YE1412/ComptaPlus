@@ -4,6 +4,10 @@ import { fileURLToPath } from "node:url";
 import express from "express";
 import { createServer } from "vite";
 import db from "./src/models/index.js";
+import cookieParser from "cookie-parser";
+import session from "express-session";
+import cors from "cors";
+import { v4 as uuidv4 } from "uuid";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const env = process.env.CTX;
@@ -68,13 +72,52 @@ async function createViteServer() {
   }
   userRouter = await import(`${prefix}src/routes/user.route.js`);
   serviceRouter = await import(`${prefix}src/routes/service.route.js`);
+  //  Populate req.cookies
+  app.use(cookieParser());
+  //  Session setup
+  app.use(
+    session({
+      secret: "myLittleSecret",
+      cookie: {
+        maxAge: 600000,
+        // secure: true,
+      },
+      saveUninitialized: true,
+      resave: false,
+      unset: "keep",
+    })
+  );
+  app.use(
+    cors({
+      origin: ["http://localhost:3000", "https://localhost:3000"],
+      credentials: true,
+      exposedHeaders: ["set-cookie"],
+    })
+  );
   // parse requests of content-type - application/x-www-form-urlencoded
   app.use(express.urlencoded({ extended: true }));
   // parse requests of content-type - application/json
   app.use(express.json());
   app.use("/api/users", userRouter.default());
   app.use("/api/services", serviceRouter.default());
-  // /(\/|\/start|\/depart)$/m
+  app.get("/api/session", (request, response) => {
+    request.session.appSession = uuidv4();
+    // console.log(`GET - Session`);
+    // console.log(request.session);
+    response.send({ id: request.session.appSession });
+  });
+  app.post("/api/session", (request, response) => {
+    // console.log(`POST - Session`);
+    // console.log(request.session);
+    // console.log(`POST - BODY Session`);
+    // console.log(request.body.sessionID);
+    if (request.body.sessionID != request.session.appSession) {
+      return response
+        .status(500)
+        .send({ message: "The data in the session does not match!" });
+    }
+    response.send({ message: "Success!" });
+  });
   app.get("*", async (req, res, next) => {
     // console.log("default Get");
     const url = req.originalUrl;

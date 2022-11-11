@@ -3,11 +3,14 @@ import { RouterLink } from "vue-router";
 import router from "@/router/index";
 import { defineComponent } from "vue";
 import { useUserStore } from "@/stores/user";
+import { useSessionStore } from "@/stores/session";
+
 export default defineComponent({
   name: "ToolbarNavBarIn",
   setup() {
-    const store = useUserStore();
-    return { store };
+    const userStore = useUserStore();
+    const sessionStore = useSessionStore();
+    return { userStore, sessionStore };
   },
   components: {
     RouterLink,
@@ -16,9 +19,10 @@ export default defineComponent({
     logoutClick(e) {
       e.preventDefault();
       // console.log("logout click !");
-      this.store.user = {};
-      this.store.connected = false;
-      router.push("/");
+      this.userStore.user = {};
+      this.userStore.connected = false;
+      this.sessionStore.deleteSession();
+      router.go(0);
     },
   },
 });

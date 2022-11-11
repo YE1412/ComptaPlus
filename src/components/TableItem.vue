@@ -44,15 +44,15 @@ export default defineComponent({
       default: () => true,
     },
     addObj: {
-      required: true
+      required: true,
     },
     updateObj: {
-      required: false
+      required: false,
     },
     updateObjId: {
       type: Number,
       required: false,
-      default: () => (0)
+      default: () => 0,
     },
     objectsProp: {
       default: () => [],
@@ -79,7 +79,7 @@ export default defineComponent({
   data() {
     return {
       objects: this.objectsProp,
-    }
+    };
   },
   computed: {
     objectsLength() {
@@ -91,8 +91,7 @@ export default defineComponent({
       return this.objectsProp.map((val) => {
         let ret = {};
         for (const key in val) {
-          if (key === this.ident)
-            ret[key] = val[key];
+          if (key === this.ident) ret[key] = val[key];
         }
         return ret;
       }, that);
@@ -103,24 +102,28 @@ export default defineComponent({
         // this.transformObject(val);
         let ret = {};
         for (const key in val) {
-          if (key !== this.ident)
-            ret[key] = val[key];
+          if (key !== this.ident) ret[key] = val[key];
         }
         return ret;
       }, that);
-    }
+    },
   },
   components: {
     // MessagesItem,
     MDBRow,
-    MDBInput
+    MDBInput,
   },
   methods: {
     actionAddButtonClick(e: Event, forDB: boolean) {
       e.preventDefault();
       this.$emit(this.addActionName, forDB);
     },
-    actionUpdateButtonClick(e: Event, forDB: boolean, id?: number=null, obj?: any=null) {
+    actionUpdateButtonClick(
+      e: Event,
+      forDB: boolean,
+      id?: number = null,
+      obj?: any = null
+    ) {
       e.preventDefault();
       // console.log('update Click !');
       this.$emit(this.updateActionName, forDB, id, obj);
@@ -161,21 +164,40 @@ export default defineComponent({
           v-bind:key="index"
           class="text-center"
         >
-          <th scope="row" style="vertical-align: middle;">
+          <th scope="row" style="vertical-align: middle">
             {{ shiftedIdents[index][ident] }}
           </th>
-          <td v-for="(val, key) in obj" v-bind:key="key" style="vertical-align: middle;">
+          <td
+            v-for="(val, key) in obj"
+            v-bind:key="key"
+            style="vertical-align: middle"
+          >
             {{ val }}
           </td>
-          <td style="vertical-align: middle;">
+          <td style="vertical-align: middle">
             <div class="" role="group">
               <a href="#" @click="actionAddButtonClick($event, false)">
                 <slot name="actionAddButton"></slot>
               </a>
-              <a href="#" @click="actionUpdateButtonClick($event, false, shiftedIdents[index][ident], obj)">
+              <a
+                href="#"
+                @click="
+                  actionUpdateButtonClick(
+                    $event,
+                    false,
+                    shiftedIdents[index][ident],
+                    obj
+                  )
+                "
+              >
                 <slot name="actionUpdateButton"></slot>
               </a>
-              <a href="#" @click="actionDeleteButtonClick($event, shiftedIdents[index][ident])">
+              <a
+                href="#"
+                @click="
+                  actionDeleteButtonClick($event, shiftedIdents[index][ident])
+                "
+              >
                 <slot name="actionDeleteButton"></slot>
               </a>
             </div>
@@ -185,10 +207,14 @@ export default defineComponent({
       <!-- new form with one line for updating -->
       <tbody v-if="isForm && updating">
         <tr class="text-center">
-          <th scope="row" style="vertical-align: middle;">
+          <th scope="row" style="vertical-align: middle">
             <MDBInput :label="updateObjId.toString()" readonly />
           </th>
-          <td v-for="(val, key) in updateObj" v-bind:key="key" style="vertical-align: middle;">
+          <td
+            v-for="(val, key) in updateObj"
+            v-bind:key="key"
+            style="vertical-align: middle"
+          >
             <slot
               :name="val.name"
               size="10"
@@ -205,20 +231,25 @@ export default defineComponent({
               :type="val.type"
             ></slot>
           </td>
-          <td class="text-center" style="vertical-align: middle;">
-              <a href="#" @click="actionUpdateButtonClick($event, true)">
-                <slot name="actionUpdateButton"></slot>
-              </a>
+          <td class="text-center" style="vertical-align: middle">
+            <a href="#" @click="actionUpdateButtonClick($event, true)">
+              <slot name="actionUpdateButton"></slot>
+            </a>
           </td>
         </tr>
       </tbody>
       <!-- New form with one line for adding -->
       <tbody v-if="isForm && adding">
         <tr class="text-center">
-          <th class="text-center" scope="row" style="vertical-align: middle;">
+          <th class="text-center" scope="row" style="vertical-align: middle">
             <MDBRow class="d-flex justify-content-center">#</MDBRow>
           </th>
-          <td class="text-center" v-for="(obj, key) in addObj" v-bind:key="key" style="vertical-align: middle;">
+          <td
+            class="text-center"
+            v-for="(obj, key) in addObj"
+            v-bind:key="key"
+            style="vertical-align: middle"
+          >
             <slot
               :name="obj.name"
               size="10"
@@ -235,10 +266,13 @@ export default defineComponent({
               :type="obj.type"
             ></slot>
           </td>
-          <td class="text-center align-items-center" style="vertical-align: middle;">
-              <a href="#" @click="actionAddButtonClick($event, true)">
-                <slot name="actionAddButton"></slot>
-              </a>
+          <td
+            class="text-center align-items-center"
+            style="vertical-align: middle"
+          >
+            <a href="#" @click="actionAddButtonClick($event, true)">
+              <slot name="actionAddButton"></slot>
+            </a>
           </td>
         </tr>
       </tbody>

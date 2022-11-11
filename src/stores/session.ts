@@ -1,66 +1,29 @@
 // import { ref, computed } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
-import serviceAxiosService from "../services/service.service";
-import { genMod, cryptMod, decryptMod } from "../WasmModules";
+import sessionAxiosService from "../services/session.service";
+import { useStorage } from "@vueuse/core";
 
-let __DECRYPTAPI__: any;
-
-async function define() {
-  if (__DECRYPTAPI__ === undefined) {
-    return (__DECRYPTAPI__ = await decryptMod.then((e: any) => {
-      return e;
-    }));
-  }
-  return;
-}
-
-async function transformObject(obj: any) {
-  await define();
-  // console.trace(__DECRYPTAPI__);
-  // console.trace(obj);
-  for (const k in obj) {
-    // console.log("typeof")
-    // console.log(typeof obj[k])
-    // console.log("is Array")
-    // console.log(Array.isArray(obj[k]))
-    // console.log("obj")
-    // console.log(obj[k])
-    if (typeof obj[k] === "string") {
-      obj[k] = __DECRYPTAPI__.decrypt(obj[k]);
-    } else if (typeof obj[k] === "object" && !Array.isArray(obj[k])) {
-      await transformObject(obj[k]);
-    }
-  }
-  // console.trace(__DECRYPTAPI__);
-  // console.trace(obj);
-}
-
-function transformValue(val: string) {
-  const ret = __DECRYPTAPI__.decrypt(val);
-  return ret;
-}
-
-const useServiceStore = defineStore("service", {
+const useSessionStore = defineStore("session", {
   state: () => ({
-    services: [],
+    sessionId: useStorage("sessionId", ""),
   }),
   getters: {
-    getServices(state) {
-      return state.services;
+    getSessionId(state) {
+      return state.sessionId;
     },
   },
   actions: {
-    getAllServices() {
+    getSession() {
       // console.log("Login...");
       return new Promise((resolve, reject) => {
-        serviceAxiosService
-          .getAll()
+        sessionAxiosService
+          .get()
           .then((res) => {
             // console.log(res);
-            if (res.data.length) {
-              transformObject(res.data);
-              this.services = res.data;
-              resolve(res.data);
+            if (res.data.id) {
+              // Insertion session en BDD
+              this.sessionId = res.data.id;
+              resolve(res.data.id);
             } else {
               reject(false);
             }
@@ -90,12 +53,27 @@ const useServiceStore = defineStore("service", {
           });
       });
     },
+    validateSession() {
+      return new Promise((resolve, reject) => {
+        sessionAxiosService
+          .validate(this.sessionId)
+          .then((res) => {
+            resolve(true);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+    deleteSession() {
+      this.sessionId = null;
+    },
   },
 });
 
 // make sure to pass the right store definition, `useAuth` in this case.
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useServiceStore, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(useSessionStore, import.meta.hot));
 }
 
-export { useServiceStore };
+export { useSessionStore };

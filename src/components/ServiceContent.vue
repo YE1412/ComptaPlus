@@ -1,4 +1,5 @@
 <script lang="ts">
+/*global __CRYPTAPI__, __KEY__*/
 import { defineComponent } from "vue";
 import { useServiceStore } from "@/stores/service";
 import MessagesItem from "../components/MessagesItem.vue";
@@ -20,22 +21,22 @@ export default defineComponent({
     console.log(`Setup`);
     const store = useServiceStore();
     return store
-    .getAllServices()
-    .then(
-      (res) => {
-        // console.log(res);
-        // console.log(store.getServices);
+      .getAllServices()
+      .then(
+        (res) => {
+          // console.log(res);
+          // console.log(store.getServices);
+          return { store };
+        },
+        (ret) => {
+          // console.log(ret);
+          return { store };
+        }
+      )
+      .catch((err) => {
+        console.log(err);
         return { store };
-      },
-      (ret) => {
-        // console.log(ret);
-        return { store };
-      }
-    )
-    .catch((err) => {
-      console.log(err);
-      return { store };
-    });
+      });
     // return { store };
   },
   beforeCreate() {
@@ -66,36 +67,36 @@ export default defineComponent({
       nom: {
         value: "",
         type: "",
-        label: this.$i18n.t('nameInputLabel'),
+        label: this.$i18n.t("nameInputLabel"),
         name: "addFormTextArea",
         invalidFeed: "",
         validFeed: "",
         isValid: false,
         required: true,
-        placeholder: this.$i18n.t('namePlaceholder')
+        placeholder: this.$i18n.t("namePlaceholder"),
       },
       montantHt: {
         value: 0,
         type: "number",
-        label: this.$i18n.t('amountInputLabel'),
+        label: this.$i18n.t("amountInputLabel"),
         name: "addFormInput",
         invalidFeed: "",
         validFeed: "",
         isValid: false,
         required: true,
-        placeholder: this.$i18n.t('amountPlaceholder')
+        placeholder: this.$i18n.t("amountPlaceholder"),
       },
       quantite: {
         value: 0,
         type: "number",
-        label: this.$i18n.t('quantityInputLabel'),
+        label: this.$i18n.t("quantityInputLabel"),
         name: "addFormInput",
         invalidFeed: "",
         validFeed: "",
         isValid: false,
         required: true,
-        placeholder: this.$i18n.t('quantityPlaceholder')
-      }
+        placeholder: this.$i18n.t("quantityPlaceholder"),
+      },
     };
     return {
       tableHeading: headTable,
@@ -116,7 +117,7 @@ export default defineComponent({
       errors: [],
       modalTitle: "",
       modalContent: "",
-      serviceModal: false
+      serviceModal: false,
     };
   },
   components: {
@@ -126,7 +127,7 @@ export default defineComponent({
     MDBInput,
     MDBRow,
     MDBTextarea,
-    ModalItem
+    ModalItem,
   },
   methods: {
     async addClickFromChild(db: boolean) {
@@ -143,7 +144,7 @@ export default defineComponent({
 
         if (!this.errors.length) {
           const ret = await this.insertNewService();
-          if (ret){
+          if (ret) {
             this.form = false;
             this.update = false;
             this.add = true;
@@ -165,39 +166,39 @@ export default defineComponent({
         // console.log(obj);
         const updateInputObj = {
           nom: {
-            value: obj['nom'],
+            value: obj["nom"],
             type: "",
-            label: this.$i18n.t('nameInputLabel'),
+            label: this.$i18n.t("nameInputLabel"),
             name: "addFormTextArea",
             invalidFeed: "",
-            validFeed: this.$i18n.t('validFeed'),
+            validFeed: this.$i18n.t("validFeed"),
             isValid: true,
             required: true,
-            placeholder: this.$i18n.t('namePlaceholder')
+            placeholder: this.$i18n.t("namePlaceholder"),
           },
           montantHt: {
-            value: obj['montantHt'],
+            value: obj["montantHt"],
             type: "number",
-            label: this.$i18n.t('amountInputLabel'),
+            label: this.$i18n.t("amountInputLabel"),
             name: "addFormInput",
             invalidFeed: "",
-            validFeed: this.$i18n.t('validFeed'),
+            validFeed: this.$i18n.t("validFeed"),
             isValid: true,
             required: true,
-            placeholder: this.$i18n.t('amountPlaceholder')
+            placeholder: this.$i18n.t("amountPlaceholder"),
           },
           quantite: {
-            value: obj['quantite'],
+            value: obj["quantite"],
             type: "number",
-            label: this.$i18n.t('quantityInputLabel'),
+            label: this.$i18n.t("quantityInputLabel"),
             name: "addFormInput",
             invalidFeed: "",
-            validFeed: this.$i18n.t('validFeed'),
+            validFeed: this.$i18n.t("validFeed"),
             isValid: true,
             required: true,
-            placeholder: this.$i18n.t('quantityPlaceholder')
-          }
-        }
+            placeholder: this.$i18n.t("quantityPlaceholder"),
+          },
+        };
         this.updateInputObject = updateInputObj;
         this.updateInputObjectId = id;
       } else {
@@ -209,7 +210,7 @@ export default defineComponent({
         if (!this.errors.length) {
           // console.log("perfect !");
           const ret = await this.updateService();
-          if (ret){
+          if (ret) {
             this.form = false;
             this.update = false;
             this.add = true;
@@ -221,8 +222,8 @@ export default defineComponent({
     deleteClickFromChild(id: number) {
       // click to delete a service
     },
-    inputChanges(e: Event){
-      switch (e.target.getAttribute("aria-label")){
+    inputChanges(e: Event) {
+      switch (e.target.getAttribute("aria-label")) {
         case "nom":
           this.nom = e.target.value;
           break;
@@ -263,93 +264,93 @@ export default defineComponent({
       const obj = {
         nom: this.nom,
         montantHt: this.montantHt,
-        quantite: this.quantite
+        quantite: this.quantite,
       };
       this.transformObject(obj);
       return serviceAxiosService
-      .create(obj)
-      .then((res) => {
-        this.modalTitle = this.$i18n.t('modalTitleOk');
-        this.modalContent = this.$i18n.t('modalAddContentOk');
-        this.serviceModal = true;
-        return true;
-      })
-      .catch((err) => {
-        this.modalTitle = this.$i18n.t('modalTitleKo');
-        this.modalContent = this.$i18n.t('modalAddContentKo', {
-          err: err.response.data.message || err.message
+        .create(obj)
+        .then((res) => {
+          this.modalTitle = this.$i18n.t("modalTitleOk");
+          this.modalContent = this.$i18n.t("modalAddContentOk");
+          this.serviceModal = true;
+          return true;
+        })
+        .catch((err) => {
+          this.modalTitle = this.$i18n.t("modalTitleKo");
+          this.modalContent = this.$i18n.t("modalAddContentKo", {
+            err: err.response.data.message || err.message,
+          });
+          this.serviceModal = true;
+          return false;
         });
-        this.serviceModal = true;
-        return false;
-      })
     },
     updateService() {
       const obj = {
         nom: this.nom,
         montantHt: this.montantHt,
-        quantite: this.quantite
+        quantite: this.quantite,
       };
       this.transformObject(obj);
       return serviceAxiosService
-      .update(this.serviceId, obj)
-      .then((res) => {
-        this.modalTitle = this.$i18n.t('modalTitleOk');
-        this.modalContent = this.$i18n.t('modalUpdateContentOk');
-        this.serviceModal = true;
-        return true;
-      })
-      .catch((err) => {
-        this.modalTitle = this.$i18n.t('modalTitleKo');
-        this.modalContent = this.$i18n.t('modalUpdateContentKo', {
-          err: err.response.data.message || err.message
+        .update(this.serviceId, obj)
+        .then((res) => {
+          this.modalTitle = this.$i18n.t("modalTitleOk");
+          this.modalContent = this.$i18n.t("modalUpdateContentOk");
+          this.serviceModal = true;
+          return true;
+        })
+        .catch((err) => {
+          this.modalTitle = this.$i18n.t("modalTitleKo");
+          this.modalContent = this.$i18n.t("modalUpdateContentKo", {
+            err: err.response.data.message || err.message,
+          });
+          this.serviceModal = true;
+          return false;
         });
-        this.serviceModal = true;
-        return false;
-      })
     },
     inputsCheck(obj: any) {
-      if (!this.nom){
-        this.errors.push(this.$i18n.t('emptyNameInvalidFeed'));
-        obj['nom'].isValid = false;
-        obj['nom'].invalidFeed = this.$i18n.t('emptyNameInvalidFeed');
-      }else if(!this.validNom()){
-        this.errors.push(this.$i18n.t('errorNameInvalidFeed'));
-        obj['nom'].isValid = false;
-        obj['nom'].invalidFeed = this.$i18n.t('errorNameInvalidFeed');
-      }else{
-        obj['nom'].isValid = true;
-        obj['nom'].validFeed = this.$i18n.t('validFeed');
+      if (!this.nom) {
+        this.errors.push(this.$i18n.t("emptyNameInvalidFeed"));
+        obj["nom"].isValid = false;
+        obj["nom"].invalidFeed = this.$i18n.t("emptyNameInvalidFeed");
+      } else if (!this.validNom()) {
+        this.errors.push(this.$i18n.t("errorNameInvalidFeed"));
+        obj["nom"].isValid = false;
+        obj["nom"].invalidFeed = this.$i18n.t("errorNameInvalidFeed");
+      } else {
+        obj["nom"].isValid = true;
+        obj["nom"].validFeed = this.$i18n.t("validFeed");
       }
 
-      if (!this.montantHt){
-        this.errors.push(this.$i18n.t('emptyAmountInvalidFeed'));
-        obj['montantHt'].isValid = false;
-        obj['montantHt'].invalidFeed = this.$i18n.t('emptyAmountInvalidFeed');
-      }else if(!this.validMontantHt()){
-        this.errors.push(this.$i18n.t('errorAmountInvalidFeed'));
-        obj['montantHt'].isValid = false;
-        obj['montantHt'].invalidFeed = this.$i18n.t('errorAmountInvalidFeed');
-      }else{
-        obj['montantHt'].isValid = true;
-        obj['montantHt'].validFeed = this.$i18n.t('validFeed');
+      if (!this.montantHt) {
+        this.errors.push(this.$i18n.t("emptyAmountInvalidFeed"));
+        obj["montantHt"].isValid = false;
+        obj["montantHt"].invalidFeed = this.$i18n.t("emptyAmountInvalidFeed");
+      } else if (!this.validMontantHt()) {
+        this.errors.push(this.$i18n.t("errorAmountInvalidFeed"));
+        obj["montantHt"].isValid = false;
+        obj["montantHt"].invalidFeed = this.$i18n.t("errorAmountInvalidFeed");
+      } else {
+        obj["montantHt"].isValid = true;
+        obj["montantHt"].validFeed = this.$i18n.t("validFeed");
       }
 
-      if (!this.quantite){
-        this.errors.push(this.$i18n.t('emptyQuantityInvalidFeed'));
-        obj['quantite'].isValid = false;
-        obj['quantite'].invalidFeed = this.$i18n.t('emptyQuantityInvalidFeed');
-      }else if(!this.validQuantite()){
-        this.errors.push(this.$i18n.t('errorQuantityInvalidFeed'));
-        obj['quantite'].isValid = false;
-        obj['quantite'].invalidFeed = this.$i18n.t('errorQuantityInvalidFeed');
-      }else{
-        obj['quantite'].isValid = true;
-        obj['quantite'].validFeed = this.$i18n.t('validFeed');
+      if (!this.quantite) {
+        this.errors.push(this.$i18n.t("emptyQuantityInvalidFeed"));
+        obj["quantite"].isValid = false;
+        obj["quantite"].invalidFeed = this.$i18n.t("emptyQuantityInvalidFeed");
+      } else if (!this.validQuantite()) {
+        this.errors.push(this.$i18n.t("errorQuantityInvalidFeed"));
+        obj["quantite"].isValid = false;
+        obj["quantite"].invalidFeed = this.$i18n.t("errorQuantityInvalidFeed");
+      } else {
+        obj["quantite"].isValid = true;
+        obj["quantite"].validFeed = this.$i18n.t("validFeed");
       }
     },
-    modalChange(val: boolean){
+    modalChange(val: boolean) {
       this.serviceModal = val;
-    }
+    },
   },
 });
 </script>

@@ -3,9 +3,16 @@ import { RouterLink, RouterView } from "vue-router";
 import { defineComponent } from "vue";
 import logoURL from "@/assets/logo.svg";
 import "@/assets/mdb/css/style.css";
+import { useSessionStore } from "@/stores/session";
+
 export default defineComponent({
   name: "App",
-  setup() {},
+  setup() {
+    const sessionStore = useSessionStore();
+    return {
+      sessionStore,
+    };
+  },
   data() {
     return {
       logoURL,
@@ -24,7 +31,11 @@ export default defineComponent({
       immediate: true,
     },
   },
-  methods: {},
+  methods: {
+    // validateSession() {
+    //   return this.sessionStore.validateSession();
+    // },
+  },
   mounted() {
     //   console.log(`the component is now mounted.`);
   },

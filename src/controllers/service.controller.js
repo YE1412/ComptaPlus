@@ -26,12 +26,7 @@ const create = (req, res) => {
 const findAll = (req, res) => {
   service
     .findAll({
-      attributes: [
-        'serviceId',
-        'nom',
-        'montantHt',
-        'quantite'
-      ],
+      attributes: ["serviceId", "nom", "montantHt", "quantite"],
       where: {},
     })
     .then((data) => {
