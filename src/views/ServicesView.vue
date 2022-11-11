@@ -39,6 +39,8 @@ export default defineComponent({
   data() {
     return {
       renderComponent: true,
+      adminService: true,
+      displayService: false,
     };
   },
   methods: {
@@ -55,16 +57,47 @@ export default defineComponent({
       // Add the component back in
       this.renderComponent = true;
     },
+    handleAdmin(src: string) {
+      switch (src) {
+        case "services":
+          this.adminService = true;
+          this.displayService = false;
+          break;
+        default:
+          break;
+      }
+      this.forceServiceRerender();
+    },
+    handleDisplay(src: string) {
+      console.log(`Display ServiceView - ${src}`);
+      switch (src) {
+        case "services":
+          this.displayService = true;
+          this.adminService = false;
+          break;
+        default:
+          break;
+      }
+      this.forceServiceRerender();
+    },
   },
 });
 </script>
 <template>
   <main>
     <TheToolbarIn @language-changed-re-render="forceServiceRerender" />
-    <Sidenav :servicesState="true" />
+    <Sidenav
+      :servicesState="true"
+      @show-admin="handleAdmin"
+      @show-display="handleDisplay"
+    />
     <div class="content">
       <Suspense>
-        <ServiceContent v-if="renderComponent" />
+        <ServiceContent
+          v-if="renderComponent"
+          :admin="adminService"
+          :display="displayService"
+        />
         <template #fallback> Loading... </template>
       </Suspense>
     </div>

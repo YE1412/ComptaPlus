@@ -17,6 +17,16 @@ export default defineComponent({
       type: Boolean,
       default: () => false,
     },
+    admin: {
+      type: Boolean,
+      required: true,
+      default: () => true,
+    },
+    display: {
+      type: Boolean,
+      required: true,
+      default: () => false,
+    },
   },
   async setup() {
     // console.log(`Setup`);
@@ -550,6 +560,8 @@ export default defineComponent({
       :updateObj="updateInputObject"
       :updateObjId="updateInputObjectId"
       v-if="renderComponent"
+      :admin="admin"
+      :display="display"
     >
       <template #actionAddButton>
         <button type="button" class="btn btn-primary btn-rounded btn-sm my-0">

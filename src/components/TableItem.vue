@@ -55,6 +55,16 @@ export default defineComponent({
       required: false,
       default: () => 0,
     },
+    admin: {
+      type: Boolean,
+      required: true,
+      default: () => true,
+    },
+    display: {
+      type: Boolean,
+      required: true,
+      default: () => true,
+    },
   },
   async setup() {
     const store = useServiceStore();
@@ -87,6 +97,11 @@ export default defineComponent({
     objectsLength() {
       // console.log(this.objects);
       return this.services.length;
+    },
+    tableHeadForDisplay() {
+      const heads = this.tableHead;
+      heads.pop();
+      return heads;
     },
   },
   components: {
@@ -147,9 +162,15 @@ export default defineComponent({
   <div class="table-responsive">
     <table class="table">
       <thead class="mdb-color darken-3">
-        <tr class="text-black text-center">
+        <tr class="text-black text-center" v-if="admin">
           <th>#</th>
           <th v-for="(head, ind) in tableHead" v-bind:key="ind">
+            {{ head }}
+          </th>
+        </tr>
+        <tr class="text-black text-center" v-if="display">
+          <th>#</th>
+          <th v-for="(head, ind) in tableHeadForDisplay" v-bind:key="ind">
             {{ head }}
           </th>
         </tr>
@@ -158,7 +179,7 @@ export default defineComponent({
       <tbody v-if="!objectsLength && !isForm">
         <tr>
           <td class="text-center" colspan="4">{{ emptyTableText }}</td>
-          <td class="text-center">
+          <td class="text-center" v-if="admin">
             <a href="#" @click="actionAddButtonClick($event, false)">
               <slot name="actionAddButton"></slot>
             </a>
@@ -181,7 +202,7 @@ export default defineComponent({
           >
             {{ val }}
           </td>
-          <td style="vertical-align: middle">
+          <td style="vertical-align: middle" v-if="admin">
             <div class="" role="group">
               <a href="#" @click="actionAddButtonClick($event, false)">
                 <slot name="actionAddButton"></slot>

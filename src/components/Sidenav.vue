@@ -46,6 +46,15 @@ export default defineComponent({
   components: {
     SidenavItem,
   },
+  methods: {
+    handleAdminClick(src: string) {
+      this.$emit("show-admin", src);
+    },
+    handleDisplayClick(src: string) {
+      // console.log(`Display Sidenav - ${src}`);
+      this.$emit("show-display", src);
+    },
+  },
 });
 </script>
 
@@ -89,39 +98,57 @@ export default defineComponent({
         <ul class="collapsible collapsible-accordion">
           <SidenavItem
             :state="servicesState"
+            @show-admin="handleAdminClick"
+            @show-display="handleDisplayClick"
             icon="bi-layout-text-sidebar"
             :title="$t('servicesTitle')"
             :link="$t('servicesPath')"
+            src="services"
           />
           <SidenavItem
             :state="actorsState"
+            @show-admin="handleAdminClick"
+            @show-display="handleDisplayClick"
             icon="bi-people-fill"
             :title="$t('actorsTitle')"
             :link="$t('actorsPath')"
+            src="actors"
           />
           <SidenavItem
             :state="ordersState"
+            @show-admin="handleAdminClick"
+            @show-display="handleDisplayClick"
             icon="bi-list-ul"
             :title="$t('ordersTitle')"
             :link="$t('ordersPath')"
+            src="orders"
           />
           <SidenavItem
             :state="paymentsState"
+            @show-admin="handleAdminClick"
+            @show-display="handleDisplayClick"
             icon="bi-credit-card-fill"
             :title="$t('paymentsTitle')"
             :link="$t('paymentsPath')"
+            src="payments"
           />
           <SidenavItem
             :state="invoicesState"
+            @show-admin="handleAdminClick"
+            @show-display="handleDisplayClick"
             icon="bi-receipt"
             :title="$t('invoicesTitle')"
             :link="$t('invoicesPath')"
+            src="invoices"
           />
           <SidenavItem
             :state="exportState"
+            @show-admin="handleAdminClick"
+            @show-display="handleDisplayClick"
             icon="bi-file-earmark-pdf-fill"
             :title="$t('exportTitle')"
             :link="$t('exportPath')"
+            src="export"
           />
         </ul>
       </li>

@@ -21,6 +21,10 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    src: {
+      type: String,
+      required: true,
+    },
   },
   setup() {},
   data() {
@@ -34,6 +38,15 @@ export default defineComponent({
   mounted() {},
   components: {
     RouterLink,
+  },
+  methods: {
+    handleAdminClick(e: Event) {
+      this.$emit("show-admin", this.src);
+    },
+    handleDisplayClick(e: Event) {
+      // console.log(`Display SidenavItem - ${this.src}`);
+      this.$emit("show-display", this.src);
+    },
   },
 });
 </script>
@@ -65,12 +78,12 @@ export default defineComponent({
     <div class="collapsible-body" :class="{ hidden: !state }">
       <ul>
         <li>
-          <a href="#" class="waves-effect">
+          <a href="#" @click="handleAdminClick($event)" class="waves-effect">
             {{ $t("admin") }}
           </a>
         </li>
         <li>
-          <a href="#" class="waves-effect">
+          <a href="#" @click="handleDisplayClick($event)" class="waves-effect">
             {{ $t("display") }}
           </a>
         </li>
