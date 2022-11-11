@@ -6,6 +6,7 @@ import {
 import HomeView from "../views/HomeView.vue";
 import i18n from "../plugins/i18n";
 import { useUserStore } from "@/stores/user";
+import { useSessionStore } from "@/stores/session";
 
 const { t } = i18n.global;
 let router: any = null;
@@ -19,61 +20,61 @@ const pathsObj = [
     path: t("startLinkTarget", "en"),
     component: "StartView",
     name: t("startLinkName", "en"),
-    // auth: false,
+    auth: false,
   },
   {
     path: t("registerLinkTarget", "en"),
     component: "RegisterView",
     name: t("registerLinkName", "en"),
-    // auth: false,
+    auth: false,
   },
   {
     path: t("homeLinkTarget", "en"),
     component: "HomeView",
     name: t("homeLinkName", "en"),
-    // auth: true,
+    auth: true,
   },
   {
     path: t("aboutLinkTarget", "en"),
     component: "AboutView",
     name: t("aboutLinkName", "en"),
-    // auth: true,
+    auth: true,
   },
   {
     path: t("actorsLinkTarget", "en"),
     component: "ActorsView",
     name: t("actorsLinkName", "en"),
-    // auth: true,
+    auth: true,
   },
   {
     path: t("ordersLinkTarget", "en"),
     component: "OrdersView",
     name: t("ordersLinkName", "en"),
-    // auth: true,
+    auth: true,
   },
   {
     path: t("paymentsLinkTarget", "en"),
     component: "PaymentsView",
     name: t("paymentsLinkName", "en"),
-    // auth: true,
+    auth: true,
   },
   {
     path: t("invoicesLinkTarget", "en"),
     component: "InvoicesView",
     name: t("invoicesLinkName", "en"),
-    // auth: true,
+    auth: true,
   },
   {
     path: t("exportLinkTarget", "en"),
     component: "ExportView",
     name: t("exportLinkName", "en"),
-    // auth: true,
+    auth: true,
   },
   {
     path: t("profileLinkTarget", "en"),
     component: "ProfileView",
     name: t("profileLinkName", "en"),
-    // auth: true,
+    auth: true,
   },
 ];
 
@@ -87,7 +88,7 @@ router = createRouter({
       meta: {
         title: t("homeLinkName"),
         icon: icon,
-        // requiresAuth: true,
+        requiresAuth: true,
       },
     },
     {
@@ -97,7 +98,7 @@ router = createRouter({
       meta: {
         title: t("homeLinkName"),
         icon: icon,
-        // requiresAuth: true,
+        requiresAuth: true,
       },
     },
     {
@@ -110,7 +111,7 @@ router = createRouter({
       meta: {
         title: t("aboutLinkName"),
         icon: icon,
-        // requiresAuth: true,
+        requiresAuth: true,
       },
     },
     {
@@ -120,7 +121,7 @@ router = createRouter({
       meta: {
         title: t("startLinkName"),
         icon: icon,
-        // requiresAuth: false,
+        requiresAuth: false,
       },
     },
     {
@@ -130,7 +131,7 @@ router = createRouter({
       meta: {
         title: t("registerLinkName"),
         icon: icon,
-        // requiresAuth: false,
+        requiresAuth: false,
       },
     },
     {
@@ -140,7 +141,7 @@ router = createRouter({
       meta: {
         title: t("servicesLinkName"),
         icon: icon,
-        // requiresAuth: true,
+        requiresAuth: true,
       },
     },
     {
@@ -150,7 +151,7 @@ router = createRouter({
       meta: {
         title: t("actorsLinkName"),
         icon: icon,
-        // requiresAuth: true,
+        requiresAuth: true,
       },
     },
     {
@@ -160,7 +161,7 @@ router = createRouter({
       meta: {
         title: t("ordersLinkName"),
         icon: icon,
-        // requiresAuth: true,
+        requiresAuth: true,
       },
     },
     {
@@ -170,7 +171,7 @@ router = createRouter({
       meta: {
         title: t("paymentsLinkName"),
         icon: icon,
-        // requiresAuth: true,
+        requiresAuth: true,
       },
     },
     {
@@ -180,7 +181,7 @@ router = createRouter({
       meta: {
         title: t("invoicesLinkName"),
         icon: icon,
-        // requiresAuth: true,
+        requiresAuth: true,
       },
     },
     {
@@ -190,7 +191,7 @@ router = createRouter({
       meta: {
         title: t("exportLinkName"),
         icon: icon,
-        // requiresAuth: true,
+        requiresAuth: true,
       },
     },
     {
@@ -200,17 +201,19 @@ router = createRouter({
       meta: {
         title: t("profileLinkName"),
         icon: icon,
-        // requiresAuth: true,
+        requiresAuth: true,
       },
     },
   ],
 });
 
-router.beforeEach((to: any, from: any, next: any) => {
+router.beforeEach(async (to: any, from: any, next: any) => {
   // ✅ This will work make sure the correct store is used for the
   // current running app
   const userStore = useUserStore();
+  const sessionStore = useSessionStore();
   const accessiblePath = isRealPath(to.fullPath);
+  let dest = "";
   // console.log(`-----------------------\nto`);
   // console.log(to);
   // console.log(`userStore connected ?`);
@@ -224,13 +227,35 @@ router.beforeEach((to: any, from: any, next: any) => {
   // console.log(`Paths Obj`);
   // console.log(pathsObj);
   // console.log(`-----------------------\n`);
-  if (to.meta.requiresAuth && !userStore.connected) next(t("startLinkTarget"));
-  else if (!hasNecessaryRoute(to) && accessiblePath !== null) {
+
+  if (to.meta.requiresAuth) {
+    dest = await validateSession(sessionStore)
+      .then(
+        (res: any) => {
+          // console.log(res);
+          return "";
+        },
+        (rej: any) => {
+          // console.log(rej);
+          return t("startLinkTarget");
+        }
+      )
+      .catch((err: any) => {
+        console.log(err);
+        return t("startLinkTarget");
+      });
+    // console.log(dest);
+    dest !== "" ? next(dest) : next();
+  } else if (!hasNecessaryRoute(to) && accessiblePath !== null) {
     generateRoute(to, accessiblePath);
     // trigger a redirection
     next(to.fullPath);
   } else next();
 });
+
+function validateSession(sessionStore: any) {
+  return sessionStore.validateSession();
+}
 
 function isRealPath(to: string) {
   const ret = null;

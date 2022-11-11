@@ -34,6 +34,7 @@ export default defineComponent({
       this.$i18n.locale = this.langDisplayed.lang;
       this.flagDropdownVisibility = false;
       this.store.langDisplayedIndex = languageIndex;
+      this.$emit("re-rendering");
     },
   },
 });

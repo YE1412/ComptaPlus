@@ -20,18 +20,18 @@ export default defineComponent({
     Sidenav,
   },
   methods: {
-    validateSession() {
-      return this.sessionStore.validateSession();
-    },
+    // validateSession() {
+    //   return this.sessionStore.validateSession();
+    // },
   },
   mounted() {
     // console.log(this.sessionStore.getSessionId);
-    this.validateSession()
-      .then((res) => {})
-      .catch((err) => {
-        console.log(err);
-        this.$router.push(this.$i18n.t("startLinkTarget"));
-      });
+    // this.validateSession()
+    // .then((res) => {})
+    // .catch((err) => {
+    //   console.log(err);
+    //   this.$router.push(this.$i18n.t("startLinkTarget"));
+    // });
   },
 });
 </script>

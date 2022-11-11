@@ -109,8 +109,8 @@ async function createViteServer() {
     response.send({ id: request.session.appSession });
   });
   app.post("/api/session", (request, response) => {
-    console.log(`POST - Session`);
-    console.log(request.session);
+    // console.log(`POST - Session`);
+    // console.log(request.session);
     // console.log(`POST - BODY Session`);
     // console.log(request.body.sessionID);
     if (request.body.sessionID != request.session.appSession) {

@@ -15,6 +15,11 @@ export default defineComponent({
     ToolbarFlagNav,
     ToolbarNavBar,
   },
+  methods: {
+    handle_re_render() {
+      this.$emit("language-changed-re-render");
+    },
+  },
 });
 </script>
 
@@ -31,6 +36,6 @@ export default defineComponent({
       </div>
       <ToolbarNavBar />
     </div>
-    <ToolbarFlagNav />
+    <ToolbarFlagNav @re-rendering="handle_re_render" />
   </div>
 </template>
