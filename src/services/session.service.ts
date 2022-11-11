@@ -10,6 +10,10 @@ class SessionDataService {
   get() {
     return http.get(`/session`);
   }
+
+  delete() {
+    return http.post("/sessions/logout");
+  }
 }
 
 export default new SessionDataService();

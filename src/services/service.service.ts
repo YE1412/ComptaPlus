@@ -22,7 +22,7 @@ class ServiceDataService {
   }
 
   delete(id: any) {
-    return http.delete(`/ServicesView/${id}`);
+    return http.delete(`/services/${id}`);
   }
 
   deleteAll() {

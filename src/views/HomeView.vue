@@ -25,7 +25,7 @@ export default defineComponent({
     },
   },
   mounted() {
-    console.log(this.sessionStore.getSessionId);
+    // console.log(this.sessionStore.getSessionId);
     this.validateSession()
       .then((res) => {})
       .catch((err) => {

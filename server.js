@@ -57,7 +57,7 @@ async function createViteServer() {
     app.use(vite.middlewares);
   }
 
-  var userRouter, serviceRouter;
+  var userRouter, serviceRouter, sessionsRouter;
   let prefix = "./";
   // console.log(import("./src/routes/user.route.js")(app));
   if (env === "development") {
@@ -72,6 +72,7 @@ async function createViteServer() {
   }
   userRouter = await import(`${prefix}src/routes/user.route.js`);
   serviceRouter = await import(`${prefix}src/routes/service.route.js`);
+  sessionsRouter = await import(`${prefix}src/routes/sessions.route.js`);
   //  Populate req.cookies
   app.use(cookieParser());
   //  Session setup
@@ -89,7 +90,7 @@ async function createViteServer() {
   );
   app.use(
     cors({
-      origin: ["http://localhost:3000", "https://localhost:3000"],
+      origin: [`http://localhost:${port}`, `https://localhost:${port}`],
       credentials: true,
       exposedHeaders: ["set-cookie"],
     })
@@ -100,6 +101,7 @@ async function createViteServer() {
   app.use(express.json());
   app.use("/api/users", userRouter.default());
   app.use("/api/services", serviceRouter.default());
+  app.use("/api/sessions", sessionsRouter.default());
   app.get("/api/session", (request, response) => {
     request.session.appSession = uuidv4();
     // console.log(`GET - Session`);
@@ -107,8 +109,8 @@ async function createViteServer() {
     response.send({ id: request.session.appSession });
   });
   app.post("/api/session", (request, response) => {
-    // console.log(`POST - Session`);
-    // console.log(request.session);
+    console.log(`POST - Session`);
+    console.log(request.session);
     // console.log(`POST - BODY Session`);
     // console.log(request.body.sessionID);
     if (request.body.sessionID != request.session.appSession) {
@@ -155,7 +157,7 @@ async function createViteServer() {
       //    function calls appropriate framework SSR APIs,
       //    e.g. ReactDOMServer.renderToString()
       // const appHtml = await render(url);
-
+      // console.log(template);
       // 5. Inject the app-rendered HTML into the template.
       const html = template.replace(`<!--ssr-outlet-->`, render);
 

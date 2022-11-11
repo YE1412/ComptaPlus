@@ -49,7 +49,7 @@ const useSessionStore = defineStore("session", {
               console.log("Error", err.message);
             }
             console.log(err.config);
-            reject(new Error(err));
+            reject(err);
           });
       });
     },
@@ -66,7 +66,15 @@ const useSessionStore = defineStore("session", {
       });
     },
     deleteSession() {
-      this.sessionId = null;
+      // this.sessionId = null;
+      return sessionAxiosService
+        .delete()
+        .then((res) => {
+          return res;
+        })
+        .catch((err) => {
+          return err;
+        });
     },
   },
 });

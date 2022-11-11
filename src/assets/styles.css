@@ -445,6 +445,7 @@ main.mt-3{
     display: flex;
     margin-top: 135px;
     padding-left: 265px;
+    flex-direction: column;
 }
 
 /*.content {

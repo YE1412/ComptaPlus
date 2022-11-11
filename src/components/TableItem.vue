@@ -2,6 +2,7 @@
 import { defineComponent } from "vue";
 import { MDBRow, MDBInput } from "mdb-vue-ui-kit";
 // import "../globals";
+import { useServiceStore } from "@/stores/service";
 
 export default defineComponent({
   name: "TableItem",
@@ -54,41 +55,49 @@ export default defineComponent({
       required: false,
       default: () => 0,
     },
-    objectsProp: {
-      default: () => [],
-    },
   },
-  setup() {
-    // const store = useServiceStore();
-    // store
-    //   .getAllServices()
-    //   .then(
-    //     (res) => {
-    //       // console.log(res);
-    //       console.log(store.getServices);
-    //     },
-    //     (ret) => {
-    //       // console.log(ret);
-    //     }
-    //   )
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-    // return { objects: this.objectsProp };
+  async setup() {
+    const store = useServiceStore();
+    // let contentsTab;
+    const fetchServices = await store
+      .getAllServices()
+      .then(
+        (res) => {
+          return res;
+        },
+        (rej) => {
+          return [];
+        }
+      )
+      .catch((err) => {
+        return [];
+      });
+    var that = this;
+
+    return { store: store, services: fetchServices };
   },
   data() {
     return {
-      objects: this.objectsProp,
+      // objects: this.fetchServices,
+      idents: this.shiftedIdents(),
+      contents: this.shiftedContent(),
     };
   },
   computed: {
     objectsLength() {
       // console.log(this.objects);
-      return this.objects.length;
+      return this.services.length;
     },
+  },
+  components: {
+    // MessagesItem,
+    MDBRow,
+    MDBInput,
+  },
+  methods: {
     shiftedIdents() {
       var that = this;
-      return this.objectsProp.map((val) => {
+      return this.services.map((val) => {
         let ret = {};
         for (const key in val) {
           if (key === this.ident) ret[key] = val[key];
@@ -98,22 +107,20 @@ export default defineComponent({
     },
     shiftedContent() {
       var that = this;
-      return this.objectsProp.map((val) => {
+      // console.log(this.services);
+      return this.services.map((val) => {
         // this.transformObject(val);
+        // console.log(val);
         let ret = {};
         for (const key in val) {
-          if (key !== this.ident) ret[key] = val[key];
+          if (key !== this.ident) {
+            // console.log(val[key]);
+            ret[key] = val[key];
+          }
         }
         return ret;
       }, that);
     },
-  },
-  components: {
-    // MessagesItem,
-    MDBRow,
-    MDBInput,
-  },
-  methods: {
     actionAddButtonClick(e: Event, forDB: boolean) {
       e.preventDefault();
       this.$emit(this.addActionName, forDB);
@@ -160,12 +167,12 @@ export default defineComponent({
       </tbody>
       <tbody v-if="objectsLength && !isForm">
         <tr
-          v-for="(obj, index) in shiftedContent"
+          v-for="(obj, index) in contents"
           v-bind:key="index"
           class="text-center"
         >
           <th scope="row" style="vertical-align: middle">
-            {{ shiftedIdents[index][ident] }}
+            {{ idents[index][ident] }}
           </th>
           <td
             v-for="(val, key) in obj"
@@ -185,7 +192,7 @@ export default defineComponent({
                   actionUpdateButtonClick(
                     $event,
                     false,
-                    shiftedIdents[index][ident],
+                    idents[index][ident],
                     obj
                   )
                 "
@@ -194,9 +201,7 @@ export default defineComponent({
               </a>
               <a
                 href="#"
-                @click="
-                  actionDeleteButtonClick($event, shiftedIdents[index][ident])
-                "
+                @click="actionDeleteButtonClick($event, idents[index][ident])"
               >
                 <slot name="actionDeleteButton"></slot>
               </a>

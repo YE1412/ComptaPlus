@@ -2,6 +2,7 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import serviceAxiosService from "../services/service.service";
 import { genMod, cryptMod, decryptMod } from "../WasmModules";
+import { useStorage } from "@vueuse/core";
 
 let __DECRYPTAPI__: any;
 
@@ -16,23 +17,22 @@ async function define() {
 
 async function transformObject(obj: any) {
   await define();
-  // console.trace(__DECRYPTAPI__);
-  // console.trace(obj);
+  const ret: any = [];
   for (const k in obj) {
-    // console.log("typeof")
-    // console.log(typeof obj[k])
-    // console.log("is Array")
-    // console.log(Array.isArray(obj[k]))
-    // console.log("obj")
-    // console.log(obj[k])
     if (typeof obj[k] === "string") {
-      obj[k] = __DECRYPTAPI__.decrypt(obj[k]);
+      ret[k] = __DECRYPTAPI__.decrypt(obj[k]);
     } else if (typeof obj[k] === "object" && !Array.isArray(obj[k])) {
-      await transformObject(obj[k]);
+      ret[k] = {};
+      for (const l in obj[k]) {
+        if (typeof obj[k][l] === "string")
+          ret[k][l] = __DECRYPTAPI__.decrypt(obj[k][l]);
+        else ret[k][l] = obj[k][l];
+      }
+    } else {
+      ret[k] = obj[k];
     }
   }
-  // console.trace(__DECRYPTAPI__);
-  // console.trace(obj);
+  return ret;
 }
 
 function transformValue(val: string) {
@@ -43,10 +43,18 @@ function transformValue(val: string) {
 const useServiceStore = defineStore("service", {
   state: () => ({
     services: [],
+    messages: useStorage("messages", []),
+    messagesVisibility: useStorage("messagesVisibility", false),
   }),
   getters: {
     getServices(state) {
       return state.services;
+    },
+    getMessages(state) {
+      return state.messages;
+    },
+    getMessagesVisibility(state) {
+      return state.messagesVisibility;
     },
   },
   actions: {
@@ -55,12 +63,13 @@ const useServiceStore = defineStore("service", {
       return new Promise((resolve, reject) => {
         serviceAxiosService
           .getAll()
-          .then((res) => {
+          .then(async (res) => {
             // console.log(res);
             if (res.data.length) {
-              transformObject(res.data);
-              this.services = res.data;
-              resolve(res.data);
+              const dataClear = await transformObject(res.data);
+              this.services = dataClear;
+              // console.log(dataClear);
+              resolve(dataClear);
             } else {
               reject(false);
             }
@@ -89,6 +98,10 @@ const useServiceStore = defineStore("service", {
             reject(new Error(err));
           });
       });
+    },
+    deleteMessages() {
+      this.messages = [];
+      this.messagesVisibility = false;
     },
   },
 });

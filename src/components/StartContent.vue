@@ -39,24 +39,24 @@ export default defineComponent({
     };
   },
   methods: {
-    loginUser(e: Event) {
+    async loginUser(e: Event) {
       if (this.login !== "" && this.password !== "") {
         const login = this.transformValue(this.login);
         const pass = this.transformValue(this.password);
         this.userStore
           .loginUser(login, pass)
           .then(
-            (res) => {
+            async (res) => {
               // console.log("OK !");
-              // this.sessionStore
-              // .getSession()
-              // .then(
-              //   (res) => {
-              //     // this.sessionId = res;
-              //   },
-              //   (ret) => {}
-              // )
-              // .catch((err) => {});
+              await this.sessionStore
+                .getSession()
+                .then(
+                  (res) => {
+                    // console.log(res);
+                  },
+                  (ret) => {}
+                )
+                .catch((err) => {});
               this.userStore.connected = true;
               this.userStore.user = this.transformObj(res);
               router.push(this.$i18n.t("home_path"));
@@ -111,7 +111,7 @@ export default defineComponent({
     "login_placeholder": "Login or email",
     "password_placeholder": "Password",
     "not_yet": "Not registred yet?",
-    "register": "Sign Up",
+    "register": "Create an account.",
     "register_path": "/register",
     "modalTitle": "Error !",
     "modalContent": "Error while siging in : Bad Login and/or password !",

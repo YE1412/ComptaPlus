@@ -13,15 +13,15 @@ export default defineComponent({
     return { userStore, sessionStore };
   },
   mounted() {
-    this.sessionStore
-      .getSession()
-      .then(
-        (res) => {
-          this.sessionId = res;
-        },
-        (ret) => {}
-      )
-      .catch((err) => {});
+    // this.sessionStore
+    //   .getSession()
+    //   .then(
+    //     (res) => {
+    //       this.sessionId = res;
+    //     },
+    //     (ret) => {}
+    //   )
+    //   .catch((err) => {});
   },
   data() {
     return {

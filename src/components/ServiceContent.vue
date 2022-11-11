@@ -1,12 +1,13 @@
 <script lang="ts">
 /*global __CRYPTAPI__, __KEY__*/
-import { defineComponent } from "vue";
+import { defineComponent, nextTick, ref } from "vue";
 import { useServiceStore } from "@/stores/service";
 import MessagesItem from "../components/MessagesItem.vue";
 import TableItem from "../components/TableItem.vue";
 import { MDBCol, MDBInput, MDBRow, MDBTextarea } from "mdb-vue-ui-kit";
 import serviceAxiosService from "../services/service.service";
 import ModalItem from "./ModalItem.vue";
+const renderComponent = ref(true);
 import "../globals";
 
 export default defineComponent({
@@ -17,44 +18,23 @@ export default defineComponent({
       default: () => false,
     },
   },
-  setup() {
-    console.log(`Setup`);
+  async setup() {
+    // console.log(`Setup`);
     const store = useServiceStore();
-    return store
-      .getAllServices()
-      .then(
-        (res) => {
-          // console.log(res);
-          // console.log(store.getServices);
-          return { store };
-        },
-        (ret) => {
-          // console.log(ret);
-          return { store };
-        }
-      )
-      .catch((err) => {
-        console.log(err);
-        return { store };
-      });
-    // return { store };
+
+    return { store };
   },
   beforeCreate() {
-    console.log(`Before Create`);
+    // console.log(`Before Create`);
     // console.log(this.store.getServices);
     // return { // For display
     //   services: this.store.getServices
     // }
   },
   created() {
-    console.log(`Created`);
+    // console.log(`Created`);
   },
-  mounted() {
-    console.log(`Mounted`);
-    // return { // For display
-    //   services: this.store.getServices
-    // }
-  },
+  mounted() {},
   data() {
     // console.log(this.services);
     const headTable = [
@@ -114,10 +94,12 @@ export default defineComponent({
       updateInputObject: {},
       updateInputObjectId: 0,
       // For all
+      // services: this.fetchServices,
       errors: [],
       modalTitle: "",
       modalContent: "",
       serviceModal: false,
+      renderComponent: true,
     };
   },
   components: {
@@ -130,6 +112,9 @@ export default defineComponent({
     ModalItem,
   },
   methods: {
+    getAllServices() {
+      this.store.getAllServices();
+    },
     async addClickFromChild(db: boolean) {
       if (!db) {
         // click to add new service line
@@ -148,7 +133,18 @@ export default defineComponent({
             this.form = false;
             this.update = false;
             this.add = true;
-            this.store.getAllServices();
+            this.store
+              .getAllServices()
+              .then(
+                () => {
+                  this.forceTableRerender();
+                },
+                () => {}
+              )
+              .catch((err) => {
+                console.log(err);
+                this.$router.go();
+              });
           }
         }
       }
@@ -214,13 +210,43 @@ export default defineComponent({
             this.form = false;
             this.update = false;
             this.add = true;
-            this.store.getAllServices();
+            this.store
+              .getAllServices()
+              .then(
+                () => {
+                  this.forceTableRerender();
+                },
+                () => {}
+              )
+              .catch((err) => {
+                console.log(err);
+                this.$router.go();
+              });
           }
         }
       }
     },
-    deleteClickFromChild(id: number) {
+    async deleteClickFromChild(id: number) {
       // click to delete a service
+      this.serviceId = id;
+      const ret = await this.deleteService();
+      if (ret) {
+        this.form = false;
+        this.update = false;
+        this.add = true;
+        this.store
+          .getAllServices()
+          .then(
+            () => {
+              this.forceTableRerender();
+            },
+            () => {}
+          )
+          .catch((err) => {
+            console.log(err);
+            this.$router.go();
+          });
+      }
     },
     inputChanges(e: Event) {
       switch (e.target.getAttribute("aria-label")) {
@@ -270,17 +296,35 @@ export default defineComponent({
       return serviceAxiosService
         .create(obj)
         .then((res) => {
+          // MODALS (set serviceModal to TRUE to active)
           this.modalTitle = this.$i18n.t("modalTitleOk");
           this.modalContent = this.$i18n.t("modalAddContentOk");
-          this.serviceModal = true;
+          this.serviceModal = false;
+          // MESSAGES
+          this.store.messages.push({
+            severity: false,
+            content: this.$i18n.t("modalAddContentOk"),
+          });
+          this.messageVisibility = true;
+          this.store.messagesVisibility = true;
           return true;
         })
         .catch((err) => {
+          // MODALS (set serviceModal to TRUE to active)
           this.modalTitle = this.$i18n.t("modalTitleKo");
           this.modalContent = this.$i18n.t("modalAddContentKo", {
             err: err.response.data.message || err.message,
           });
-          this.serviceModal = true;
+          this.serviceModal = false;
+          // MESSAGES
+          this.store.messages.push({
+            severity: true,
+            content: this.$i18n.t("modalAddContentKo", {
+              err: err.response.data.message || err.message,
+            }),
+          });
+          this.messageVisibility = true;
+          this.store.messagesVisibility = true;
           return false;
         });
     },
@@ -294,17 +338,67 @@ export default defineComponent({
       return serviceAxiosService
         .update(this.serviceId, obj)
         .then((res) => {
+          // MODALS (set serviceModal to TRUE to active)
           this.modalTitle = this.$i18n.t("modalTitleOk");
           this.modalContent = this.$i18n.t("modalUpdateContentOk");
-          this.serviceModal = true;
+          this.serviceModal = false;
+          // MESSAGES
+          this.store.messages.push({
+            severity: false,
+            content: this.$i18n.t("modalUpdateContentOk"),
+          });
+          this.messageVisibility = true;
+          this.store.messagesVisibility = true;
           return true;
         })
         .catch((err) => {
+          // MODALS (set serviceModal to TRUE to active)
           this.modalTitle = this.$i18n.t("modalTitleKo");
           this.modalContent = this.$i18n.t("modalUpdateContentKo", {
             err: err.response.data.message || err.message,
           });
-          this.serviceModal = true;
+          this.serviceModal = false;
+          // MESSAGES
+          this.store.messages.push({
+            severity: true,
+            content: this.$i18n.t("modalUpdateContentKo"),
+          });
+          this.messageVisibility = true;
+          this.store.messagesVisibility = true;
+          return false;
+        });
+    },
+    deleteService() {
+      return serviceAxiosService
+        .delete(this.serviceId)
+        .then((res) => {
+          // MODALS (set serviceModal to TRUE to active)
+          this.modalTitle = this.$i18n.t("modalTitleOk");
+          this.modalContent = this.$i18n.t("modalDeleteContentOk");
+          this.serviceModal = false;
+          // MESSAGES
+          this.store.messages.push({
+            severity: false,
+            content: this.$i18n.t("modalDeleteContentOk"),
+          });
+          this.messageVisibility = true;
+          this.store.messagesVisibility = true;
+          return true;
+        })
+        .catch((err) => {
+          // MODALS (set serviceModal to TRUE to active)
+          this.modalTitle = this.$i18n.t("modalTitleKo");
+          this.modalContent = this.$i18n.t("modalDeleteContentKo", {
+            err: err.response.data.message || err.message,
+          });
+          this.serviceModal = false;
+          // MESSAGES
+          this.store.messages.push({
+            severity: true,
+            content: this.$i18n.t("modalDeleteContentKo"),
+          });
+          this.messageVisibility = true;
+          this.store.messagesVisibility = true;
           return false;
         });
     },
@@ -348,6 +442,16 @@ export default defineComponent({
         obj["quantite"].validFeed = this.$i18n.t("validFeed");
       }
     },
+    async forceTableRerender() {
+      // Remove MyComponent from the DOM
+      this.renderComponent = false;
+
+      // Wait for the change to get flushed to the DOM
+      await this.$nextTick();
+
+      // Add the component back in
+      this.renderComponent = true;
+    },
     modalChange(val: boolean) {
       this.serviceModal = val;
     },
@@ -371,7 +475,7 @@ export default defineComponent({
     "errorAmountInvalidFeed": "Montant incorrect!",
     "namePlaceholder": "Nom",
     "emptyNameInvalidFeed": "Le nom de service ne peut être vide!",
-    "errorNameInvalidFeed": "Nom incorrect incorrect!",
+    "errorNameInvalidFeed": "Nom incorrect !",
     "quantityPlaceholder": "Quantité",
     "emptyQuantityInvalidFeed": "La quantité ne peut être vide!",
     "errorQuantityInvalidFeed": "Quantité incorrect!",
@@ -387,7 +491,8 @@ export default defineComponent({
     "modalDeleteContentKo": "Une erreur est survenue lors de la suppression du service : {err}!",
     "nameInputLabel": "Nom",
     "amountInputLabel": "Montant",
-    "quantityInputLabel": "Quantité"
+    "quantityInputLabel": "Quantité",
+    "servicesLinkTarget": "/services"
   },
   "en": {
     "nameTableHeadText": "Name",
@@ -419,18 +524,18 @@ export default defineComponent({
     "modalDeleteContentKo": "An error occured while deleting service : {err} !",
     "nameInputLabel": "Name",
     "amountInputLabel": "Amount",
-    "quantityInputLabel": "Quantity"
+    "quantityInputLabel": "Quantity",
+    "servicesLinkTarget": "/services"
   }
 }
 </i18n>
 
 <template>
-  <MessagesItem v-if="messageVisibility"></MessagesItem>
+  <MessagesItem v-if="store.getMessagesVisibility"></MessagesItem>
   <div class="container">
     <TableItem
       :isForm="form"
       :tableHead="tableHeading"
-      :objectsProp="store.getServices"
       :emptyTableText="$t('emptyTableBodyContentText')"
       addActionName="addClick"
       ident="serviceId"
@@ -444,6 +549,7 @@ export default defineComponent({
       :addObj="addInputObject"
       :updateObj="updateInputObject"
       :updateObjId="updateInputObjectId"
+      v-if="renderComponent"
     >
       <template #actionAddButton>
         <button type="button" class="btn btn-primary btn-rounded btn-sm my-0">
