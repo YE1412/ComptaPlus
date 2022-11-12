@@ -24,12 +24,13 @@ const app = express();
 
 async function createViteServer() {
   // Testing db connection
-  let opt = {};
+  let opt = {force:true};
   if (env === "production") opt.logging = false;
   let ret = await db.sequelize
     .authenticate()
-    .then(() => {
-      db.sequelize.sync(opt);
+    .then(async () => {
+      await db.sequelize.sync(opt);
+      initDB();
       // db.sequelize.close();
       console.log("Database connection has been established !");
       return true;
@@ -178,6 +179,75 @@ async function createViteServer() {
 
   app.listen(port, () => {
     console.log(`app listening on port ${port}`);
+  });
+}
+
+function initDB() {
+  const userType = db.userType;
+  const actorType = db.actorType;
+  const lang = db.langue;
+  const paymentType = db.paymentType;
+  const devise = db.devise;
+
+  userType.create({
+    regular: true,
+    admin: false,
+  });
+  userType.create({
+    regular: false,
+    admin: true,
+  });
+  userType.create({
+    regular: true,
+    admin: true,
+  });
+
+  actorType.create({
+    seller: true,
+    buyer: false,
+  });
+  actorType.create({
+    seller: false,
+    buyer: true,
+  });
+  actorType.create({
+    seller: true,
+    buyer: true,
+  });
+
+  lang.create({
+    libelle: "Français",
+    nom: "fr",
+  });
+  lang.create({
+    libelle: "English",
+    nom: "us",
+  });
+
+  paymentType.create({
+    cb: true,
+    esp: false,
+    chq: false,
+  });
+  paymentType.create({
+    cb: false,
+    esp: true,
+    chq: false,
+  });
+  paymentType.create({
+    cb: false,
+    esp: false,
+    chq: true,
+  });
+
+  devise.create({
+    symbole: "€",
+  });
+  devise.create({
+    symbole: "$",
+  });
+  devise.create({
+    symbole: "£",
   });
 }
 

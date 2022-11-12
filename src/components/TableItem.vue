@@ -65,6 +65,11 @@ export default defineComponent({
       required: true,
       default: () => true,
     },
+    colSpan: {
+      type: String,
+      required: true,
+      default: () => "1",
+    },
   },
   async setup() {
     const store = useServiceStore();
@@ -178,7 +183,7 @@ export default defineComponent({
 
       <tbody v-if="!objectsLength && !isForm">
         <tr>
-          <td class="text-center" colspan="4">{{ emptyTableText }}</td>
+          <td class="text-center" :colspan="colSpan">{{ emptyTableText }}</td>
           <td class="text-center" v-if="admin">
             <a href="#" @click="actionAddButtonClick($event, false)">
               <slot name="actionAddButton"></slot>

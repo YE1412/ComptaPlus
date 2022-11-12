@@ -17,6 +17,7 @@ const model = (sequelize) => {
       email: {
         type: DataTypes.CHAR,
         allowNull: false,
+        unique: true,
       },
       nom: {
         type: DataTypes.CHAR,
@@ -28,7 +29,7 @@ const model = (sequelize) => {
       },
       numCommercant: {
         type: DataTypes.CHAR,
-        allowNull: false,
+        allowNull: true,
       },
       numRue: {
         type: DataTypes.CHAR,
@@ -42,9 +43,9 @@ const model = (sequelize) => {
         type: DataTypes.CHAR,
         allowNull: false,
       },
-      type: {
-        type: DataTypes.INTEGER(1),
-      },
+      // type: {
+      //   type: DataTypes.INTEGER(1),
+      // },
       ville: {
         type: DataTypes.CHAR,
         allowNull: false,

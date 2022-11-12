@@ -1,19 +1,25 @@
 <script lang="ts">
 /*global __CRYPTAPI__, __KEY__*/
 import { defineComponent, nextTick, ref } from "vue";
-import { useServiceStore } from "@/stores/service";
+import { useActorStore } from "@/stores/actor";
 import MessagesItem from "../components/MessagesItem.vue";
 import TableItem from "../components/TableItem.vue";
-import { MDBCol, MDBInput, MDBRow, MDBTextarea } from "mdb-vue-ui-kit";
-import serviceAxiosService from "../services/service.service";
+import {
+  MDBCol,
+  MDBInput,
+  MDBRow,
+  MDBTextarea,
+  MDBRadio,
+} from "mdb-vue-ui-kit";
+import actorAxiosService from "../services/actor.service";
 import ModalItem from "./ModalItem.vue";
 const renderComponent = ref(true);
 import "../globals";
 
 export default defineComponent({
-  name: "ServiceContent",
+  name: "ActorContent",
   props: {
-    serviceForm: {
+    actorForm: {
       type: Boolean,
       default: () => false,
     },
@@ -30,16 +36,12 @@ export default defineComponent({
   },
   async setup() {
     // console.log(`Setup`);
-    const store = useServiceStore();
+    const store = useActorStore();
 
     return { store };
   },
   beforeCreate() {
     // console.log(`Before Create`);
-    // console.log(this.store.getServices);
-    // return { // For display
-    //   services: this.store.getServices
-    // }
   },
   created() {
     // console.log(`Created`);
@@ -48,9 +50,16 @@ export default defineComponent({
   data() {
     // console.log(this.services);
     const headTable = [
-      this.$i18n.t("nameTableHeadText"),
-      this.$i18n.t("amountTableHeadText"),
-      this.$i18n.t("quantityTableHeadText"),
+      this.$i18n.t("firstnameTableHeadText"),
+      this.$i18n.t("lastnameTableHeadText"),
+      this.$i18n.t("cpTableHeadText"),
+      this.$i18n.t("emailTableHeadText"),
+      this.$i18n.t("streetNameTableHeadText"),
+      this.$i18n.t("streetNumberTableHeadText"),
+      this.$i18n.t("cityTableHeadText"),
+      this.$i18n.t("sellerNumTableHeadText"),
+      this.$i18n.t("telTableHeadText"),
+      this.$i18n.t("typeTableHeadText"),
       this.$i18n.t("actionTableHeadText"),
     ];
     const addInputObj = {
@@ -91,7 +100,7 @@ export default defineComponent({
     return {
       tableHeading: headTable,
       messageVisibility: false,
-      form: this.serviceForm,
+      form: this.actorForm,
       // For adding
       update: false,
       add: true,
@@ -119,6 +128,7 @@ export default defineComponent({
     MDBInput,
     MDBRow,
     MDBTextarea,
+    MDBRadio,
     ModalItem,
   },
   methods: {
@@ -303,7 +313,7 @@ export default defineComponent({
         quantite: this.quantite,
       };
       this.transformObject(obj);
-      return serviceAxiosService
+      return actorAxiosService
         .create(obj)
         .then((res) => {
           // MODALS (set serviceModal to TRUE to active)
@@ -345,7 +355,7 @@ export default defineComponent({
         quantite: this.quantite,
       };
       this.transformObject(obj);
-      return serviceAxiosService
+      return actorAxiosService
         .update(this.serviceId, obj)
         .then((res) => {
           // MODALS (set serviceModal to TRUE to active)
@@ -379,7 +389,7 @@ export default defineComponent({
         });
     },
     deleteService() {
-      return serviceAxiosService
+      return actorAxiosService
         .delete(this.serviceId)
         .then((res) => {
           // MODALS (set serviceModal to TRUE to active)
@@ -469,73 +479,151 @@ export default defineComponent({
 });
 </script>
 
+this.$i18n.t("firstnameTableHeadText"), this.$i18n.t("lastnameTableHeadText"),
+this.$i18n.t("cpTableHeadText"), this.$i18n.t("emailTableHeadText"),
+this.$i18n.t("streetNameTableHeadText"),
+this.$i18n.t("streetNumberTableHeadText"), this.$i18n.t("cityTableHeadText"),
+this.$i18n.t("sellerNumTableHeadText"), this.$i18n.t("telTableHeadText"),
+this.$i18n.t("typeTableHeadText"), this.$i18n.t("actionTableHeadText"),
 <i18n>
 {
   "fr": {
-    "nameTableHeadText": "Nom",
-    "amountTableHeadText": "Montant Unitaire HT",
-    "quantityTableHeadText": "Quantité",
+    "firstnameTableHeadText": "Prénom",
+    "lastnameTableHeadText": "Nom",
+    "cpTableHeadText": "Code Postal",
+    "emailTableHeadText": "Email",
+    "streetNameTableHeadText": "Nom de rue",
+    "streetNumberTableHeadText": "Numéro de rue",
+    "cityTableHeadText": "Ville",
+    "sellerNumTableHeadText": "N° Commerçant",
+    "telTableHeadText": "Téléphone",
+    "typeTableHeadText": "Type",
     "emptyTableBodyContentText": "Aucun Service.",
     "addButtonText": "Ajouter",
     "updateButtonText": "Modifier",
     "deleteButtonText": "Suppimer",
     "actionTableHeadText": "Actions",
-    "amountPlaceholder": "Montant",
-    "emptyAmountInvalidFeed": "Le montant ne peut être vide!",
-    "errorAmountInvalidFeed": "Montant incorrect!",
-    "namePlaceholder": "Nom",
-    "emptyNameInvalidFeed": "Le nom de service ne peut être vide!",
-    "errorNameInvalidFeed": "Nom incorrect !",
-    "quantityPlaceholder": "Quantité",
-    "emptyQuantityInvalidFeed": "La quantité ne peut être vide!",
-    "errorQuantityInvalidFeed": "Quantité incorrect!",
+
+    "firstnamePlaceholder": "Prénom",
+    "emptyFirstnameInvalidFeed": "Le prénom ne peut être vide!",
+    "errorFirstnameInvalidFeed": "Prénom incorrect!",
+    "lastnamePlaceholder": "Nom",
+    "emptyLastnameInvalidFeed": "Le nom ne peut être vide!",
+    "errorLastnameInvalidFeed": "Nom incorrect!",
+    "cpPlaceholder": "Code Postal",
+    "emptyCPInvalidFeed": "Le code postal ne peut être vide!",
+    "errorCPInvalidFeed": "Code postal incorrect!",
+    "emailPlaceholder": "Email",
+    "emptyEmailInvalidFeed": "L'email' ne peut être vide!",
+    "errorEmailInvalidFeed": "Email incorrect!",
+    "streetNamePlaceholder": "Nom de rue",
+    "emptyStreetnameInvalidFeed": "Le nom de rue ne peut être vide!",
+    "errorStreetnameInvalidFeed": "Nom de rue incorrect!",
+    "streetNumberPlaceholder": "Numéro de rue",
+    "emptyStreetnumberInvalidFeed": "Le n° de rue ne peut être vide!",
+    "errorStreetnumberInvalidFeed": "N° de rue incorrect!",
+    "cityPlaceholder": "Ville",
+    "emptyCityInvalidFeed": "La ville ne peut être vide!",
+    "errorCityInvalidFeed": "Ville incorrect!",
+    "sellerNumPlaceholder": "N° Commerçant",
+    "emptySellernumInvalidFeed": "Le n° de commerçant ne peut être vide!",
+    "errorSellernumInvalidFeed": "N° de commerçant incorrect!",
+    "telPlaceholder": "Téléphone",
+    "emptyTelInvalidFeed": "Le n° de téléphone ne peut être vide!",
+    "errorTelInvalidFeed": "N° de téléphone incorrect!",
+
     "validFeed": "Validé!",
     "modalCloseBtnText": "Fermer",
     "modalTitleOk": "Cool !",
-    "modalAddContentOk": "Service ajouté avec succès !",
-    "modalUpdateContentOk": "Service mis à jour avec succès !",
-    "modalDeleteContentOk": "Service supprimé avec succès !",
+    "modalAddContentOk": "Acteur ajouté avec succès !",
+    "modalUpdateContentOk": "Acteur mis à jour avec succès !",
+    "modalDeleteContentOk": "Acteur supprimé avec succès !",
     "modalTitleKo": "Oups !",
-    "modalAddContentKo": "Une erreur est survenue lors de l'ajout du service : {err}!",
-    "modalUpdateContentKo": "Une erreur est survenue lors de la modification du service : {err}!",
-    "modalDeleteContentKo": "Une erreur est survenue lors de la suppression du service : {err}!",
-    "nameInputLabel": "Nom",
-    "amountInputLabel": "Montant",
-    "quantityInputLabel": "Quantité",
-    "servicesLinkTarget": "/services"
+    "modalAddContentKo": "Une erreur est survenue lors de l'ajout de l'acteur : {err}!",
+    "modalUpdateContentKo": "Une erreur est survenue lors de la modification de l'acteur : {err}!",
+    "modalDeleteContentKo": "Une erreur est survenue lors de la suppression de l'acteur : {err}!",
+
+    "firstnameInputLabel": "Prénom",
+    "lastnameInputLabel": "Nom",
+    "cpInputLabel": "Code Postal",
+    "emailInputLabel": "Email",
+    "streetNameInputLabel": "Nom de rue",
+    "streetNumberInputLabel": "Numéro de rue",
+    "cityInputLabel": "Ville",
+    "sellerNumInputLabel": "N° Commerçant",
+    "telInputLabel": "Téléphone",
+    "typeInputLabel": "Type",
+
+    "actorsLinkTarget": "/acteurs"
   },
   "en": {
-    "nameTableHeadText": "Name",
-    "amountTableHeadText": "Unit amount excl. taxes",
-    "quantityTableHeadText": "Quantity",
+    "firstnameTableHeadText": "Firstname",
+    "lastnameTableHeadText": "Lastname",
+    "cpTableHeadText": "Postal code",
+    "emailTableHeadText": "Email",
+    "streetNameTableHeadText": "Street name",
+    "streetNumberTableHeadText": "Street number",
+    "cityTableHeadText": "City",
+    "sellerNumTableHeadText": "Seller ID Number",
+    "telTableHeadText": "Phone",
+    "typeTableHeadText": "Type",
     "emptyTableBodyContentText": "No Service.",
     "addButtonText": "Add",
     "updateButtonText": "Update",
     "deleteButtonText": "Delete",
     "actionTableHeadText": "Actions",
-    "amountPlaceholder": "Amount",
-    "emptyAmountInvalidFeed": "Amount can't be empty!",
-    "errorAmountInvalidFeed": "Bad amount supplied!",
-    "namePlaceholder": "Name",
-    "emptyNameInvalidFeed": "Service name can't be empty!",
-    "errorNameInvalidFeed": "Bad service name supplied!",
-    "quantityPlaceholder": "Quantity",
-    "emptyQuantityInvalidFeed": "Quantity can't be empty!",
-    "errorQuantityInvalidFeed": "Bad quantity supplied!",
+
+    "firstnamePlaceholder": "Firstname",
+    "emptyFirstnameInvalidFeed": "Firstname can't be empty!",
+    "errorFirstnameInvalidFeed": "Bad firstname supplied!",
+    "lastnamePlaceholder": "Lastname",
+    "emptyLastnameInvalidFeed": "Lastname can't be empty!",
+    "errorLastnameInvalidFeed": "Bad lastname supplied!",
+    "cpPlaceholder": "Postal code",
+    "emptyCPInvalidFeed": "Postal code can't be empty!",
+    "errorCPInvalidFeed": "Bad postal code supplied!",
+    "emailPlaceholder": "Email",
+    "emptyEmailInvalidFeed": "Email can't be empty!",
+    "errorEmailInvalidFeed": "Bad email supplied!",
+    "streetNamePlaceholder": "Street name",
+    "emptyStreetnameInvalidFeed": "Street name can't be empty!",
+    "errorStreetnameInvalidFeed": "Bad street name supplied!",
+    "streetNumberPlaceholder": "Street number",
+    "emptyStreetnumberInvalidFeed": "Street number can't be empty!",
+    "errorStreetnumberInvalidFeed": "Bad street number supplied!",
+    "cityPlaceholder": "City",
+    "emptyCityInvalidFeed": "City can't be empty!",
+    "errorCityInvalidFeed": "Bad city supplied!",
+    "sellerNumPlaceholder": "Seller name",
+    "emptySellernumInvalidFeed": "Seller name can't be empty!",
+    "errorSellernumInvalidFeed": "Bad seller name supplied!",
+    "telPlaceholder": "Phone number",
+    "emptyTelInvalidFeed": "Phone number can't be empty!",
+    "errorTelInvalidFeed": "Bad phone number supplied!",
+
     "validFeed": "Ok!",
     "modalCloseBtnText": "Close",
     "modalTitleOk": "Great !",
-    "modalAddContentOk": "Service added successfully !",
-    "modalUpdateContentOk": "Service updated successfully !",
-    "modalDeleteContentOk": "Service deleted successfully !",
+    "modalAddContentOk": "Actor added successfully !",
+    "modalUpdateContentOk": "Actor updated successfully !",
+    "modalDeleteContentOk": "Actor deleted successfully !",
     "modalTitleKo": "Error !",
-    "modalAddContentKo": "An error occured while adding service : {err} !",
-    "modalUpdateContentKo": "An error occured while updating service : {err} !",
-    "modalDeleteContentKo": "An error occured while deleting service : {err} !",
-    "nameInputLabel": "Name",
-    "amountInputLabel": "Amount",
-    "quantityInputLabel": "Quantity",
-    "servicesLinkTarget": "/services"
+    "modalAddContentKo": "An error occured while adding actor : {err} !",
+    "modalUpdateContentKo": "An error occured while updating actor : {err} !",
+    "modalDeleteContentKo": "An error occured while deleting actor : {err} !",
+
+    "firstnameInputLabel": "Firstname",
+    "lastnameInputLabel": "Lastname",
+    "cpInputLabel": "Postal code",
+    "emailInputLabel": "Email",
+    "streetNameInputLabel": "Street name",
+    "streetNumberInputLabel": "Street number",
+    "cityInputLabel": "City",
+    "sellerNumInputLabel": "Seller ID Number",
+    "telInputLabel": "Phone",
+    "typeInputLabel": "Type",
+
+    "servicesLinkTarget": "/actors"
   }
 }
 </i18n>
@@ -548,7 +636,7 @@ export default defineComponent({
       :tableHead="tableHeading"
       :emptyTableText="$t('emptyTableBodyContentText')"
       addActionName="addClick"
-      ident="serviceId"
+      ident="actorId"
       @addClick="addClickFromChild"
       updateActionName="updateClick"
       @updateClick="updateClickFromChild"
@@ -562,7 +650,7 @@ export default defineComponent({
       v-if="renderComponent"
       :admin="admin"
       :display="display"
-      colSpan="4"
+      colSpan="11"
     >
       <template #actionAddButton>
         <button type="button" class="btn btn-primary btn-rounded btn-sm my-0">

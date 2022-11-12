@@ -69,7 +69,7 @@ export default defineComponent({
       this.forceServiceRerender();
     },
     handleDisplay(src: string) {
-      console.log(`Display ServiceView - ${src}`);
+      // console.log(`Display ServiceView - ${src}`);
       switch (src) {
         case "services":
           this.displayService = true;

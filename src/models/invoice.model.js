@@ -26,6 +26,13 @@ const model = (sequelize) => {
           key: "langueId",
         },
       },
+      deviseId: {
+        type: DataTypes.INTEGER,
+        reference: {
+          model: "devise",
+          key: "deviseId",
+        },
+      },
       tvaValue: {
         type: DataTypes.FLOAT,
         allowNull: false,

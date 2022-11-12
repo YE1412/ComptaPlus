@@ -1,29 +1,24 @@
 import { DataTypes } from "sequelize";
 
 const model = (sequelize) => {
-  const paymentType = sequelize.define(
-    "payment_type",
+  const userType = sequelize.define(
+    "user_type",
     {
-      paymentTypeId: {
+      userTypeId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      cb: {
+      regular: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        unique: "paymentTypeConstraint",
+        unique: "userTypeConstraint",
       },
-      esp: {
+      admin: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        unique: "paymentTypeConstraint",
-      },
-      chq: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        unique: "paymentTypeConstraint",
+        unique: "userTypeConstraint",
       },
     },
     {
@@ -33,7 +28,7 @@ const model = (sequelize) => {
       deletedAt: false,
     }
   );
-  return paymentType;
+  return userType;
 };
 
 export default model;

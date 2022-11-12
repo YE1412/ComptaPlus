@@ -13,14 +13,6 @@ const model = (sequelize) => {
       symbole: {
         type: DataTypes.CHAR(1),
       },
-      factureId: {
-        type: DataTypes.INTEGER,
-        reference: {
-          model: "facture",
-          key: "factureId",
-        },
-        allowNull: false,
-      },
     },
     {
       freezeTableName: true,

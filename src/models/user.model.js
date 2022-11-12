@@ -30,8 +30,14 @@ const model = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      type: {
+      userTypeId: {
         type: DataTypes.INTEGER,
+        references: {
+          model: "user_type",
+          key: "userTypeId",
+        },
+        defaultValue: null,
+        allowNull: true,
       },
     },
     {

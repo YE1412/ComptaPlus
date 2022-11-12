@@ -1,6 +1,8 @@
 import dbConfig from "../config/db.config.js";
 import { Sequelize } from "sequelize";
 import actor from "./actor.model.js";
+import actorActivity from "./actorActivity.model.js";
+import actorType from "./actorType.model.js";
 import contains from "./contains.model.js";
 import devise from "./devise.model.js";
 import invoice from "./invoice.model.js";
@@ -10,6 +12,7 @@ import payment from "./payment.model.js";
 import paymentType from "./paymentType.model.js";
 import service from "./service.model.js";
 import user from "./user.model.js";
+import userType from "./userType.model.js";
 
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   logging: console.log,
@@ -36,8 +39,33 @@ const orderModelObj = order(sequelize);
 const containsModelObj = contains(sequelize);
 const paymentModelObj = payment(sequelize);
 const paymentTypeModelObj = paymentType(sequelize);
+const actorActivityModelObj = actorActivity(sequelize);
+const actorTypeModelObj = actorType(sequelize);
+const userTypeModelObj = userType(sequelize);
 
 // ASSOCIATIONS
+userTypeModelObj.users = userTypeModelObj.hasMany(userModelObj, {
+  onDelete: "SET NULL",
+  onUpdate: "CASCADE",
+  foreignKey: "userTypeId",
+});
+userModelObj.type = userModelObj.belongsTo(userTypeModelObj, {
+  foreignKey: "userTypeId",
+});
+
+actorModelObj.types = actorModelObj.belongsToMany(actorTypeModelObj, {
+  through: "personne_activite",
+  foreignKey: "actorTypeId",
+  onUpdate: "CASCADE",
+  onDelete: "CASCADE",
+});
+actorTypeModelObj.actors = actorTypeModelObj.belongsToMany(actorModelObj, {
+  through: "personne_activite",
+  foreignKey: "actorId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+
 paymentTypeModelObj.payments = paymentTypeModelObj.hasMany(paymentModelObj, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
@@ -53,15 +81,6 @@ invoiceModelObj.payments = invoiceModelObj.hasMany(paymentModelObj, {
   foreignKey: "factureId",
 });
 paymentModelObj.invoice = paymentModelObj.belongsTo(invoiceModelObj, {
-  foreignKey: "factureId",
-});
-
-invoiceModelObj.devises = invoiceModelObj.hasMany(deviseModelObj, {
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-  foreignKey: "factureId",
-});
-deviseModelObj.invoice = deviseModelObj.belongsTo(invoiceModelObj, {
   foreignKey: "factureId",
 });
 
@@ -90,6 +109,15 @@ invoiceModelObj.orders = invoiceModelObj.hasMany(orderModelObj, {
 });
 orderModelObj.invoice = orderModelObj.belongsTo(invoiceModelObj, {
   foreignKey: "factureId",
+});
+
+deviseModelObj.invoices = deviseModelObj.hasMany(invoiceModelObj, {
+  onDelete: "SET NULL",
+  onUpdate: "CASCADE",
+  foreignKey: "deviseId",
+});
+invoiceModelObj.devise = invoiceModelObj.belongsTo(deviseModelObj, {
+  foreignKey: "deviseId",
 });
 
 orderModelObj.services = orderModelObj.belongsToMany(serviceModelObj, {
@@ -127,5 +155,8 @@ db.order = orderModelObj;
 db.contains = containsModelObj;
 db.paymentType = paymentTypeModelObj;
 db.payment = paymentModelObj;
+db.userType = userTypeModelObj;
+db.actorType = actorTypeModelObj;
+db.actorActivity = actorActivityModelObj;
 
 export default db;
