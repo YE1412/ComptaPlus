@@ -2,6 +2,7 @@
 /*global __CRYPTAPI__, __KEY__*/
 import { defineComponent, nextTick, ref } from "vue";
 import { useActorStore } from "@/stores/actor";
+import { useMessageStore } from "@/stores/message";
 import MessagesItem from "../components/MessagesItem.vue";
 import TableItem from "../components/TableItem.vue";
 import { MDBCol, MDBInput, MDBRow, MDBCheckbox } from "mdb-vue-ui-kit";
@@ -33,8 +34,9 @@ export default defineComponent({
   },
   async setup() {
     // console.log(`Setup`);
-    const store = useActorStore();
-    const types = await store
+    const actorStore = useActorStore();
+    const messageStore = useMessageStore();
+    const types = await actorStore
       .getAllTypes()
       .then(
         (res) => {
@@ -49,7 +51,7 @@ export default defineComponent({
         console.log(err);
         return [];
       });
-    return { store, types };
+    return { actorStore, messageStore, types };
   },
   beforeCreate() {
     // console.log(`Before Create`);
@@ -86,6 +88,8 @@ export default defineComponent({
         placeholder: this.$i18n.t("firstnamePlaceholder"),
         size: "12",
         disabled: false,
+        counter: true,
+        maxLength: 255,
       },
       nom: {
         value: "",
@@ -99,6 +103,8 @@ export default defineComponent({
         placeholder: this.$i18n.t("lastnamePlaceholder"),
         size: "12",
         disabled: false,
+        counter: true,
+        maxLength: 255,
       },
       email: {
         value: "",
@@ -112,6 +118,8 @@ export default defineComponent({
         placeholder: this.$i18n.t("emailPlaceholder"),
         size: "12",
         disabled: false,
+        counter: true,
+        maxLength: 255,
       },
       nomRue: {
         value: "",
@@ -125,6 +133,8 @@ export default defineComponent({
         placeholder: this.$i18n.t("streetNamePlaceholder"),
         size: "12",
         disabled: false,
+        counter: true,
+        maxLength: 255,
       },
       numRue: {
         value: 0,
@@ -151,6 +161,8 @@ export default defineComponent({
         placeholder: this.$i18n.t("cityPlaceholder"),
         size: "12",
         disabled: false,
+        counter: true,
+        maxLength: 255,
       },
       cp: {
         value: "",
@@ -164,6 +176,8 @@ export default defineComponent({
         placeholder: this.$i18n.t("cpPlaceholder"),
         size: "12",
         disabled: false,
+        counter: true,
+        maxLength: 10,
       },
       tel: {
         value: "",
@@ -177,6 +191,8 @@ export default defineComponent({
         placeholder: this.$i18n.t("telPlaceholder"),
         size: "12",
         disabled: false,
+        counter: true,
+        maxLength: 10,
       },
       numCommercant: {
         value: "",
@@ -190,19 +206,12 @@ export default defineComponent({
         placeholder: this.$i18n.t("sellerNumberPlaceholder"),
         size: "12",
         disabled: false,
+        counter: true,
+        maxLength: 255,
       },
-      types: {
-        model: false,
-        type: "",
-        label: "",
+      typeObj: {
+        value: "",
         name: "addFormCheckbox",
-        invalidFeed: "",
-        validFeed: "",
-        isValid: false,
-        required: true,
-        placeholder: false,
-        size: "12",
-        disabled: false,
       },
     };
     return {
@@ -223,10 +232,10 @@ export default defineComponent({
       cp: "",
       tel: "",
       numCommercant: null,
-      type: {},
+      type: 0,
       seller: false,
       buyer: false,
-      both: false,
+      // both: false,
       // For update
       updateInputObject: {},
       updateInputObjectId: 0,
@@ -252,26 +261,28 @@ export default defineComponent({
           !this.types[key].seller && this.types[key].buyer
             ? this.$i18n.t("typeInputBuyerLabel")
             : label;
-        label =
-          this.types[key].seller && this.types[key].buyer
-            ? this.$i18n.t("typeInputAllLabel")
-            : label;
+        // label =
+        //   this.types[key].seller && this.types[key].buyer
+        //     ? this.$i18n.t("typeInputAllLabel")
+        //     : label;
         model =
           this.types[key].seller && !this.types[key].buyer ? "seller" : model;
         model =
           !this.types[key].seller && this.types[key].buyer ? "buyer" : model;
-        model =
-          this.types[key].seller && this.types[key].buyer ? "both" : model;
-        ret[key] = {};
-        ret[key].label = label;
-        ret[key].id = `type-${this.types[key].actorTypeId}`;
-        ret[key].model = model;
-        ret[key].ariaLabel = `actorType-${model}`;
-        ret[key].required = true;
-        ret[key].isValid = false;
-        ret[key].validFeedback = "";
-        ret[key].invalidFeedback = "";
-        ret[key].btnCheck = false;
+        // model =
+        //   this.types[key].seller && this.types[key].buyer ? "both" : model;
+        if (!this.types[key].seller || !this.types[key].buyer) {
+          ret[key] = {};
+          ret[key].label = label;
+          ret[key].id = `type-${this.types[key].actorTypeId}`;
+          ret[key].model = model;
+          ret[key].ariaLabel = `actorType-${model}`;
+          ret[key].required = true;
+          ret[key].isValid = false;
+          ret[key].validFeedback = "";
+          ret[key].invalidFeedback = "";
+          ret[key].btnCheck = false;
+        }
       }
       return ret;
     },
@@ -309,7 +320,7 @@ export default defineComponent({
             this.form = false;
             this.update = false;
             this.add = true;
-            this.store
+            this.actorStore
               .getAllActors()
               .then(
                 () => {
@@ -331,47 +342,152 @@ export default defineComponent({
         this.form = true;
         this.update = true;
         this.add = false;
-        // this.actorId = id;
-        // this.nom = obj.nom;
-        // this.montantHt = obj.montantHt;
-        // this.quantite = obj.quantite;
+        this.actorId = id;
+        this.prenom = obj.prenom;
+        this.nom = obj.nom;
+        this.email = obj.email;
+        this.nomRue = obj.nomRue;
+        this.numRue = obj.numRue;
+        this.ville = obj.ville;
+        this.cp = obj.cp;
+        this.tel = obj.tel;
+        this.numCommercant = obj.numCommercant;
+        this.type = obj.personne_type.actorTypeId;
+        this.seller = obj.personne_type.seller;
+        this.buyer = obj.personne_type.buyer;
         // console.log(obj);
-        // const updateInputObj = {
-        //   nom: {
-        //     value: obj["nom"],
-        //     type: "",
-        //     label: this.$i18n.t("nameInputLabel"),
-        //     name: "addFormTextArea",
-        //     invalidFeed: "",
-        //     validFeed: this.$i18n.t("validFeed"),
-        //     isValid: true,
-        //     required: true,
-        //     placeholder: this.$i18n.t("namePlaceholder"),
-        //   },
-        //   montantHt: {
-        //     value: obj["montantHt"],
-        //     type: "number",
-        //     label: this.$i18n.t("amountInputLabel"),
-        //     name: "addFormInput",
-        //     invalidFeed: "",
-        //     validFeed: this.$i18n.t("validFeed"),
-        //     isValid: true,
-        //     required: true,
-        //     placeholder: this.$i18n.t("amountPlaceholder"),
-        //   },
-        //   quantite: {
-        //     value: obj["quantite"],
-        //     type: "number",
-        //     label: this.$i18n.t("quantityInputLabel"),
-        //     name: "addFormInput",
-        //     invalidFeed: "",
-        //     validFeed: this.$i18n.t("validFeed"),
-        //     isValid: true,
-        //     required: true,
-        //     placeholder: this.$i18n.t("quantityPlaceholder"),
-        //   },
-        // };
-        // this.updateInputObject = updateInputObj;
+        const updateInputObj = {
+          prenom: {
+            value: obj["prenom"],
+            type: "text",
+            label: this.$i18n.t("firstnameInputLabel"),
+            name: "addFormInput",
+            invalidFeed: "",
+            validFeed: this.$i18n.t("validFeed"),
+            isValid: true,
+            required: true,
+            placeholder: this.$i18n.t("firstnamePlaceholder"),
+            size: "12",
+            counter: true,
+            maxLength: 255,
+          },
+          nom: {
+            value: obj["nom"],
+            type: "text",
+            label: this.$i18n.t("lastnameInputLabel"),
+            name: "addFormInput",
+            invalidFeed: "",
+            validFeed: this.$i18n.t("validFeed"),
+            isValid: true,
+            required: true,
+            placeholder: this.$i18n.t("lastnamePlaceholder"),
+            size: "12",
+            counter: true,
+            maxLength: 255,
+          },
+          email: {
+            value: obj["email"],
+            type: "email",
+            label: this.$i18n.t("emailInputLabel"),
+            name: "addFormInput",
+            invalidFeed: "",
+            validFeed: this.$i18n.t("validFeed"),
+            isValid: true,
+            required: true,
+            placeholder: this.$i18n.t("emailPlaceholder"),
+            size: "12",
+            counter: true,
+            maxLength: 255,
+          },
+          nomRue: {
+            value: obj["nomRue"],
+            type: "text",
+            label: this.$i18n.t("streetNameInputLabel"),
+            name: "addFormInput",
+            invalidFeed: "",
+            validFeed: this.$i18n.t("validFeed"),
+            isValid: true,
+            required: true,
+            placeholder: this.$i18n.t("streetNamePlaceholder"),
+            size: "12",
+            counter: true,
+            maxLength: 255,
+          },
+          numRue: {
+            value: obj["numRue"],
+            type: "number",
+            label: this.$i18n.t("streetNumberInputLabel"),
+            name: "addFormInput",
+            invalidFeed: "",
+            validFeed: this.$i18n.t("validFeed"),
+            isValid: true,
+            required: true,
+            placeholder: this.$i18n.t("streetNumberPlaceholder"),
+            size: "12",
+            counter: false,
+          },
+          ville: {
+            value: obj["ville"],
+            type: "text",
+            label: this.$i18n.t("cityInputLabel"),
+            name: "addFormInput",
+            invalidFeed: "",
+            validFeed: this.$i18n.t("validFeed"),
+            isValid: true,
+            required: true,
+            placeholder: this.$i18n.t("cityPlaceholder"),
+            size: "12",
+            counter: true,
+            maxLength: 255,
+          },
+          cp: {
+            value: obj["cp"],
+            type: "text",
+            label: this.$i18n.t("cpInputLabel"),
+            name: "addFormInput",
+            invalidFeed: "",
+            validFeed: this.$i18n.t("validFeed"),
+            isValid: true,
+            required: true,
+            placeholder: this.$i18n.t("cpPlaceholder"),
+            size: "12",
+            counter: true,
+            maxLength: 10,
+          },
+          tel: {
+            value: obj["tel"],
+            type: "text",
+            label: this.$i18n.t("telInputLabel"),
+            name: "addFormInput",
+            invalidFeed: "",
+            validFeed: this.$i18n.t("validFeed"),
+            isValid: true,
+            required: true,
+            placeholder: this.$i18n.t("telPlaceholder"),
+            size: "12",
+            counter: true,
+            maxLength: 10,
+          },
+          numCommercant: {
+            value: obj["numCommercant"] !== null ? obj["numCommercant"] : "",
+            type: "text",
+            label: this.$i18n.t("sellerNumberInputLabel"),
+            name: "addFormInput",
+            invalidFeed: "",
+            validFeed: this.$i18n.t("validFeed"),
+            isValid: true,
+            required: true,
+            placeholder: this.$i18n.t("sellerNumberPlaceholder"),
+            size: "12",
+            counter: true,
+            maxLength: 10,
+          },
+          typeObj: {
+            value: "",
+            name: "addFormCheckbox",
+          },
+        };
+        this.updateInputObject = updateInputObj;
         this.updateInputObjectId = id;
       } else {
         // click to register the new update
@@ -381,13 +497,15 @@ export default defineComponent({
 
         if (!this.errors.length) {
           // console.log("perfect !");
-          const ret = await this.updateService();
+          const ret = await this.updateActor();
           if (ret) {
             this.form = false;
             this.update = false;
             this.add = true;
-            this.store
-              .getAllServices()
+            console.log(this.messageStore.getMessages);
+            console.log(this.messageStore.getMessagesVisibility);
+            this.actorStore
+              .getAllActors()
               .then(
                 () => {
                   this.forceTableRerender();
@@ -405,13 +523,13 @@ export default defineComponent({
     async deleteClickFromChild(id: number) {
       // click to delete a actor
       this.actorId = id;
-      const ret = await this.deleteService();
+      const ret = await this.deleteActor();
       if (ret) {
         this.form = false;
         this.update = false;
         this.add = true;
-        this.store
-          .getAllServices()
+        this.actorStore
+          .getAllActors()
           .then(
             () => {
               this.forceTableRerender();
@@ -526,12 +644,12 @@ export default defineComponent({
           this.modalContent = this.$i18n.t("modalAddContentOk");
           this.actorModal = false;
           // MESSAGES
-          this.store.messages.push({
+          this.messageStore.messages.push({
             severity: false,
             content: this.$i18n.t("modalAddContentOk"),
           });
           this.messageVisibility = true;
-          this.store.messagesVisibility = true;
+          this.messageStore.messagesVisibility = true;
           return true;
         })
         .catch((err) => {
@@ -542,14 +660,14 @@ export default defineComponent({
           });
           this.actorModal = false;
           // MESSAGES
-          this.store.messages.push({
+          this.messageStore.messages.push({
             severity: true,
             content: this.$i18n.t("modalAddContentKo", {
               err: err.response.data.message || err.message,
             }),
           });
           this.messageVisibility = true;
-          this.store.messagesVisibility = true;
+          this.messageStore.messagesVisibility = true;
           return false;
         });
     },
@@ -564,7 +682,7 @@ export default defineComponent({
         cp: this.cp,
         tel: this.tel,
         numCommercant: this.numCommercant,
-        personne_type: this.type,
+        actorTypeId: this.type,
       };
       this.transformObject(obj);
       return actorAxiosService
@@ -575,12 +693,12 @@ export default defineComponent({
           this.modalContent = this.$i18n.t("modalUpdateContentOk");
           this.actorModal = false;
           // MESSAGES
-          this.store.messages.push({
+          this.messageStore.messages.push({
             severity: false,
             content: this.$i18n.t("modalUpdateContentOk"),
           });
           this.messageVisibility = true;
-          this.store.messagesVisibility = true;
+          this.messageStore.messagesVisibility = true;
           return true;
         })
         .catch((err) => {
@@ -591,12 +709,12 @@ export default defineComponent({
           });
           this.actorModal = false;
           // MESSAGES
-          this.store.messages.push({
+          this.messageStore.messages.push({
             severity: true,
             content: this.$i18n.t("modalUpdateContentKo"),
           });
           this.messageVisibility = true;
-          this.store.messagesVisibility = true;
+          this.messageStore.messagesVisibility = true;
           return false;
         });
     },
@@ -609,12 +727,12 @@ export default defineComponent({
           this.modalContent = this.$i18n.t("modalDeleteContentOk");
           this.actorModal = false;
           // MESSAGES
-          this.store.messages.push({
+          this.messageStore.messages.push({
             severity: false,
             content: this.$i18n.t("modalDeleteContentOk"),
           });
           this.messageVisibility = true;
-          this.store.messagesVisibility = true;
+          this.messageStore.messagesVisibility = true;
           return true;
         })
         .catch((err) => {
@@ -625,21 +743,21 @@ export default defineComponent({
           });
           this.actorModal = false;
           // MESSAGES
-          this.store.messages.push({
+          this.messageStore.messages.push({
             severity: true,
             content: this.$i18n.t("modalDeleteContentKo"),
           });
           this.messageVisibility = true;
-          this.store.messagesVisibility = true;
+          this.messageStore.messagesVisibility = true;
           return false;
         });
     },
     inputsCheck(obj: any) {
       if (!this.seller && !this.buyer && !this.both) {
         this.errors.push(this.$i18n.t("emptyTypeInvalidFeed"));
-        obj["types"].isValid = false;
-        obj["types"].invalidFeed = this.$i18n.t("emptyTypeInvalidFeed");
-      } else if (this.both || this.seller) {
+        obj["typeObj"].isValid = false;
+        obj["typeObj"].invalidFeed = this.$i18n.t("emptyTypeInvalidFeed");
+      } else if (this.seller) {
         if (!this.numCommercant) {
           this.errors.push(this.$i18n.t("emptySellerNumberInvalidFeed"));
           obj["numCommercant"].isValid = false;
@@ -653,20 +771,20 @@ export default defineComponent({
             "errorSellerNumberInvalidFeed"
           );
         } else {
-          if (this.seller) this.type = 2;
-          else this.type = 1;
-          obj["types"].isValid = true;
-          obj["types"].validFeed = this.$i18n.t("validFeed");
+          if (this.buyer) this.type = 1;
+          else this.type = 2;
+          obj["typeObj"].isValid = true;
+          obj["typeObj"].validFeed = this.$i18n.t("validFeed");
           obj["numCommercant"].isValid = true;
           obj["numCommercant"].validFeed = this.$i18n.t("validFeed");
         }
-        obj["types"].invalidFeed = "";
+        obj["typeObj"].invalidFeed = "";
       } else {
         this.type = 3;
         this.numCommercant = null;
-        obj["types"].isValid = true;
-        obj["types"].validFeed = this.$i18n.t("validFeed");
-        obj["types"].invalidFeed = "";
+        obj["typeObj"].isValid = true;
+        obj["typeObj"].validFeed = this.$i18n.t("validFeed");
+        obj["typeObj"].invalidFeed = "";
         obj["numCommercant"].isValid = true;
         obj["numCommercant"].validFeed = this.$i18n.t("validFeed");
       }
@@ -881,7 +999,6 @@ export default defineComponent({
     "telInputLabel": "Téléphone",
     "typeInputSellerLabel": "Vendeur",
     "typeInputBuyerLabel": "Acheteur",
-    "typeInputAllLabel": "Les deux",
 
     "actorsLinkTarget": "/acteurs"
   },
@@ -955,7 +1072,6 @@ export default defineComponent({
     "telInputLabel": "Phone",
     "typeInputSellerLabel": "Seller",
     "typeInputBuyerLabel": "Buyer",
-    "typeInputAllLabel": "Both",
 
     "servicesLinkTarget": "/actors"
   }
@@ -963,7 +1079,7 @@ export default defineComponent({
 </i18n>
 
 <template>
-  <MessagesItem v-if="store.getMessagesVisibility"></MessagesItem>
+  <MessagesItem v-if="messageStore.getMessagesVisibility"></MessagesItem>
   <div class="container">
     <TableItem
       :isForm="form"
@@ -1016,6 +1132,8 @@ export default defineComponent({
           placeholder,
           type,
           disabled,
+          counter,
+          maxlength,
         }"
       >
         <MDBRow class="g-2 d-flex justify-content-center">
@@ -1035,6 +1153,8 @@ export default defineComponent({
               :type="type"
               :disabled="disabled"
               @input="inputChanges($event)"
+              :counter="counter"
+              :maxlength="maxlength"
             >
               <!-- <slot name="input-prepend"></slot> -->
               <!-- <template v-if="inputGroup" v-slot:prepend>

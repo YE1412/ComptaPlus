@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useServiceStore } from "@/stores/service";
+import { useMessageStore } from "@/stores/message";
 
 export default defineComponent({
   name: "MessagesItem",
@@ -11,7 +11,7 @@ export default defineComponent({
     },
   },
   setup() {
-    const store = useServiceStore();
+    const store = useMessageStore();
     return { store };
   },
   // data() {

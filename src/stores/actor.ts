@@ -2,7 +2,6 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import actorAxiosService from "../services/actor.service";
 import { decryptMod } from "../WasmModules";
-import { useStorage } from "@vueuse/core";
 
 let __DECRYPTAPI__: any;
 
@@ -44,18 +43,13 @@ const useActorStore = defineStore("actor", {
   state: () => ({
     actors: [],
     types: [],
-    messages: useStorage("messages", []),
-    messagesVisibility: useStorage("messagesVisibility", false),
   }),
   getters: {
-    getActorss(state) {
+    getActors(state) {
       return state.actors;
     },
-    getMessages(state) {
-      return state.messages;
-    },
-    getMessagesVisibility(state) {
-      return state.messagesVisibility;
+    getTypes(state) {
+      return state.types;
     },
   },
   actions: {
@@ -137,10 +131,6 @@ const useActorStore = defineStore("actor", {
             reject(new Error(err));
           });
       });
-    },
-    deleteMessages() {
-      this.messages = [];
-      this.messagesVisibility = false;
     },
   },
 });

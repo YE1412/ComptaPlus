@@ -2,6 +2,7 @@
 /*global __CRYPTAPI__, __KEY__*/
 import { defineComponent, nextTick, ref } from "vue";
 import { useServiceStore } from "@/stores/service";
+import { useMessageStore } from "@/stores/message";
 import MessagesItem from "../components/MessagesItem.vue";
 import TableItem from "../components/TableItem.vue";
 import { MDBCol, MDBInput, MDBRow, MDBTextarea } from "mdb-vue-ui-kit";
@@ -29,19 +30,20 @@ export default defineComponent({
     },
   },
   provide() {
-    return { src: "actors" };
+    return { src: "services" };
   },
   async setup() {
     // console.log(`Setup`);
-    const store = useServiceStore();
+    const serviceStore = useServiceStore();
+    const messageStore = useMessageStore();
 
-    return { store };
+    return { serviceStore, messageStore };
   },
   beforeCreate() {
     // console.log(`Before Create`);
-    // console.log(this.store.getServices);
+    // console.log(this.serviceStore.getServices);
     // return { // For display
-    //   services: this.store.getServices
+    //   services: this.serviceStore.getServices
     // }
   },
   created() {
@@ -132,7 +134,7 @@ export default defineComponent({
   },
   methods: {
     // getAllServices() {
-    //   this.store.getAllServices();
+    //   this.serviceStore.getAllServices();
     // },
     async addClickFromChild(db: boolean) {
       if (!db) {
@@ -152,7 +154,7 @@ export default defineComponent({
             this.form = false;
             this.update = false;
             this.add = true;
-            this.store
+            this.serviceStore
               .getAllServices()
               .then(
                 () => {
@@ -235,7 +237,7 @@ export default defineComponent({
             this.form = false;
             this.update = false;
             this.add = true;
-            this.store
+            this.serviceStore
               .getAllServices()
               .then(
                 () => {
@@ -259,7 +261,7 @@ export default defineComponent({
         this.form = false;
         this.update = false;
         this.add = true;
-        this.store
+        this.serviceStore
           .getAllServices()
           .then(
             () => {
@@ -326,12 +328,12 @@ export default defineComponent({
           this.modalContent = this.$i18n.t("modalAddContentOk");
           this.serviceModal = false;
           // MESSAGES
-          this.store.messages.push({
+          this.messageStore.messages.push({
             severity: false,
             content: this.$i18n.t("modalAddContentOk"),
           });
           this.messageVisibility = true;
-          this.store.messagesVisibility = true;
+          this.messageStore.messagesVisibility = true;
           return true;
         })
         .catch((err) => {
@@ -342,14 +344,14 @@ export default defineComponent({
           });
           this.serviceModal = false;
           // MESSAGES
-          this.store.messages.push({
+          this.messageStore.messages.push({
             severity: true,
             content: this.$i18n.t("modalAddContentKo", {
               err: err.response.data.message || err.message,
             }),
           });
           this.messageVisibility = true;
-          this.store.messagesVisibility = true;
+          this.messageStore.messagesVisibility = true;
           return false;
         });
     },
@@ -368,12 +370,12 @@ export default defineComponent({
           this.modalContent = this.$i18n.t("modalUpdateContentOk");
           this.serviceModal = false;
           // MESSAGES
-          this.store.messages.push({
+          this.messageStore.messages.push({
             severity: false,
             content: this.$i18n.t("modalUpdateContentOk"),
           });
           this.messageVisibility = true;
-          this.store.messagesVisibility = true;
+          this.messageStore.messagesVisibility = true;
           return true;
         })
         .catch((err) => {
@@ -384,12 +386,12 @@ export default defineComponent({
           });
           this.serviceModal = false;
           // MESSAGES
-          this.store.messages.push({
+          this.messageStore.messages.push({
             severity: true,
             content: this.$i18n.t("modalUpdateContentKo"),
           });
           this.messageVisibility = true;
-          this.store.messagesVisibility = true;
+          this.messageStore.messagesVisibility = true;
           return false;
         });
     },
@@ -402,12 +404,12 @@ export default defineComponent({
           this.modalContent = this.$i18n.t("modalDeleteContentOk");
           this.serviceModal = false;
           // MESSAGES
-          this.store.messages.push({
+          this.messageStore.messages.push({
             severity: false,
             content: this.$i18n.t("modalDeleteContentOk"),
           });
           this.messageVisibility = true;
-          this.store.messagesVisibility = true;
+          this.messageStore.messagesVisibility = true;
           return true;
         })
         .catch((err) => {
@@ -418,12 +420,12 @@ export default defineComponent({
           });
           this.serviceModal = false;
           // MESSAGES
-          this.store.messages.push({
+          this.messageStore.messages.push({
             severity: true,
             content: this.$i18n.t("modalDeleteContentKo"),
           });
           this.messageVisibility = true;
-          this.store.messagesVisibility = true;
+          this.messageStore.messagesVisibility = true;
           return false;
         });
     },
@@ -556,7 +558,7 @@ export default defineComponent({
 </i18n>
 
 <template>
-  <MessagesItem v-if="store.getMessagesVisibility"></MessagesItem>
+  <MessagesItem v-if="messageStore.getMessagesVisibility"></MessagesItem>
   <div class="container">
     <TableItem
       :isForm="form"

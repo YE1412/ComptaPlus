@@ -77,7 +77,7 @@ const update = (req, res) => {
       },
     })
     .then((result) => {
-      if (result === 1) {
+      if (result[0] === 1) {
         res.send({
           message: "Service was updated successfully !",
         });

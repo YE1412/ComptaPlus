@@ -46,9 +46,10 @@ const findAll = (req, res) => {
         "cp",
         "tel",
         "numCommercant",
-        "actorTypeId",
+        "personne_type.actorTypeId",
       ],
       where: {},
+      include: type,
     })
     .then((data) => {
       res.send(data);
@@ -109,23 +110,14 @@ const update = (req, res) => {
   const params = req.params;
 
   actor
-    .update(
-      req.body,
-      {
-        where: {
-          actorId: params.id,
-        },
+    .update(req.body, {
+      where: {
+        actorId: params.id,
       },
-      {
-        include: [
-          {
-            association: actor.type,
-          },
-        ],
-      }
-    )
+    })
     .then((result) => {
-      if (result === 1) {
+      // console.log(result);
+      if (result[0] === 1) {
         res.send({
           message: "Actor was updated successfully !",
         });

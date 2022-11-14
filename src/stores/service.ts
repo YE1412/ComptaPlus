@@ -2,7 +2,6 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import serviceAxiosService from "../services/service.service";
 import { genMod, cryptMod, decryptMod } from "../WasmModules";
-import { useStorage } from "@vueuse/core";
 
 let __DECRYPTAPI__: any;
 
@@ -43,18 +42,10 @@ function transformValue(val: string) {
 const useServiceStore = defineStore("service", {
   state: () => ({
     services: [],
-    messages: useStorage("messages", []),
-    messagesVisibility: useStorage("messagesVisibility", false),
   }),
   getters: {
     getServices(state) {
       return state.services;
-    },
-    getMessages(state) {
-      return state.messages;
-    },
-    getMessagesVisibility(state) {
-      return state.messagesVisibility;
     },
   },
   actions: {
@@ -98,10 +89,6 @@ const useServiceStore = defineStore("service", {
             reject(new Error(err));
           });
       });
-    },
-    deleteMessages() {
-      this.messages = [];
-      this.messagesVisibility = false;
     },
   },
 });

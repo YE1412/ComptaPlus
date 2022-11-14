@@ -125,6 +125,31 @@ export default defineComponent({
       }
       return this.tableHead;
     },
+    tableActorsTypeLibelle() {
+      let ret = [];
+      if (this.src === "actors") {
+        for (const k in this.contents) {
+          for (const l in this.contents[k]) {
+            if (l === "personne_type") {
+              let libelle =
+                this.contents[k][l].seller && this.contents[k][l].buyer
+                  ? this.$i18n.t("actorTypeBothLibelle")
+                  : "";
+              libelle =
+                this.contents[k][l].seller && !this.contents[k][l].buyer
+                  ? this.$i18n.t("actorTypeSellerLibelle")
+                  : libelle;
+              libelle =
+                !this.contents[k][l].seller && this.contents[k][l].buyer
+                  ? this.$i18n.t("actorTypeBuyerLibelle")
+                  : libelle;
+              ret[k] = libelle;
+            }
+          }
+        }
+      }
+      return ret;
+    },
   },
   mounted() {
     this.hydrateAll();
@@ -238,17 +263,28 @@ export default defineComponent({
 });
 </script>
 
+<i18n>
+{
+  "fr": {
+    "actorTypeBothLibelle": "Acheteur, Vendeur",
+    "actorTypeSellerLibelle": "Vendeur",
+    "actorTypeBuyerLibelle": "Acheteur"
+  },
+  "en": {
+    "actorTypeBothLibelle": "Buyer, Seller",
+    "actorTypeSellerLibelle": "Seller",
+    "actorTypeBuyerLibelle": "Buyer"    
+  }
+}
+</i18n>
+
 <template>
   <div class="table-responsive">
     <table class="table">
       <thead class="mdb-color darken-3">
         <tr class="text-black text-center" v-if="admin">
           <th>#</th>
-          <th
-            v-for="(head, ind) in tableHead"
-            v-bind:key="ind"
-            class="col-md-10"
-          >
+          <th v-for="(head, ind) in tableHead" v-bind:key="ind">
             {{ head }}
           </th>
         </tr>
@@ -284,7 +320,7 @@ export default defineComponent({
             v-bind:key="key"
             style="vertical-align: middle"
           >
-            {{ val }}
+            {{ key === "personne_type" ? tableActorsTypeLibelle[index] : val }}
           </td>
           <td style="vertical-align: middle" v-if="admin">
             <div class="" role="group">
@@ -340,6 +376,8 @@ export default defineComponent({
               :placeholder="val.placeholder"
               :type="val.type"
               :disabled="val.disabled"
+              :counter="val.counter"
+              :maxlength="val.maxLength"
             ></slot>
           </td>
           <td class="text-center" style="vertical-align: middle">
@@ -376,6 +414,8 @@ export default defineComponent({
               :placeholder="obj.placeholder"
               :type="obj.type"
               :disabled="obj.disabled"
+              :counter="obj.counter"
+              :maxlength="obj.maxLength"
             ></slot>
           </td>
           <td
