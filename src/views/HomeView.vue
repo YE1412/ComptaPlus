@@ -5,6 +5,7 @@ import TheToolbarIn from "../components/TheToolbarIn.vue";
 import Sidenav from "../components/Sidenav.vue";
 import { useUserStore } from "@/stores/user";
 import { useSessionStore } from "@/stores/session";
+import { useCounterStore } from "@/stores/counter";
 import { RouterLink } from "vue-router";
 
 export default defineComponent({
@@ -12,7 +13,8 @@ export default defineComponent({
   setup() {
     const userStore = useUserStore();
     const sessionStore = useSessionStore();
-    return { userStore, sessionStore };
+    const counterStore = useCounterStore();
+    return { userStore, sessionStore, counterStore };
   },
   components: {
     TheWelcome,
@@ -32,6 +34,12 @@ export default defineComponent({
     //   console.log(err);
     //   this.$router.push(this.$i18n.t("startLinkTarget"));
     // });
+  },
+  data() {
+    this.$i18n.locale =
+      this.counterStore.getLanguages[
+        this.counterStore.getLangDisplayedIndex
+      ].lang;
   },
 });
 </script>

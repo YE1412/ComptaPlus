@@ -1,7 +1,8 @@
-import { ref, computed } from "vue";
+// import { ref } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
 import userAxiosService from "../services/user.service";
 import i18n from "../plugins/i18n";
+import { useStorage } from "@vueuse/core";
 
 const { t } = i18n.global;
 const useCounterStore = defineStore("counter", {
@@ -12,7 +13,7 @@ const useCounterStore = defineStore("counter", {
   // },
   state: () => ({
     count: 0,
-    languages: [
+    languages: useStorage("languages", [
       {
         country: "France",
         lang: "fr",
@@ -27,8 +28,8 @@ const useCounterStore = defineStore("counter", {
         label: t("countryLabel2", "en"),
         default: t("countryDefaultLabel2", "en"),
       },
-    ],
-    langDisplayedIndex: 0,
+    ]),
+    langDisplayedIndex: useStorage("langDisplayedIndex", 0),
   }),
   getters: {
     getCount(state) {

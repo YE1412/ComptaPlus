@@ -29,7 +29,7 @@ export default defineComponent({
     };
   },
   methods: {
-    async forceServiceRerender() {
+    async forceActorRerender() {
       // Remove MyComponent from the DOM
       this.renderComponent = false;
 
@@ -48,7 +48,7 @@ export default defineComponent({
         default:
           break;
       }
-      this.forceServiceRerender();
+      this.forceActorRerender();
     },
     handleDisplay(src: string) {
       // console.log(`Display ServiceView - ${src}`);
@@ -60,14 +60,14 @@ export default defineComponent({
         default:
           break;
       }
-      this.forceServiceRerender();
+      this.forceActorRerender();
     },
   },
 });
 </script>
 <template>
   <main>
-    <TheToolbarIn @language-changed-re-render="forceServiceRerender" />
+    <TheToolbarIn @language-changed-re-render="forceActorRerender" />
     <Sidenav
       :actorsState="true"
       @show-admin="handleAdmin"

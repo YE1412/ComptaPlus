@@ -4,6 +4,7 @@ import { MDBRow, MDBInput } from "mdb-vue-ui-kit";
 // import "../globals";
 import { useServiceStore } from "@/stores/service";
 import { useActorStore } from "@/stores/actor";
+import { useOrderStore } from "@/stores/order";
 
 export default defineComponent({
   name: "TableItem",
@@ -72,40 +73,19 @@ export default defineComponent({
       required: true,
       default: () => "1",
     },
-    // src: {
-    //   type: String,
-    //   required: false,
-    //   default: () => ("services")
-    // }
   },
   async setup() {
     const servStore = useServiceStore();
     const actStore = useActorStore();
-    // let contentTab;
-    // if (this.src === "services") {
-    //   contentTab = await store
-    //   .getAllServices()
-    //   .then(
-    //     (res) => {
-    //       return res;
-    //     },
-    //     (rej) => {
-    //       return [];
-    //     }
-    //   )
-    //   .catch((err) => {
-    //     return [];
-    //   });
-    // }
-    return { serviceStore: servStore, actorStore: actStore };
+    const ordStore = useOrderStore();
+
+    return {
+      serviceStore: servStore,
+      actorStore: actStore,
+      orderStore: ordStore,
+    };
   },
   data() {
-    // console.log(this.src);
-    // return {
-    //   idents: this.shiftedIdents(),
-    //   contents: this.shiftedContent(),
-    // };
-    // console.log(this.objContents);
     return {
       objContents: [],
       idents: [],
@@ -203,6 +183,20 @@ export default defineComponent({
             // });
             // this.messageVisibility = true;
             // this.store.messagesVisibility = true;
+            return [];
+          }));
+      } else if (this.src === "orders") {
+        return (contentTab = await this.orderStore
+          .getAllOrders()
+          .then(
+            (res) => {
+              return res;
+            },
+            (rej) => {
+              return [];
+            }
+          )
+          .catch((err) => {
             return [];
           }));
       } else {

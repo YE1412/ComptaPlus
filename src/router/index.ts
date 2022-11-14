@@ -214,19 +214,19 @@ router.beforeEach(async (to: any, from: any, next: any) => {
   const sessionStore = useSessionStore();
   const accessiblePath = isRealPath(to.fullPath);
   let dest = "";
-  // console.log(`-----------------------\nto`);
-  // console.log(to);
-  // console.log(`userStore connected ?`);
-  // console.log(userStore.connected);
-  // console.log(`startLinkTarget`);
-  // console.log(t("startLinkTarget"));
-  // console.log(`Router getRoutes`);
-  // console.log(router.getRoutes());
-  // console.log(`Accessible Path`);
-  // console.log(accessiblePath);
-  // console.log(`Paths Obj`);
-  // console.log(pathsObj);
-  // console.log(`-----------------------\n`);
+  console.log(`-----------------------\nto`);
+  console.log(to);
+  console.log(`userStore connected ?`);
+  console.log(userStore.connected);
+  console.log(`startLinkTarget`);
+  console.log(t("startLinkTarget"));
+  console.log(`Router getRoutes`);
+  console.log(router.getRoutes());
+  console.log(`Accessible Path`);
+  console.log(accessiblePath);
+  console.log(`Paths Obj`);
+  console.log(pathsObj);
+  console.log(`-----------------------\n`);
 
   if (to.meta.requiresAuth) {
     dest = await validateSession(sessionStore)
@@ -284,7 +284,7 @@ function generateRoute(to: any, pathObj: any): void {
     meta: {
       title: pathObj.name,
       icon: icon,
-      // requiresAuth: pathObj.auth,
+      requiresAuth: pathObj.auth,
     },
   });
 }

@@ -502,8 +502,8 @@ export default defineComponent({
             this.form = false;
             this.update = false;
             this.add = true;
-            console.log(this.messageStore.getMessages);
-            console.log(this.messageStore.getMessagesVisibility);
+            // console.log(this.messageStore.getMessages);
+            // console.log(this.messageStore.getMessagesVisibility);
             this.actorStore
               .getAllActors()
               .then(

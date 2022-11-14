@@ -58,7 +58,7 @@ async function createViteServer() {
     app.use(vite.middlewares);
   }
 
-  var userRouter, serviceRouter, sessionsRouter, actorRouter;
+  var userRouter, serviceRouter, sessionsRouter, actorRouter, orderRouter;
   let prefix = "./";
   // console.log(import("./src/routes/user.route.js")(app));
   if (env === "development") {
@@ -75,6 +75,7 @@ async function createViteServer() {
   serviceRouter = await import(`${prefix}src/routes/service.route.js`);
   sessionsRouter = await import(`${prefix}src/routes/sessions.route.js`);
   actorRouter = await import(`${prefix}src/routes/actor.route.js`);
+  orderRouter = await import(`${prefix}src/routes/order.route.js`);
   //  Populate req.cookies
   app.use(cookieParser());
   //  Session setup
@@ -105,6 +106,7 @@ async function createViteServer() {
   app.use("/api/services", serviceRouter.default());
   app.use("/api/sessions", sessionsRouter.default());
   app.use("/api/actors", actorRouter.default());
+  app.use("/api/orders", orderRouter.default());
   app.get("/api/session", (request, response) => {
     request.session.appSession = uuidv4();
     // console.log(`GET - Session`);
