@@ -43,9 +43,13 @@ const model = (sequelize) => {
         type: DataTypes.CHAR,
         allowNull: false,
       },
-      // type: {
-      //   type: DataTypes.INTEGER(1),
-      // },
+      actorTypeId: {
+        type: DataTypes.INTEGER,
+        reference: {
+          model: "personne_type",
+          key: "actorTypeId",
+        },
+      },
       ville: {
         type: DataTypes.CHAR,
         allowNull: false,

@@ -1,7 +1,7 @@
 import dbConfig from "../config/db.config.js";
 import { Sequelize } from "sequelize";
 import actor from "./actor.model.js";
-import actorActivity from "./actorActivity.model.js";
+// import actorActivity from "./actorActivity.model.js";
 import actorType from "./actorType.model.js";
 import contains from "./contains.model.js";
 import devise from "./devise.model.js";
@@ -39,7 +39,7 @@ const orderModelObj = order(sequelize);
 const containsModelObj = contains(sequelize);
 const paymentModelObj = payment(sequelize);
 const paymentTypeModelObj = paymentType(sequelize);
-const actorActivityModelObj = actorActivity(sequelize);
+// const actorActivityModelObj = actorActivity(sequelize);
 const actorTypeModelObj = actorType(sequelize);
 const userTypeModelObj = userType(sequelize);
 
@@ -53,18 +53,29 @@ userModelObj.type = userModelObj.belongsTo(userTypeModelObj, {
   foreignKey: "userTypeId",
 });
 
-actorModelObj.types = actorModelObj.belongsToMany(actorTypeModelObj, {
-  through: "personne_activite",
+actorTypeModelObj.actors = actorTypeModelObj.hasMany(actorModelObj, {
   foreignKey: "actorTypeId",
   onUpdate: "CASCADE",
-  onDelete: "CASCADE",
+  onDelete: "SET NULL",
 });
-actorTypeModelObj.actors = actorTypeModelObj.belongsToMany(actorModelObj, {
-  through: "personne_activite",
-  foreignKey: "actorId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
+actorModelObj.type = actorModelObj.belongsTo(actorTypeModelObj, {
+  foreignKey: "actorTypeId",
 });
+
+// actorModelObj.types = actorModelObj.belongsToMany(actorTypeModelObj, {
+//   through: "personne_activite",
+//   foreignKey: "actorTypeId",
+//   onUpdate: "CASCADE",
+//   onDelete: "CASCADE",
+//   as: "types"
+// });
+// actorTypeModelObj.actors = actorTypeModelObj.belongsToMany(actorModelObj, {
+//   through: "personne_activite",
+//   foreignKey: "actorId",
+//   onDelete: "CASCADE",
+//   onUpdate: "CASCADE",
+//   as: "actors"
+// });
 
 paymentTypeModelObj.payments = paymentTypeModelObj.hasMany(paymentModelObj, {
   onDelete: "CASCADE",
@@ -157,6 +168,6 @@ db.paymentType = paymentTypeModelObj;
 db.payment = paymentModelObj;
 db.userType = userTypeModelObj;
 db.actorType = actorTypeModelObj;
-db.actorActivity = actorActivityModelObj;
+// db.actorActivity = actorActivityModelObj;
 
 export default db;

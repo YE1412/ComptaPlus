@@ -5,6 +5,10 @@ class ActorDataService {
     return http.get("/actors");
   }
 
+  getAllTypes() {
+    return http.get("/actors/types");
+  }
+
   get(id: number) {
     return http.get(`/actors/find`, {
       params: {
@@ -29,8 +33,8 @@ class ActorDataService {
     return http.delete(`/actors`);
   }
 
-  findByAmountAndType(montantHt: any, type: any) {
-    return http.get(`/actors/amount/${montantHt}/type/${type}`);
+  findByTypes(types: any) {
+    return http.get(`/actors/types/${types}`);
   }
 }
 

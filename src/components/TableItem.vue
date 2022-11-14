@@ -3,9 +3,11 @@ import { defineComponent } from "vue";
 import { MDBRow, MDBInput } from "mdb-vue-ui-kit";
 // import "../globals";
 import { useServiceStore } from "@/stores/service";
+import { useActorStore } from "@/stores/actor";
 
 export default defineComponent({
   name: "TableItem",
+  inject: ["src"],
   props: {
     isForm: {
       type: Boolean,
@@ -70,44 +72,62 @@ export default defineComponent({
       required: true,
       default: () => "1",
     },
+    // src: {
+    //   type: String,
+    //   required: false,
+    //   default: () => ("services")
+    // }
   },
   async setup() {
-    const store = useServiceStore();
-    // let contentsTab;
-    const fetchServices = await store
-      .getAllServices()
-      .then(
-        (res) => {
-          return res;
-        },
-        (rej) => {
-          return [];
-        }
-      )
-      .catch((err) => {
-        return [];
-      });
-    var that = this;
-
-    return { store: store, services: fetchServices };
+    const servStore = useServiceStore();
+    const actStore = useActorStore();
+    // let contentTab;
+    // if (this.src === "services") {
+    //   contentTab = await store
+    //   .getAllServices()
+    //   .then(
+    //     (res) => {
+    //       return res;
+    //     },
+    //     (rej) => {
+    //       return [];
+    //     }
+    //   )
+    //   .catch((err) => {
+    //     return [];
+    //   });
+    // }
+    return { serviceStore: servStore, actorStore: actStore };
   },
   data() {
+    // console.log(this.src);
+    // return {
+    //   idents: this.shiftedIdents(),
+    //   contents: this.shiftedContent(),
+    // };
+    // console.log(this.objContents);
     return {
-      // objects: this.fetchServices,
-      idents: this.shiftedIdents(),
-      contents: this.shiftedContent(),
+      objContents: [],
+      idents: [],
+      contents: [],
     };
   },
   computed: {
     objectsLength() {
-      // console.log(this.objects);
-      return this.services.length;
+      // console.log(this.objContents);
+      return this.objContents.length;
     },
     tableHeadForDisplay() {
-      const heads = this.tableHead;
-      heads.pop();
-      return heads;
+      if (this.display) {
+        const heads = this.tableHead;
+        heads.pop();
+        return heads;
+      }
+      return this.tableHead;
     },
+  },
+  mounted() {
+    this.hydrateAll();
   },
   components: {
     // MessagesItem,
@@ -115,9 +135,64 @@ export default defineComponent({
     MDBInput,
   },
   methods: {
+    async hydrateObjContent() {
+      let contentTab = [];
+      if (this.src === "services") {
+        return (contentTab = await this.serviceStore
+          .getAllServices()
+          .then(
+            (res) => {
+              return res;
+            },
+            (rej) => {
+              return [];
+            }
+          )
+          .catch((err) => {
+            return [];
+          }));
+      } else if (this.src === "actors") {
+        return (contentTab = await this.actorStore
+          .getAllActors()
+          .then(
+            (res) => {
+              return res;
+            },
+            (rej) => {
+              return [];
+            }
+          )
+          .catch((err) => {
+            // MODALS (set actorModal to TRUE to active)
+            // this.modalTitle = this.$i18n.t("modalTitleKo");
+            // this.modalContent = this.$i18n.t("modalAddContentKo", {
+            //   err: err.response.data.message || err.message,
+            // });
+            // this.actorModal = false;
+            // // MESSAGES
+            // this.store.messages.push({
+            //   severity: true,
+            //   content: this.$i18n.t("modalAddContentKo", {
+            //     err: err.response.data.message || err.message,
+            //   }),
+            // });
+            // this.messageVisibility = true;
+            // this.store.messagesVisibility = true;
+            return [];
+          }));
+      } else {
+        return contentTab;
+      }
+      // this.objContents = contentTab;
+    },
+    async hydrateAll() {
+      this.objContents = await this.hydrateObjContent();
+      this.idents = this.shiftedIdents();
+      this.contents = this.shiftedContent();
+    },
     shiftedIdents() {
       var that = this;
-      return this.services.map((val) => {
+      return this.objContents.map((val) => {
         let ret = {};
         for (const key in val) {
           if (key === this.ident) ret[key] = val[key];
@@ -127,8 +202,8 @@ export default defineComponent({
     },
     shiftedContent() {
       var that = this;
-      // console.log(this.services);
-      return this.services.map((val) => {
+      // console.log(this.objContents);
+      return this.objContents.map((val) => {
         // this.transformObject(val);
         // console.log(val);
         let ret = {};
@@ -169,7 +244,11 @@ export default defineComponent({
       <thead class="mdb-color darken-3">
         <tr class="text-black text-center" v-if="admin">
           <th>#</th>
-          <th v-for="(head, ind) in tableHead" v-bind:key="ind">
+          <th
+            v-for="(head, ind) in tableHead"
+            v-bind:key="ind"
+            class="col-md-10"
+          >
             {{ head }}
           </th>
         </tr>
@@ -248,7 +327,7 @@ export default defineComponent({
           >
             <slot
               :name="val.name"
-              size="10"
+              :size="val.size"
               :inputGroup="false"
               :ariaLabel="key"
               :label="val.value.toString()"
@@ -260,6 +339,7 @@ export default defineComponent({
               :required="val.required"
               :placeholder="val.placeholder"
               :type="val.type"
+              :disabled="val.disabled"
             ></slot>
           </td>
           <td class="text-center" style="vertical-align: middle">
@@ -283,7 +363,7 @@ export default defineComponent({
           >
             <slot
               :name="obj.name"
-              size="10"
+              :size="obj.size"
               :inputGroup="false"
               :ariaLabel="key"
               :label="obj.label"
@@ -295,6 +375,7 @@ export default defineComponent({
               :required="obj.required"
               :placeholder="obj.placeholder"
               :type="obj.type"
+              :disabled="obj.disabled"
             ></slot>
           </td>
           <td

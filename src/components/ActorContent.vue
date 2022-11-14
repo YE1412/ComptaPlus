@@ -4,13 +4,7 @@ import { defineComponent, nextTick, ref } from "vue";
 import { useActorStore } from "@/stores/actor";
 import MessagesItem from "../components/MessagesItem.vue";
 import TableItem from "../components/TableItem.vue";
-import {
-  MDBCol,
-  MDBInput,
-  MDBRow,
-  MDBTextarea,
-  MDBRadio,
-} from "mdb-vue-ui-kit";
+import { MDBCol, MDBInput, MDBRow, MDBCheckbox } from "mdb-vue-ui-kit";
 import actorAxiosService from "../services/actor.service";
 import ModalItem from "./ModalItem.vue";
 const renderComponent = ref(true);
@@ -34,11 +28,28 @@ export default defineComponent({
       default: () => false,
     },
   },
+  provide() {
+    return { src: "actors" };
+  },
   async setup() {
     // console.log(`Setup`);
     const store = useActorStore();
-
-    return { store };
+    const types = await store
+      .getAllTypes()
+      .then(
+        (res) => {
+          // console.log(res);
+          return res;
+        },
+        (ret) => {
+          return [];
+        }
+      )
+      .catch((err) => {
+        console.log(err);
+        return [];
+      });
+    return { store, types };
   },
   beforeCreate() {
     // console.log(`Before Create`);
@@ -52,49 +63,146 @@ export default defineComponent({
     const headTable = [
       this.$i18n.t("firstnameTableHeadText"),
       this.$i18n.t("lastnameTableHeadText"),
-      this.$i18n.t("cpTableHeadText"),
       this.$i18n.t("emailTableHeadText"),
       this.$i18n.t("streetNameTableHeadText"),
       this.$i18n.t("streetNumberTableHeadText"),
       this.$i18n.t("cityTableHeadText"),
-      this.$i18n.t("sellerNumTableHeadText"),
+      this.$i18n.t("cpTableHeadText"),
       this.$i18n.t("telTableHeadText"),
+      this.$i18n.t("sellerNumberTableHeadText"),
       this.$i18n.t("typeTableHeadText"),
       this.$i18n.t("actionTableHeadText"),
     ];
     const addInputObj = {
+      prenom: {
+        value: "",
+        type: "text",
+        label: this.$i18n.t("firstnameInputLabel"),
+        name: "addFormInput",
+        invalidFeed: "",
+        validFeed: "",
+        isValid: false,
+        required: true,
+        placeholder: this.$i18n.t("firstnamePlaceholder"),
+        size: "12",
+        disabled: false,
+      },
       nom: {
         value: "",
+        type: "text",
+        label: this.$i18n.t("lastnameInputLabel"),
+        name: "addFormInput",
+        invalidFeed: "",
+        validFeed: "",
+        isValid: false,
+        required: true,
+        placeholder: this.$i18n.t("lastnamePlaceholder"),
+        size: "12",
+        disabled: false,
+      },
+      email: {
+        value: "",
+        type: "email",
+        label: this.$i18n.t("emailInputLabel"),
+        name: "addFormInput",
+        invalidFeed: "",
+        validFeed: "",
+        isValid: false,
+        required: true,
+        placeholder: this.$i18n.t("emailPlaceholder"),
+        size: "12",
+        disabled: false,
+      },
+      nomRue: {
+        value: "",
+        type: "text",
+        label: this.$i18n.t("streetNameInputLabel"),
+        name: "addFormInput",
+        invalidFeed: "",
+        validFeed: "",
+        isValid: false,
+        required: true,
+        placeholder: this.$i18n.t("streetNamePlaceholder"),
+        size: "12",
+        disabled: false,
+      },
+      numRue: {
+        value: 0,
+        type: "number",
+        label: this.$i18n.t("streetNumberInputLabel"),
+        name: "addFormInput",
+        invalidFeed: "",
+        validFeed: "",
+        isValid: false,
+        required: true,
+        placeholder: this.$i18n.t("streetNumberPlaceholder"),
+        size: "12",
+        disabled: false,
+      },
+      ville: {
+        value: "",
+        type: "text",
+        label: this.$i18n.t("cityInputLabel"),
+        name: "addFormInput",
+        invalidFeed: "",
+        validFeed: "",
+        isValid: false,
+        required: true,
+        placeholder: this.$i18n.t("cityPlaceholder"),
+        size: "12",
+        disabled: false,
+      },
+      cp: {
+        value: "",
+        type: "text",
+        label: this.$i18n.t("cpInputLabel"),
+        name: "addFormInput",
+        invalidFeed: "",
+        validFeed: "",
+        isValid: false,
+        required: true,
+        placeholder: this.$i18n.t("cpPlaceholder"),
+        size: "12",
+        disabled: false,
+      },
+      tel: {
+        value: "",
+        type: "text",
+        label: this.$i18n.t("telInputLabel"),
+        name: "addFormInput",
+        invalidFeed: "",
+        validFeed: "",
+        isValid: false,
+        required: true,
+        placeholder: this.$i18n.t("telPlaceholder"),
+        size: "12",
+        disabled: false,
+      },
+      numCommercant: {
+        value: "",
+        type: "text",
+        label: this.$i18n.t("sellerNumberInputLabel"),
+        name: "addFormInput",
+        invalidFeed: "",
+        validFeed: "",
+        isValid: false,
+        required: true,
+        placeholder: this.$i18n.t("sellerNumberPlaceholder"),
+        size: "12",
+        disabled: false,
+      },
+      types: {
+        model: false,
         type: "",
-        label: this.$i18n.t("nameInputLabel"),
-        name: "addFormTextArea",
+        label: "",
+        name: "addFormCheckbox",
         invalidFeed: "",
         validFeed: "",
         isValid: false,
         required: true,
-        placeholder: this.$i18n.t("namePlaceholder"),
-      },
-      montantHt: {
-        value: 0,
-        type: "number",
-        label: this.$i18n.t("amountInputLabel"),
-        name: "addFormInput",
-        invalidFeed: "",
-        validFeed: "",
-        isValid: false,
-        required: true,
-        placeholder: this.$i18n.t("amountPlaceholder"),
-      },
-      quantite: {
-        value: 0,
-        type: "number",
-        label: this.$i18n.t("quantityInputLabel"),
-        name: "addFormInput",
-        invalidFeed: "",
-        validFeed: "",
-        isValid: false,
-        required: true,
-        placeholder: this.$i18n.t("quantityPlaceholder"),
+        placeholder: false,
+        size: "12",
+        disabled: false,
       },
     };
     return {
@@ -105,21 +213,68 @@ export default defineComponent({
       update: false,
       add: true,
       addInputObject: addInputObj,
-      serviceId: 0,
+      actorId: 0,
+      prenom: "",
       nom: "",
-      montantHt: 0,
-      quantite: 0,
+      email: "",
+      nomRue: "",
+      numRue: 0,
+      ville: "",
+      cp: "",
+      tel: "",
+      numCommercant: null,
+      type: {},
+      seller: false,
+      buyer: false,
+      both: false,
       // For update
       updateInputObject: {},
       updateInputObjectId: 0,
       // For all
-      // services: this.fetchServices,
       errors: [],
       modalTitle: "",
       modalContent: "",
-      serviceModal: false,
+      actorModal: false,
       renderComponent: true,
     };
+  },
+  computed: {
+    typesInputForAdding() {
+      let ret = [];
+      for (const key in this.types) {
+        let label = "",
+          model;
+        label =
+          this.types[key].seller && !this.types[key].buyer
+            ? this.$i18n.t("typeInputSellerLabel")
+            : label;
+        label =
+          !this.types[key].seller && this.types[key].buyer
+            ? this.$i18n.t("typeInputBuyerLabel")
+            : label;
+        label =
+          this.types[key].seller && this.types[key].buyer
+            ? this.$i18n.t("typeInputAllLabel")
+            : label;
+        model =
+          this.types[key].seller && !this.types[key].buyer ? "seller" : model;
+        model =
+          !this.types[key].seller && this.types[key].buyer ? "buyer" : model;
+        model =
+          this.types[key].seller && this.types[key].buyer ? "both" : model;
+        ret[key] = {};
+        ret[key].label = label;
+        ret[key].id = `type-${this.types[key].actorTypeId}`;
+        ret[key].model = model;
+        ret[key].ariaLabel = `actorType-${model}`;
+        ret[key].required = true;
+        ret[key].isValid = false;
+        ret[key].validFeedback = "";
+        ret[key].invalidFeedback = "";
+        ret[key].btnCheck = false;
+      }
+      return ret;
+    },
   },
   components: {
     MessagesItem,
@@ -127,39 +282,40 @@ export default defineComponent({
     MDBCol,
     MDBInput,
     MDBRow,
-    MDBTextarea,
-    MDBRadio,
     ModalItem,
+    MDBCheckbox,
   },
   methods: {
-    // getAllServices() {
-    //   this.store.getAllServices();
-    // },
     async addClickFromChild(db: boolean) {
       if (!db) {
-        // click to add new service line
+        // click to add new actor line
         this.form = true;
         this.update = false;
         this.add = true;
       } else {
-        // click to register a new service
+        // console.log(this.buyer);
+        // console.log(this.seller);
+        // console.log(this.both);
+        // click to register a new actor
         this.errors = [];
+        // console.log("addClick !");
 
         this.inputsCheck(this.addInputObject);
 
         if (!this.errors.length) {
-          const ret = await this.insertNewService();
+          const ret = await this.insertNewActor();
+          console.log(ret);
           if (ret) {
             this.form = false;
             this.update = false;
             this.add = true;
             this.store
-              .getAllServices()
+              .getAllActors()
               .then(
                 () => {
                   this.forceTableRerender();
                 },
-                () => {}
+                (ret) => {}
               )
               .catch((err) => {
                 console.log(err);
@@ -171,51 +327,51 @@ export default defineComponent({
     },
     async updateClickFromChild(db: boolean, id: number, obj: any) {
       if (!db) {
-        // click to update new service line
+        // click to update new actor line
         this.form = true;
         this.update = true;
         this.add = false;
-        this.serviceId = id;
-        this.nom = obj.nom;
-        this.montantHt = obj.montantHt;
-        this.quantite = obj.quantite;
+        // this.actorId = id;
+        // this.nom = obj.nom;
+        // this.montantHt = obj.montantHt;
+        // this.quantite = obj.quantite;
         // console.log(obj);
-        const updateInputObj = {
-          nom: {
-            value: obj["nom"],
-            type: "",
-            label: this.$i18n.t("nameInputLabel"),
-            name: "addFormTextArea",
-            invalidFeed: "",
-            validFeed: this.$i18n.t("validFeed"),
-            isValid: true,
-            required: true,
-            placeholder: this.$i18n.t("namePlaceholder"),
-          },
-          montantHt: {
-            value: obj["montantHt"],
-            type: "number",
-            label: this.$i18n.t("amountInputLabel"),
-            name: "addFormInput",
-            invalidFeed: "",
-            validFeed: this.$i18n.t("validFeed"),
-            isValid: true,
-            required: true,
-            placeholder: this.$i18n.t("amountPlaceholder"),
-          },
-          quantite: {
-            value: obj["quantite"],
-            type: "number",
-            label: this.$i18n.t("quantityInputLabel"),
-            name: "addFormInput",
-            invalidFeed: "",
-            validFeed: this.$i18n.t("validFeed"),
-            isValid: true,
-            required: true,
-            placeholder: this.$i18n.t("quantityPlaceholder"),
-          },
-        };
-        this.updateInputObject = updateInputObj;
+        // const updateInputObj = {
+        //   nom: {
+        //     value: obj["nom"],
+        //     type: "",
+        //     label: this.$i18n.t("nameInputLabel"),
+        //     name: "addFormTextArea",
+        //     invalidFeed: "",
+        //     validFeed: this.$i18n.t("validFeed"),
+        //     isValid: true,
+        //     required: true,
+        //     placeholder: this.$i18n.t("namePlaceholder"),
+        //   },
+        //   montantHt: {
+        //     value: obj["montantHt"],
+        //     type: "number",
+        //     label: this.$i18n.t("amountInputLabel"),
+        //     name: "addFormInput",
+        //     invalidFeed: "",
+        //     validFeed: this.$i18n.t("validFeed"),
+        //     isValid: true,
+        //     required: true,
+        //     placeholder: this.$i18n.t("amountPlaceholder"),
+        //   },
+        //   quantite: {
+        //     value: obj["quantite"],
+        //     type: "number",
+        //     label: this.$i18n.t("quantityInputLabel"),
+        //     name: "addFormInput",
+        //     invalidFeed: "",
+        //     validFeed: this.$i18n.t("validFeed"),
+        //     isValid: true,
+        //     required: true,
+        //     placeholder: this.$i18n.t("quantityPlaceholder"),
+        //   },
+        // };
+        // this.updateInputObject = updateInputObj;
         this.updateInputObjectId = id;
       } else {
         // click to register the new update
@@ -247,8 +403,8 @@ export default defineComponent({
       }
     },
     async deleteClickFromChild(id: number) {
-      // click to delete a service
-      this.serviceId = id;
+      // click to delete a actor
+      this.actorId = id;
       const ret = await this.deleteService();
       if (ret) {
         this.form = false;
@@ -269,15 +425,38 @@ export default defineComponent({
       }
     },
     inputChanges(e: Event) {
+      // console.log(this.buyer);
+      // console.log(this.seller);
+      // console.log(this.both);
+      // console.log(e.target.getAttribute("id"));
+      // console.log(e.target.getAttribute("id").value);
       switch (e.target.getAttribute("aria-label")) {
+        case "prenom":
+          this.prenom = e.target.value;
+          break;
         case "nom":
           this.nom = e.target.value;
           break;
-        case "montantHt":
-          this.montantHt = parseFloat(e.target.value);
+        case "email":
+          this.email = e.target.value;
           break;
-        case "quantite":
-          this.quantite = parseInt(e.target.value);
+        case "numRue":
+          this.numRue = e.target.value;
+          break;
+        case "nomRue":
+          this.nomRue = e.target.value;
+          break;
+        case "cp":
+          this.cp = e.target.value;
+          break;
+        case "ville":
+          this.ville = e.target.value;
+          break;
+        case "tel":
+          this.tel = e.target.value;
+          break;
+        case "numCommercant":
+          this.numCommercant = e.target.value;
           break;
         default:
           break;
@@ -285,14 +464,33 @@ export default defineComponent({
       // console.log(e.target);
       // console.log("changes !");
     },
+    validPrenom: function () {
+      var re = /^([a-zA-Z])*$/;
+      return re.test(this.nom);
+    },
     validNom: function () {
       var re = /^([a-zA-Z])*$/;
       return re.test(this.nom);
     },
-    validMontantHt: function () {
+    validEmail: function () {
       return true;
     },
-    validQuantite: function () {
+    validNumRue: function () {
+      return true;
+    },
+    validNomRue: function () {
+      return true;
+    },
+    validCp: function () {
+      return true;
+    },
+    validVille: function () {
+      return true;
+    },
+    validTel: function () {
+      return true;
+    },
+    validNumCommercant: function () {
       return true;
     },
     transformObject(obj) {
@@ -306,20 +504,27 @@ export default defineComponent({
       const ret = __CRYPTAPI__.crypt(val, __KEY__);
       return ret;
     },
-    insertNewService() {
+    insertNewActor() {
       const obj = {
+        prenom: this.prenom,
         nom: this.nom,
-        montantHt: this.montantHt,
-        quantite: this.quantite,
+        email: this.email,
+        nomRue: this.nomRue,
+        numRue: this.numRue,
+        ville: this.ville,
+        cp: this.cp,
+        tel: this.tel,
+        numCommercant: this.numCommercant,
+        type: this.type,
       };
       this.transformObject(obj);
       return actorAxiosService
         .create(obj)
         .then((res) => {
-          // MODALS (set serviceModal to TRUE to active)
+          // MODALS (set actorModal to TRUE to active)
           this.modalTitle = this.$i18n.t("modalTitleOk");
           this.modalContent = this.$i18n.t("modalAddContentOk");
-          this.serviceModal = false;
+          this.actorModal = false;
           // MESSAGES
           this.store.messages.push({
             severity: false,
@@ -330,12 +535,12 @@ export default defineComponent({
           return true;
         })
         .catch((err) => {
-          // MODALS (set serviceModal to TRUE to active)
+          // MODALS (set actorModal to TRUE to active)
           this.modalTitle = this.$i18n.t("modalTitleKo");
           this.modalContent = this.$i18n.t("modalAddContentKo", {
             err: err.response.data.message || err.message,
           });
-          this.serviceModal = false;
+          this.actorModal = false;
           // MESSAGES
           this.store.messages.push({
             severity: true,
@@ -348,20 +553,27 @@ export default defineComponent({
           return false;
         });
     },
-    updateService() {
+    updateActor() {
       const obj = {
+        prenom: this.prenom,
         nom: this.nom,
-        montantHt: this.montantHt,
-        quantite: this.quantite,
+        email: this.email,
+        nomRue: this.nomRue,
+        numRue: this.numRue,
+        ville: this.ville,
+        cp: this.cp,
+        tel: this.tel,
+        numCommercant: this.numCommercant,
+        personne_type: this.type,
       };
       this.transformObject(obj);
       return actorAxiosService
-        .update(this.serviceId, obj)
+        .update(this.actorId, obj)
         .then((res) => {
-          // MODALS (set serviceModal to TRUE to active)
+          // MODALS (set actorModal to TRUE to active)
           this.modalTitle = this.$i18n.t("modalTitleOk");
           this.modalContent = this.$i18n.t("modalUpdateContentOk");
-          this.serviceModal = false;
+          this.actorModal = false;
           // MESSAGES
           this.store.messages.push({
             severity: false,
@@ -372,12 +584,12 @@ export default defineComponent({
           return true;
         })
         .catch((err) => {
-          // MODALS (set serviceModal to TRUE to active)
+          // MODALS (set actorModal to TRUE to active)
           this.modalTitle = this.$i18n.t("modalTitleKo");
           this.modalContent = this.$i18n.t("modalUpdateContentKo", {
             err: err.response.data.message || err.message,
           });
-          this.serviceModal = false;
+          this.actorModal = false;
           // MESSAGES
           this.store.messages.push({
             severity: true,
@@ -388,14 +600,14 @@ export default defineComponent({
           return false;
         });
     },
-    deleteService() {
+    deleteActor() {
       return actorAxiosService
-        .delete(this.serviceId)
+        .delete(this.actorId)
         .then((res) => {
-          // MODALS (set serviceModal to TRUE to active)
+          // MODALS (set actorModal to TRUE to active)
           this.modalTitle = this.$i18n.t("modalTitleOk");
           this.modalContent = this.$i18n.t("modalDeleteContentOk");
-          this.serviceModal = false;
+          this.actorModal = false;
           // MESSAGES
           this.store.messages.push({
             severity: false,
@@ -406,12 +618,12 @@ export default defineComponent({
           return true;
         })
         .catch((err) => {
-          // MODALS (set serviceModal to TRUE to active)
+          // MODALS (set actorModal to TRUE to active)
           this.modalTitle = this.$i18n.t("modalTitleKo");
           this.modalContent = this.$i18n.t("modalDeleteContentKo", {
             err: err.response.data.message || err.message,
           });
-          this.serviceModal = false;
+          this.actorModal = false;
           // MESSAGES
           this.store.messages.push({
             severity: true,
@@ -423,44 +635,162 @@ export default defineComponent({
         });
     },
     inputsCheck(obj: any) {
+      if (!this.seller && !this.buyer && !this.both) {
+        this.errors.push(this.$i18n.t("emptyTypeInvalidFeed"));
+        obj["types"].isValid = false;
+        obj["types"].invalidFeed = this.$i18n.t("emptyTypeInvalidFeed");
+      } else if (this.both || this.seller) {
+        if (!this.numCommercant) {
+          this.errors.push(this.$i18n.t("emptySellerNumberInvalidFeed"));
+          obj["numCommercant"].isValid = false;
+          obj["numCommercant"].invalidFeed = this.$i18n.t(
+            "emptySellerNumberInvalidFeed"
+          );
+        } else if (!this.validNumCommercant()) {
+          this.errors.push(this.$i18n.t("errorSellerNumberInvalidFeed"));
+          obj["numCommercant"].isValid = false;
+          obj["numCommercant"].invalidFeed = this.$i18n.t(
+            "errorSellerNumberInvalidFeed"
+          );
+        } else {
+          if (this.seller) this.type = 2;
+          else this.type = 1;
+          obj["types"].isValid = true;
+          obj["types"].validFeed = this.$i18n.t("validFeed");
+          obj["numCommercant"].isValid = true;
+          obj["numCommercant"].validFeed = this.$i18n.t("validFeed");
+        }
+        obj["types"].invalidFeed = "";
+      } else {
+        this.type = 3;
+        this.numCommercant = null;
+        obj["types"].isValid = true;
+        obj["types"].validFeed = this.$i18n.t("validFeed");
+        obj["types"].invalidFeed = "";
+        obj["numCommercant"].isValid = true;
+        obj["numCommercant"].validFeed = this.$i18n.t("validFeed");
+      }
+
+      if (!this.prenom) {
+        this.errors.push(this.$i18n.t("emptyFirstnameInvalidFeed"));
+        obj["prenom"].isValid = false;
+        obj["prenom"].invalidFeed = this.$i18n.t("emptyFirstnameInvalidFeed");
+      } else if (!this.validPrenom()) {
+        this.errors.push(this.$i18n.t("errorFirstnameInvalidFeed"));
+        obj["prenom"].isValid = false;
+        obj["prenom"].invalidFeed = this.$i18n.t("errorFirstnameInvalidFeed");
+      } else {
+        obj["prenom"].isValid = true;
+        obj["prenom"].validFeed = this.$i18n.t("validFeed");
+      }
+
       if (!this.nom) {
-        this.errors.push(this.$i18n.t("emptyNameInvalidFeed"));
+        this.errors.push(this.$i18n.t("emptyLastnameInvalidFeed"));
         obj["nom"].isValid = false;
-        obj["nom"].invalidFeed = this.$i18n.t("emptyNameInvalidFeed");
+        obj["nom"].invalidFeed = this.$i18n.t("emptyLastnameInvalidFeed");
       } else if (!this.validNom()) {
-        this.errors.push(this.$i18n.t("errorNameInvalidFeed"));
+        this.errors.push(this.$i18n.t("errorLastnameInvalidFeed"));
         obj["nom"].isValid = false;
-        obj["nom"].invalidFeed = this.$i18n.t("errorNameInvalidFeed");
+        obj["nom"].invalidFeed = this.$i18n.t("errorLastnameInvalidFeed");
       } else {
         obj["nom"].isValid = true;
         obj["nom"].validFeed = this.$i18n.t("validFeed");
       }
 
-      if (!this.montantHt) {
-        this.errors.push(this.$i18n.t("emptyAmountInvalidFeed"));
-        obj["montantHt"].isValid = false;
-        obj["montantHt"].invalidFeed = this.$i18n.t("emptyAmountInvalidFeed");
-      } else if (!this.validMontantHt()) {
-        this.errors.push(this.$i18n.t("errorAmountInvalidFeed"));
-        obj["montantHt"].isValid = false;
-        obj["montantHt"].invalidFeed = this.$i18n.t("errorAmountInvalidFeed");
+      if (!this.email) {
+        this.errors.push(this.$i18n.t("emptyEmailInvalidFeed"));
+        obj["email"].isValid = false;
+        obj["email"].invalidFeed = this.$i18n.t("emptyEmailInvalidFeed");
+      } else if (!this.validEmail()) {
+        this.errors.push(this.$i18n.t("errorEmailInvalidFeed"));
+        obj["email"].isValid = false;
+        obj["email"].invalidFeed = this.$i18n.t("errorEmailInvalidFeed");
       } else {
-        obj["montantHt"].isValid = true;
-        obj["montantHt"].validFeed = this.$i18n.t("validFeed");
+        obj["email"].isValid = true;
+        obj["email"].validFeed = this.$i18n.t("validFeed");
       }
 
-      if (!this.quantite) {
-        this.errors.push(this.$i18n.t("emptyQuantityInvalidFeed"));
-        obj["quantite"].isValid = false;
-        obj["quantite"].invalidFeed = this.$i18n.t("emptyQuantityInvalidFeed");
-      } else if (!this.validQuantite()) {
-        this.errors.push(this.$i18n.t("errorQuantityInvalidFeed"));
-        obj["quantite"].isValid = false;
-        obj["quantite"].invalidFeed = this.$i18n.t("errorQuantityInvalidFeed");
+      if (!this.numRue) {
+        this.errors.push(this.$i18n.t("emptyStreetNumberInvalidFeed"));
+        obj["numRue"].isValid = false;
+        obj["numRue"].invalidFeed = this.$i18n.t(
+          "emptyStreetNumberInvalidFeed"
+        );
+      } else if (!this.validNumRue()) {
+        this.errors.push(this.$i18n.t("errorStreetNumberInvalidFeed"));
+        obj["numRue"].isValid = false;
+        obj["numRue"].invalidFeed = this.$i18n.t(
+          "errorStreetNumberInvalidFeed"
+        );
       } else {
-        obj["quantite"].isValid = true;
-        obj["quantite"].validFeed = this.$i18n.t("validFeed");
+        obj["numRue"].isValid = true;
+        obj["numRue"].validFeed = this.$i18n.t("validFeed");
       }
+
+      if (!this.nomRue) {
+        this.errors.push(this.$i18n.t("emptyStreetNameInvalidFeed"));
+        obj["nomRue"].isValid = false;
+        obj["nomRue"].invalidFeed = this.$i18n.t("emptyStreetNameInvalidFeed");
+      } else if (!this.validNomRue()) {
+        this.errors.push(this.$i18n.t("errorStreetNameInvalidFeed"));
+        obj["nomRue"].isValid = false;
+        obj["nomRue"].invalidFeed = this.$i18n.t("errorStreetNameInvalidFeed");
+      } else {
+        obj["nomRue"].isValid = true;
+        obj["nomRue"].validFeed = this.$i18n.t("validFeed");
+      }
+
+      if (!this.ville) {
+        this.errors.push(this.$i18n.t("emptyCityInvalidFeed"));
+        obj["ville"].isValid = false;
+        obj["ville"].invalidFeed = this.$i18n.t("emptyCityInvalidFeed");
+      } else if (!this.validVille()) {
+        this.errors.push(this.$i18n.t("errorCityInvalidFeed"));
+        obj["ville"].isValid = false;
+        obj["ville"].invalidFeed = this.$i18n.t("errorCityInvalidFeed");
+      } else {
+        obj["ville"].isValid = true;
+        obj["ville"].validFeed = this.$i18n.t("validFeed");
+      }
+
+      if (!this.cp) {
+        this.errors.push(this.$i18n.t("emptyCPInvalidFeed"));
+        obj["cp"].isValid = false;
+        obj["cp"].invalidFeed = this.$i18n.t("emptyCPInvalidFeed");
+      } else if (!this.validCp()) {
+        this.errors.push(this.$i18n.t("errorCPInvalidFeed"));
+        obj["cp"].isValid = false;
+        obj["cp"].invalidFeed = this.$i18n.t("errorCPInvalidFeed");
+      } else {
+        obj["cp"].isValid = true;
+        obj["cp"].validFeed = this.$i18n.t("validFeed");
+      }
+
+      if (!this.tel) {
+        this.errors.push(this.$i18n.t("emptyTelInvalidFeed"));
+        obj["tel"].isValid = false;
+        obj["tel"].invalidFeed = this.$i18n.t("emptyTelInvalidFeed");
+      } else if (!this.validTel()) {
+        this.errors.push(this.$i18n.t("errorTelInvalidFeed"));
+        obj["tel"].isValid = false;
+        obj["tel"].invalidFeed = this.$i18n.t("errorTelInvalidFeed");
+      } else {
+        obj["tel"].isValid = true;
+        obj["tel"].validFeed = this.$i18n.t("validFeed");
+      }
+
+      // if (!this.numCommercant) {
+      //   this.errors.push(this.$i18n.t("emptySellerNumInvalidFeed"));
+      //   obj["numCommercant"].isValid = false;
+      //   obj["numCommercant"].invalidFeed = this.$i18n.t("emptySellerNumInvalidFeed");
+      // } else if (!this.validNumCommercant()) {
+      //   this.errors.push(this.$i18n.t("errorSellerNumInvalidFeed"));
+      //   obj["numCommercant"].isValid = false;
+      //   obj["numCommercant"].invalidFeed = this.$i18n.t("errorSellerNumInvalidFeed");
+      // } else {
+      //   obj["numCommercant"].isValid = true;
+      //   obj["numCommercant"].validFeed = this.$i18n.t("validFeed");
+      // }
     },
     async forceTableRerender() {
       // Remove MyComponent from the DOM
@@ -473,18 +803,12 @@ export default defineComponent({
       this.renderComponent = true;
     },
     modalChange(val: boolean) {
-      this.serviceModal = val;
+      this.actorModal = val;
     },
   },
 });
 </script>
 
-this.$i18n.t("firstnameTableHeadText"), this.$i18n.t("lastnameTableHeadText"),
-this.$i18n.t("cpTableHeadText"), this.$i18n.t("emailTableHeadText"),
-this.$i18n.t("streetNameTableHeadText"),
-this.$i18n.t("streetNumberTableHeadText"), this.$i18n.t("cityTableHeadText"),
-this.$i18n.t("sellerNumTableHeadText"), this.$i18n.t("telTableHeadText"),
-this.$i18n.t("typeTableHeadText"), this.$i18n.t("actionTableHeadText"),
 <i18n>
 {
   "fr": {
@@ -495,10 +819,10 @@ this.$i18n.t("typeTableHeadText"), this.$i18n.t("actionTableHeadText"),
     "streetNameTableHeadText": "Nom de rue",
     "streetNumberTableHeadText": "Numéro de rue",
     "cityTableHeadText": "Ville",
-    "sellerNumTableHeadText": "N° Commerçant",
+    "sellerNumberTableHeadText": "N° Commerçant",
     "telTableHeadText": "Téléphone",
     "typeTableHeadText": "Type",
-    "emptyTableBodyContentText": "Aucun Service.",
+    "emptyTableBodyContentText": "Aucun Acteur.",
     "addButtonText": "Ajouter",
     "updateButtonText": "Modifier",
     "deleteButtonText": "Suppimer",
@@ -517,22 +841,25 @@ this.$i18n.t("typeTableHeadText"), this.$i18n.t("actionTableHeadText"),
     "emptyEmailInvalidFeed": "L'email' ne peut être vide!",
     "errorEmailInvalidFeed": "Email incorrect!",
     "streetNamePlaceholder": "Nom de rue",
-    "emptyStreetnameInvalidFeed": "Le nom de rue ne peut être vide!",
-    "errorStreetnameInvalidFeed": "Nom de rue incorrect!",
+    "emptyStreetNameInvalidFeed": "Le nom de rue ne peut être vide!",
+    "errorStreetNameInvalidFeed": "Nom de rue incorrect!",
     "streetNumberPlaceholder": "Numéro de rue",
-    "emptyStreetnumberInvalidFeed": "Le n° de rue ne peut être vide!",
-    "errorStreetnumberInvalidFeed": "N° de rue incorrect!",
+    "emptyStreetNumberInvalidFeed": "Le n° de rue ne peut être vide!",
+    "errorStreetNumberInvalidFeed": "N° de rue incorrect!",
     "cityPlaceholder": "Ville",
     "emptyCityInvalidFeed": "La ville ne peut être vide!",
     "errorCityInvalidFeed": "Ville incorrect!",
-    "sellerNumPlaceholder": "N° Commerçant",
-    "emptySellernumInvalidFeed": "Le n° de commerçant ne peut être vide!",
-    "errorSellernumInvalidFeed": "N° de commerçant incorrect!",
+    "sellerNumberPlaceholder": "N° Commerçant",
+    "emptySellerNumberInvalidFeed": "Le n° de commerçant ne peut être vide!",
+    "errorSellerNumberInvalidFeed": "N° de commerçant incorrect!",
     "telPlaceholder": "Téléphone",
     "emptyTelInvalidFeed": "Le n° de téléphone ne peut être vide!",
     "errorTelInvalidFeed": "N° de téléphone incorrect!",
-
+    "typePlaceholder": "Type",
+    "emptyTypeInvalidFeed": "Le type ne peut être vide!",
+    "errorTypeInvalidFeed": "Type incorrect!",
     "validFeed": "Validé!",
+
     "modalCloseBtnText": "Fermer",
     "modalTitleOk": "Cool !",
     "modalAddContentOk": "Acteur ajouté avec succès !",
@@ -550,9 +877,11 @@ this.$i18n.t("typeTableHeadText"), this.$i18n.t("actionTableHeadText"),
     "streetNameInputLabel": "Nom de rue",
     "streetNumberInputLabel": "Numéro de rue",
     "cityInputLabel": "Ville",
-    "sellerNumInputLabel": "N° Commerçant",
+    "sellerNumberInputLabel": "N° Commerçant",
     "telInputLabel": "Téléphone",
-    "typeInputLabel": "Type",
+    "typeInputSellerLabel": "Vendeur",
+    "typeInputBuyerLabel": "Acheteur",
+    "typeInputAllLabel": "Les deux",
 
     "actorsLinkTarget": "/acteurs"
   },
@@ -564,10 +893,10 @@ this.$i18n.t("typeTableHeadText"), this.$i18n.t("actionTableHeadText"),
     "streetNameTableHeadText": "Street name",
     "streetNumberTableHeadText": "Street number",
     "cityTableHeadText": "City",
-    "sellerNumTableHeadText": "Seller ID Number",
+    "sellerNumberTableHeadText": "Seller ID Number",
     "telTableHeadText": "Phone",
     "typeTableHeadText": "Type",
-    "emptyTableBodyContentText": "No Service.",
+    "emptyTableBodyContentText": "No Actor.",
     "addButtonText": "Add",
     "updateButtonText": "Update",
     "deleteButtonText": "Delete",
@@ -586,22 +915,25 @@ this.$i18n.t("typeTableHeadText"), this.$i18n.t("actionTableHeadText"),
     "emptyEmailInvalidFeed": "Email can't be empty!",
     "errorEmailInvalidFeed": "Bad email supplied!",
     "streetNamePlaceholder": "Street name",
-    "emptyStreetnameInvalidFeed": "Street name can't be empty!",
-    "errorStreetnameInvalidFeed": "Bad street name supplied!",
+    "emptyStreetNameInvalidFeed": "Street name can't be empty!",
+    "errorStreetNameInvalidFeed": "Bad street name supplied!",
     "streetNumberPlaceholder": "Street number",
-    "emptyStreetnumberInvalidFeed": "Street number can't be empty!",
-    "errorStreetnumberInvalidFeed": "Bad street number supplied!",
+    "emptyStreetNumberInvalidFeed": "Street number can't be empty!",
+    "errorStreetNumberInvalidFeed": "Bad street number supplied!",
     "cityPlaceholder": "City",
     "emptyCityInvalidFeed": "City can't be empty!",
     "errorCityInvalidFeed": "Bad city supplied!",
-    "sellerNumPlaceholder": "Seller name",
-    "emptySellernumInvalidFeed": "Seller name can't be empty!",
-    "errorSellernumInvalidFeed": "Bad seller name supplied!",
+    "sellerNumberPlaceholder": "Seller name",
+    "emptySellerNumberInvalidFeed": "Seller name can't be empty!",
+    "errorSellerNumberInvalidFeed": "Bad seller name supplied!",
     "telPlaceholder": "Phone number",
     "emptyTelInvalidFeed": "Phone number can't be empty!",
     "errorTelInvalidFeed": "Bad phone number supplied!",
-
+    "typePlaceholder": "Type",
+    "emptyTypeInvalidFeed": "Type can't be empty!",
+    "errorTypeInvalidFeed": "Bad type supplied!",
     "validFeed": "Ok!",
+
     "modalCloseBtnText": "Close",
     "modalTitleOk": "Great !",
     "modalAddContentOk": "Actor added successfully !",
@@ -619,9 +951,11 @@ this.$i18n.t("typeTableHeadText"), this.$i18n.t("actionTableHeadText"),
     "streetNameInputLabel": "Street name",
     "streetNumberInputLabel": "Street number",
     "cityInputLabel": "City",
-    "sellerNumInputLabel": "Seller ID Number",
+    "sellerNumberInputLabel": "Seller ID Number",
     "telInputLabel": "Phone",
-    "typeInputLabel": "Type",
+    "typeInputSellerLabel": "Seller",
+    "typeInputBuyerLabel": "Buyer",
+    "typeInputAllLabel": "Both",
 
     "servicesLinkTarget": "/actors"
   }
@@ -681,6 +1015,7 @@ this.$i18n.t("typeTableHeadText"), this.$i18n.t("actionTableHeadText"),
           required,
           placeholder,
           type,
+          disabled,
         }"
       >
         <MDBRow class="g-2 d-flex justify-content-center">
@@ -698,6 +1033,7 @@ this.$i18n.t("typeTableHeadText"), this.$i18n.t("actionTableHeadText"),
               :required="required"
               :placeholder="placeholder"
               :type="type"
+              :disabled="disabled"
               @input="inputChanges($event)"
             >
               <!-- <slot name="input-prepend"></slot> -->
@@ -708,7 +1044,7 @@ this.$i18n.t("typeTableHeadText"), this.$i18n.t("actionTableHeadText"),
           </MDBCol>
         </MDBRow>
       </template>
-      <template
+      <!-- <template
         #addFormTextArea="{
           size,
           inputGroup,
@@ -741,23 +1077,45 @@ this.$i18n.t("typeTableHeadText"), this.$i18n.t("actionTableHeadText"),
               :type="type"
               @input="inputChanges($event)"
             >
-              <!-- <slot name="input-prepend"></slot> -->
-              <!-- <template v-if="inputGroup" v-slot:prepend>
-                <span class="input-group-text" id="basic">@</span>
-              </template> -->
             </MDBTextarea>
+          </MDBCol>
+        </MDBRow>
+      </template> -->
+      <template #addFormCheckbox="{ size, invalidFeedback, validFeedback }">
+        <MDBRow class="g-2 d-flex justify-content-center">
+          <MDBCol :md="size">
+            <MDBCheckbox
+              v-for="(val, ind) in typesInputForAdding"
+              v-bind:key="ind"
+              :id="val.id"
+              :label="val.label"
+              :aria-label="val.ariaLabel"
+              v-model="$data[val.model]"
+              :validateOnChange="true"
+              :required="val.required"
+              :isValid="val.isValid"
+              :isValidated="true"
+              :validFeedback="validFeedback"
+              :invalidFeedback="invalidFeedback"
+              :btnCheck="val.btnCheck"
+            >
+            </MDBCheckbox>
+            <!-- <MDBSwitch
+              label="val.label"
+            > 
+            </MDBSwitch> -->
           </MDBCol>
         </MDBRow>
       </template>
     </TableItem>
   </div>
   <ModalItem
-    @serviceModal="modalChange"
-    input="serviceModal"
-    id="serviceModal"
+    @actorModal="modalChange"
+    input="actorModal"
+    id="actorModal"
     tabIndex="-1"
-    labelledBy="serviceModal"
-    :model="serviceModal"
+    labelledBy="actorModal"
+    :model="actorModal"
     :centered="true"
     :modalTitle="modalTitle"
     :modalContent="modalContent"

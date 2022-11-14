@@ -7,7 +7,7 @@ const model = (sequelize) => {
       actorTypeId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true,
+        // autoIncrement: true,
         allowNull: false,
       },
       seller: {

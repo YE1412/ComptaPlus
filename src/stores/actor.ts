@@ -43,6 +43,7 @@ function transformValue(val: string) {
 const useActorStore = defineStore("actor", {
   state: () => ({
     actors: [],
+    types: [],
     messages: useStorage("messages", []),
     messagesVisibility: useStorage("messagesVisibility", false),
   }),
@@ -58,7 +59,7 @@ const useActorStore = defineStore("actor", {
     },
   },
   actions: {
-    getAllServices() {
+    getAllActors() {
       // console.log("Login...");
       return new Promise((resolve, reject) => {
         actorAxiosService
@@ -70,6 +71,44 @@ const useActorStore = defineStore("actor", {
               this.actors = dataClear;
               // console.log(dataClear);
               resolve(dataClear);
+            } else {
+              reject(false);
+            }
+          })
+          .catch((err: any) => {
+            // La requête a été faite et le code de
+            //   réponse du serveur n'est pas dans la plage 2xx
+            if (err.response) {
+              console.log(err.response.data);
+              console.log(err.response.status);
+              console.log(err.response.headers);
+            }
+            // La requête a été  faite mais aucune réponse
+            //  n'a été ruçue `error.request` est une instance de
+            //  XMLHttpRequest dans le navigateur et une instance
+            //  de http.ClientRequest avec node.js
+            else if (err.request) {
+              console.log(err.request);
+            }
+            // Quelque chose s'est passé lors de la construction de
+            //  la requête et cela a provoqué une erreur
+            else {
+              console.log("Error", err.message);
+            }
+            console.log(err.config);
+            reject(new Error(err));
+          });
+      });
+    },
+    getAllTypes() {
+      return new Promise((resolve, reject) => {
+        actorAxiosService
+          .getAllTypes()
+          .then((res: any) => {
+            if (res.data.length) {
+              this.types = res.data;
+              // console.log(dataClear);
+              resolve(res.data);
             } else {
               reject(false);
             }

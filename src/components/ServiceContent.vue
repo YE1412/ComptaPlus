@@ -28,6 +28,9 @@ export default defineComponent({
       default: () => false,
     },
   },
+  provide() {
+    return { src: "actors" };
+  },
   async setup() {
     // console.log(`Setup`);
     const store = useServiceStore();
@@ -64,6 +67,8 @@ export default defineComponent({
         isValid: false,
         required: true,
         placeholder: this.$i18n.t("namePlaceholder"),
+        size: "10",
+        disabled: false,
       },
       montantHt: {
         value: 0,
@@ -75,6 +80,8 @@ export default defineComponent({
         isValid: false,
         required: true,
         placeholder: this.$i18n.t("amountPlaceholder"),
+        size: "10",
+        disabled: false,
       },
       quantite: {
         value: 0,
@@ -86,6 +93,8 @@ export default defineComponent({
         isValid: false,
         required: true,
         placeholder: this.$i18n.t("quantityPlaceholder"),
+        size: "10",
+        disabled: false,
       },
     };
     return {
@@ -181,6 +190,8 @@ export default defineComponent({
             isValid: true,
             required: true,
             placeholder: this.$i18n.t("namePlaceholder"),
+            size: "10",
+            disabled: false,
           },
           montantHt: {
             value: obj["montantHt"],
@@ -192,6 +203,8 @@ export default defineComponent({
             isValid: true,
             required: true,
             placeholder: this.$i18n.t("amountPlaceholder"),
+            size: "10",
+            disabled: false,
           },
           quantite: {
             value: obj["quantite"],
@@ -203,6 +216,8 @@ export default defineComponent({
             isValid: true,
             required: true,
             placeholder: this.$i18n.t("quantityPlaceholder"),
+            size: "10",
+            disabled: false,
           },
         };
         this.updateInputObject = updateInputObj;

@@ -10,7 +10,7 @@ const create = (req, res) => {
     nom: body.nom,
     quantite: body.quantite,
   };
-  // Save user in db
+  // Save service in db
   service
     .create(serviceObj)
     .then((data) => {
@@ -34,7 +34,7 @@ const findAll = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occured while retieving service.",
+        message: err.message || "Some error occured while retieving services.",
       });
     });
 };
@@ -67,31 +67,6 @@ const findOne = (req, res) => {
     });
 };
 
-// const checkOne = (req, res) => {
-// const query = req.query;
-// user
-//   .findAll({
-//     where: {
-//       [Op.or]: [
-//         {
-//           login: query.login,
-//         },
-//         {
-//           email: query.login,
-//         },
-//       ],
-//     },
-//   })
-//   .then((data) => {
-//     res.send(data);
-//   })
-//   .catch((err) => {
-//     res.status(500).send({
-//       message: err.message || "Some error occured while retieving user.",
-//     });
-//   });
-// };
-
 const update = (req, res) => {
   const params = req.params;
 
@@ -104,7 +79,7 @@ const update = (req, res) => {
     .then((result) => {
       if (result === 1) {
         res.send({
-          message: "User was updated successfully !",
+          message: "Service was updated successfully !",
         });
       } else {
         res.send({
@@ -135,7 +110,7 @@ const deleteOne = (req, res) => {
         });
       } else {
         res.send({
-          message: `Cannot delete service with id=${params.id}. Maybe User was not found or req.body is empty !`,
+          message: `Cannot delete service with id=${params.id}. Maybe Service was not found or req.body is empty !`,
         });
       }
     })

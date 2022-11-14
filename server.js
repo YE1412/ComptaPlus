@@ -24,13 +24,13 @@ const app = express();
 
 async function createViteServer() {
   // Testing db connection
-  let opt = {force:true};
+  let opt = {};
   if (env === "production") opt.logging = false;
   let ret = await db.sequelize
     .authenticate()
     .then(async () => {
       await db.sequelize.sync(opt);
-      initDB();
+      // initDB();
       // db.sequelize.close();
       console.log("Database connection has been established !");
       return true;
@@ -58,7 +58,7 @@ async function createViteServer() {
     app.use(vite.middlewares);
   }
 
-  var userRouter, serviceRouter, sessionsRouter;
+  var userRouter, serviceRouter, sessionsRouter, actorRouter;
   let prefix = "./";
   // console.log(import("./src/routes/user.route.js")(app));
   if (env === "development") {
@@ -74,6 +74,7 @@ async function createViteServer() {
   userRouter = await import(`${prefix}src/routes/user.route.js`);
   serviceRouter = await import(`${prefix}src/routes/service.route.js`);
   sessionsRouter = await import(`${prefix}src/routes/sessions.route.js`);
+  actorRouter = await import(`${prefix}src/routes/actor.route.js`);
   //  Populate req.cookies
   app.use(cookieParser());
   //  Session setup
@@ -103,6 +104,7 @@ async function createViteServer() {
   app.use("/api/users", userRouter.default());
   app.use("/api/services", serviceRouter.default());
   app.use("/api/sessions", sessionsRouter.default());
+  app.use("/api/actors", actorRouter.default());
   app.get("/api/session", (request, response) => {
     request.session.appSession = uuidv4();
     // console.log(`GET - Session`);
@@ -182,73 +184,76 @@ async function createViteServer() {
   });
 }
 
-function initDB() {
-  const userType = db.userType;
-  const actorType = db.actorType;
-  const lang = db.langue;
-  const paymentType = db.paymentType;
-  const devise = db.devise;
+// function initDB() {
+//   const userType = db.userType;
+//   const actorType = db.actorType;
+//   const lang = db.langue;
+//   const paymentType = db.paymentType;
+//   const devise = db.devise;
 
-  userType.create({
-    regular: true,
-    admin: false,
-  });
-  userType.create({
-    regular: false,
-    admin: true,
-  });
-  userType.create({
-    regular: true,
-    admin: true,
-  });
+//   userType.create({
+//     regular: true,
+//     admin: false,
+//   });
+//   userType.create({
+//     regular: false,
+//     admin: true,
+//   });
+//   userType.create({
+//     regular: true,
+//     admin: true,
+//   });
 
-  actorType.create({
-    seller: true,
-    buyer: false,
-  });
-  actorType.create({
-    seller: false,
-    buyer: true,
-  });
-  actorType.create({
-    seller: true,
-    buyer: true,
-  });
+//   actorType.create({
+//     actorTypeId: 2,
+//     seller: true,
+//     buyer: false,
+//   });
+//   actorType.create({
+//     actorTypeId: 3,
+//     seller: false,
+//     buyer: true,
+//   });
+//   actorType.create({
+//     actorTypeId: 1,
+//     seller: true,
+//     buyer: true,
+//   });
 
-  lang.create({
-    libelle: "Français",
-    nom: "fr",
-  });
-  lang.create({
-    libelle: "English",
-    nom: "us",
-  });
+//   lang.create({
+//     libelle: "Français",
+//     nom: "fr",
+//   });
+//   lang.create({
+//     libelle: "English",
+//     nom: "us",
+//   });
 
-  paymentType.create({
-    cb: true,
-    esp: false,
-    chq: false,
-  });
-  paymentType.create({
-    cb: false,
-    esp: true,
-    chq: false,
-  });
-  paymentType.create({
-    cb: false,
-    esp: false,
-    chq: true,
-  });
+//   paymentType.create({
+//     cb: true,
+//     esp: false,
+//     chq: false,
+//   });
+//   paymentType.create({
+//     cb: false,
+//     esp: true,
+//     chq: false,
+//   });
+//   paymentType.create({
+//     cb: false,
+//     esp: false,
+//     chq: true,
+//   });
 
-  devise.create({
-    symbole: "€",
-  });
-  devise.create({
-    symbole: "$",
-  });
-  devise.create({
-    symbole: "£",
-  });
-}
+//   devise.create({
+//     symbole: "€",
+//   });
+//   devise.create({
+//     symbole: "$",
+//   });
+//   devise.create({
+//     symbole: "£",
+//   });
+// }
 
 createViteServer();
