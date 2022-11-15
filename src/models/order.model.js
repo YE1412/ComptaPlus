@@ -22,6 +22,7 @@ const model = (sequelize) => {
           model: "facture",
           key: "factureId",
         },
+        defaultValue: null,
       },
     },
     {

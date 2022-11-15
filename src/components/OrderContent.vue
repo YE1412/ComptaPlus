@@ -7,10 +7,11 @@ import { useMessageStore } from "@/stores/message";
 import MessagesItem from "../components/MessagesItem.vue";
 import TableItem from "../components/TableItem.vue";
 import { MDBCol, MDBRow, MDBTextarea } from "mdb-vue-ui-kit";
-import orderAxiosService from "../services/actor.service";
+import orderAxiosService from "../services/order.service";
 import ModalItem from "./ModalItem.vue";
 const renderComponent = ref(true);
 import "../globals";
+import vSelect from 'vue-select'
 
 export default defineComponent({
   name: "OrderContent",
@@ -66,9 +67,22 @@ export default defineComponent({
     // console.log(this.services);
     const headTable = [
       this.$i18n.t("additionalContentTableHeadText"),
+      this.$i18n.t("priceHtHeadText"),
       this.$i18n.t("servicesTableHeadText"),
+      this.$i18n.t("invoiceHeadText"),
       this.$i18n.t("actionTableHeadText"),
     ];
+    let servicesOpt = [];
+    servicesOpt.push({ text: this.$i18n.t('servicesPlaceholder'), value: 0, montantHt: 0, quantite: 0, nom: "default" });
+    for(const key in this.servicesObj){
+      let service = {};
+      service.text = `${this.servicesObj[key].nom} - ${this.servicesObj[key].montantHt}`;
+      service.value = this.servicesObj[key].serviceId;
+      service.montantHt = this.servicesObj[key].montantHt;
+      service.quantite = this.servicesObj[key].quantite;
+      service.nom = this.servicesObj[key].nom;
+      servicesOpt.push(service);
+    }
     const addInputObj = {
       contenuAdditionnel: {
         value: "",
@@ -84,6 +98,7 @@ export default defineComponent({
         disabled: false,
       },
       services: {
+        servicesOption: servicesOpt,
         value: "",
         type: "",
         label: this.$i18n.t("servicesInputLabel"),
@@ -107,7 +122,9 @@ export default defineComponent({
       addInputObject: addInputObj,
       orderId: 0,
       contenuAdditionnel: "",
+      priceHt: 0,
       services: [],
+      selectedServices: [],
       // For update
       updateInputObject: {},
       updateInputObjectId: 0,
@@ -117,7 +134,7 @@ export default defineComponent({
       modalContent: "",
       orderModal: false,
       renderComponent: true,
-      tableColSpan: "3",
+      tableColSpan: "5",
     };
   },
   computed: {
@@ -161,6 +178,7 @@ export default defineComponent({
     MDBRow,
     ModalItem,
     MDBTextarea,
+    vSelect
   },
   methods: {
     async addClickFromChild(db: boolean) {
@@ -169,6 +187,11 @@ export default defineComponent({
         this.form = true;
         this.update = false;
         this.add = true;
+        this.tableHeading = [
+          this.$i18n.t("additionalContentTableHeadText"),
+          this.$i18n.t("servicesTableHeadText"),
+          this.$i18n.t("actionTableHeadText"),
+        ];
       } else {
         // console.log(this.buyer);
         // console.log(this.seller);
@@ -176,18 +199,23 @@ export default defineComponent({
         // click to register a new order
         this.errors = [];
         // console.log("addClick !");
-
+        // console.log(this.selectedServices);
+        // HtPrice calculation
+        this.priceHt = 0;
+        for (const key in this.selectedServices){
+          this.priceHt += (this.selectedServices[key].montantHt * this.selectedServices[key].quantite);
+        }
         this.inputsCheck(this.addInputObject);
 
         if (!this.errors.length) {
           const ret = await this.insertNewOrder();
-          console.log(ret);
+          // console.log(ret);
           if (ret) {
             this.form = false;
             this.update = false;
             this.add = true;
             this.orderStore
-              .getAllActors()
+              .getAllOrders()
               .then(
                 () => {
                   this.forceTableRerender();
@@ -210,6 +238,11 @@ export default defineComponent({
         this.add = false;
         this.orderId = id;
         this.contenuAdditionnel = obj.contenuAdditionnel;
+        this.tableHeading = [
+          this.$i18n.t("additionalContentTableHeadText"),
+          this.$i18n.t("servicesTableHeadText"),
+          this.$i18n.t("actionTableHeadText"),
+        ];
         // this.services = obj.nom;
         // console.log(obj);
         const updateInputObj = {
@@ -280,12 +313,16 @@ export default defineComponent({
         this.update = false;
         this.add = true;
         this.orderStore
-          .getAllActors()
+          .getAllOrders()
           .then(
-            () => {
+            (res) => {
+              // console.log(res);
               this.forceTableRerender();
             },
-            () => {}
+            (ret) => {
+              // console.log(ret);
+              this.forceTableRerender();
+            }
           )
           .catch((err) => {
             console.log(err);
@@ -323,6 +360,8 @@ export default defineComponent({
       for (const k in obj) {
         if (typeof obj[k] === "string") {
           obj[k] = __CRYPTAPI__.crypt(obj[k], __KEY__);
+        }else if(typeof obj[k] === "object"){
+          this.transformObject(obj[k]);
         }
       }
     },
@@ -333,8 +372,8 @@ export default defineComponent({
     insertNewOrder() {
       const obj = {
         contenuAdditionnel: this.contenuAdditionnel,
-        priceHT: null,
-        factureId: null,
+        priceHt: this.priceHt,
+        services: this.selectedServices
       };
       this.transformObject(obj);
       return orderAxiosService
@@ -482,7 +521,7 @@ export default defineComponent({
   "fr": {
     "additionalContentTableHeadText": "Contenu additionnel",
     "servicesTableHeadText": "Services",
-    "priceHeadText": "Prix Hors taxes",
+    "priceHtHeadText": "Prix Hors taxes",
     "invoiceHeadText": "Facture",
     "emptyTableBodyContentText": "Aucune Commande.",
     "addButtonText": "Ajouter",
@@ -515,7 +554,7 @@ export default defineComponent({
   "en": {
     "additionalContentTableHeadText": "Additional content",
     "servicesTableHeadText": "Services",
-    "priceHeadText": "Price Excl. taxes",
+    "priceHtHeadText": "Price Excl. taxes",
     "invoiceHeadText": "Invoice",
     "emptyTableBodyContentText": "No Order.",
     "addButtonText": "Add",
@@ -556,7 +595,7 @@ export default defineComponent({
       :tableHead="tableHeading"
       :emptyTableText="$t('emptyTableBodyContentText')"
       addActionName="addClick"
-      ident="actorId"
+      ident="orderId"
       @addClick="addClickFromChild"
       updateActionName="updateClick"
       @updateClick="updateClickFromChild"
@@ -627,36 +666,38 @@ export default defineComponent({
       <template
         #addFormSelect="{
           size,
-          inputGroup,
           ariaLabel,
           label,
-          model,
-          invalidFeedback,
-          validFeedback,
-          isValid,
-          isValidated,
           required,
-          placeholder,
-          type,
         }"
       >
         <MDBRow class="g-3 d-flex justify-content-center">
-          <MDBCol :md="size">
-            <select
-              :inputGroup="inputGroup"
-              :aria-label="ariaLabel"
-              aria-describedby="basic"
-              :label="label"
-              :model="model"
-              :invalidFeedback="invalidFeedback"
-              :validFeedback="validFeedback"
-              :isValid="isValid"
-              :isValidated="isValidated"
+          <MDBCol :md="size" class="input-group">
+            <!-- <div class="input-group-prepend">
+              <label class="input-group-text" for="services">
+                {{ label }}
+              </label>
+            </div> -->
+            <vSelect
               :required="required"
-              :placeholder="placeholder"
-              :type="type"
-              @input="inputChanges($event)"
-            ></select>
+              :aria-label="ariaLabel"
+              label="text"
+              v-model="selectedServices"
+              :multiple="true"
+              :options="addInputObject.services.servicesOption"
+              id="services"
+              class="custom-select w-100"
+              :selectable="(option) => option.value !== 0"
+            >
+              <template #search="{attributes, events}">
+                <input
+                  class="vs__search"
+                  :required="!selectedServices"
+                  v-bind="attributes"
+                  v-on="events"
+                />
+              </template>
+            </vSelect>
           </MDBCol>
         </MDBRow>
       </template>

@@ -7,6 +7,7 @@ import HomeView from "../views/HomeView.vue";
 import i18n from "../plugins/i18n";
 import { useUserStore } from "@/stores/user";
 import { useSessionStore } from "@/stores/session";
+import { useMessageStore } from "@/stores/message";
 
 const { t } = i18n.global;
 let router: any = null;
@@ -212,22 +213,22 @@ router.beforeEach(async (to: any, from: any, next: any) => {
   // current running app
   const userStore = useUserStore();
   const sessionStore = useSessionStore();
+  const messageStore = useMessageStore();
   const accessiblePath = isRealPath(to.fullPath);
   let dest = "";
-  console.log(`-----------------------\nto`);
-  console.log(to);
-  console.log(`userStore connected ?`);
-  console.log(userStore.connected);
-  console.log(`startLinkTarget`);
-  console.log(t("startLinkTarget"));
-  console.log(`Router getRoutes`);
-  console.log(router.getRoutes());
-  console.log(`Accessible Path`);
-  console.log(accessiblePath);
-  console.log(`Paths Obj`);
-  console.log(pathsObj);
-  console.log(`-----------------------\n`);
-
+  // console.log(`-----------------------\nto`);
+  // console.log(to);
+  // console.log(`userStore connected ?`);
+  // console.log(userStore.connected);
+  // console.log(`startLinkTarget`);
+  // console.log(t("startLinkTarget"));
+  // console.log(`Router getRoutes`);
+  // console.log(router.getRoutes());
+  // console.log(`Accessible Path`);
+  // console.log(accessiblePath);
+  // console.log(`Paths Obj`);
+  // console.log(pathsObj);
+  // console.log(`-----------------------\n`);
   if (to.meta.requiresAuth) {
     dest = await validateSession(sessionStore)
       .then(
@@ -237,6 +238,7 @@ router.beforeEach(async (to: any, from: any, next: any) => {
         },
         (rej: any) => {
           // console.log(rej);
+          messageStore.deleteMessages();
           return t("startLinkTarget");
         }
       )

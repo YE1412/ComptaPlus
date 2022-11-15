@@ -4,13 +4,15 @@ import router from "@/router/index";
 import { defineComponent } from "vue";
 import { useUserStore } from "@/stores/user";
 import { useSessionStore } from "@/stores/session";
+import { useMessageStore } from "@/stores/message";
 
 export default defineComponent({
   name: "ToolbarNavBarIn",
   setup() {
     const userStore = useUserStore();
     const sessionStore = useSessionStore();
-    return { userStore, sessionStore };
+    const messageStore = useMessageStore();
+    return { userStore, sessionStore, messageStore };
   },
   components: {
     RouterLink,
@@ -22,6 +24,7 @@ export default defineComponent({
       this.userStore.user = {};
       this.userStore.connected = false;
       this.sessionStore.deleteSession();
+      this.messageStore.deleteMessages();
       router.go(0);
     },
   },

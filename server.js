@@ -29,9 +29,12 @@ async function createViteServer() {
   let ret = await db.sequelize
     .authenticate()
     .then(async () => {
-      await db.sequelize.sync(opt);
-      // initDB();
-      // db.sequelize.close();
+      await db.sequelize
+      .query('SET FOREIGN_KEY_CHECKS = 0', {raw: true})
+      .then(async () => {
+        await db.sequelize.sync(opt);
+        // initDB();
+      });
       console.log("Database connection has been established !");
       return true;
     })

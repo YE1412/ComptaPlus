@@ -12,11 +12,20 @@ import RegisterContentItem from "./RegisterContentItem.vue";
 import userAxiosService from "../services/user.service";
 import ModalItem from "./ModalItem.vue";
 import router from "@/router/index";
+import { useMessageStore } from "@/stores/message";
+import MessagesItem from "../components/MessagesItem.vue";
 // import { genMod, cryptMod } from "../WasmModules";
 import "../globals";
 
 export default defineComponent({
   name: "RegisterContent",
+  setup() {
+    const messageStore = useMessageStore();
+
+    return {
+      messageStore
+    };
+  },
   data() {
     return {
       errors: [],
@@ -61,6 +70,7 @@ export default defineComponent({
     MDBListGroupItem,
     MDBListGroup,
     ModalItem,
+    MessagesItem
   },
   methods: {
     lastnameChanges(text: String) {
@@ -269,18 +279,34 @@ export default defineComponent({
         .create(obj)
         .then((res) => {
           // console.log(res);
-          this.modalTitle = this.$i18n.t("modalTitleOk");
-          this.modalContent = this.$i18n.t("modalContentOk");
-          this.registerModal = true;
+          // this.modalTitle = this.$i18n.t("modalTitleOk");
+          // this.modalContent = this.$i18n.t("modalContentOk");
+          // this.registerModal = true;
+          // MESSAGES
+          this.messageStore.messages.push({
+            severity: false,
+            content: this.$i18n.t("modalContentOk"),
+          });
+          this.messageVisibility = true;
+          this.messageStore.messagesVisibility = true;
           return true;
         })
         .catch((err) => {
           // console.log(err);
-          this.modalTitle = this.$i18n.t("modalTitleKo");
-          this.modalContent = this.$i18n.t("modalContentKo", {
-            err: err.response.data.message || err.message,
+          // this.modalTitle = this.$i18n.t("modalTitleKo");
+          // this.modalContent = this.$i18n.t("modalContentKo", {
+          //   err: err.response.data.message || err.message,
+          // });
+          // this.registerModal = true;
+          // MESSAGES
+          this.messageStore.messages.push({
+            severity: true,
+            content: this.$i18n.t("modalContentKo", {
+              err: err.response.data.message || err.message,
+            }),
           });
-          this.registerModal = true;
+          this.messageVisibility = true;
+          this.messageStore.messagesVisibility = true;
           return false;
         });
     },
@@ -391,6 +417,7 @@ export default defineComponent({
 
 <template>
   <main class="mt-3">
+    <MessagesItem v-if="messageStore.getMessagesVisibility"></MessagesItem>
     <div class="container">
       <MDBRow
         tag="form"

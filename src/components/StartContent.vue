@@ -5,6 +5,8 @@ import router from "@/router/index";
 import { RouterLink } from "vue-router";
 import { useUserStore } from "@/stores/user";
 import { useSessionStore } from "@/stores/session";
+import { useMessageStore } from "@/stores/message";
+import MessagesItem from "../components/MessagesItem.vue";
 import StartContentLoginItem from "./StartContentLoginItem.vue";
 import UserIcon from "./icons/IconUser.vue";
 import LockIcon from "./icons/IconLock.vue";
@@ -16,7 +18,8 @@ export default defineComponent({
   setup() {
     const userStore = useUserStore();
     const sessionStore = useSessionStore();
-    return { userStore, sessionStore };
+    const messageStore = useMessageStore();
+    return { userStore, sessionStore, messageStore };
   },
   mounted() {
     // console.log(__KEY__);
@@ -30,6 +33,7 @@ export default defineComponent({
     UserIcon,
     LockIcon,
     ModalItem,
+    MessagesItem
   },
   data() {
     return {
@@ -134,6 +138,9 @@ export default defineComponent({
 </i18n>
 
 <template>
+  <div style="margin-top: 80px;">
+    <MessagesItem v-if="messageStore.getMessagesVisibility"></MessagesItem>
+  </div>
   <div class="cont">
     <div class="demo">
       <div class="login">

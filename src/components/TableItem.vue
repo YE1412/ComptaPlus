@@ -130,6 +130,38 @@ export default defineComponent({
       }
       return ret;
     },
+    tableOrdersServicesLibelle() {
+      let ret = "";
+      if (this.src === "orders") {
+        for (const k in this.contents) {
+          for (const l in this.contents[k]) {
+            if (l === "Services") {
+              for(const m in this.contents[k][l]){
+                let libelle = `${this.contents[k][l][m].serviceId} - ${this.contents[k][l][m].nom}`;
+                ret += m != (this.contents[k][l].length - 1) ? `${libelle}, ` : libelle;
+              }
+            }
+          }
+        }
+      }
+      return ret;
+    },
+    tableOrdersInvoicesLibelle() {
+      let ret = "";
+      if (this.src === "orders") {
+        for (const k in this.contents) {
+          for (const l in this.contents[k]) {
+            if (l === "facture") {
+              let libelle = "null";
+              if (this.contents[k][l] !== null)
+                libelle = `${this.contents[k][l].factureId} - `;
+              ret = libelle;
+            }
+          }
+        }
+      }
+      return ret;
+    },
   },
   mounted() {
     this.hydrateAll();
@@ -314,7 +346,11 @@ export default defineComponent({
             v-bind:key="key"
             style="vertical-align: middle"
           >
-            {{ key === "personne_type" ? tableActorsTypeLibelle[index] : val }}
+            {{ key === "personne_type" ? tableActorsTypeLibelle[index] : "" }}   
+            {{ key === "facture" ? tableOrdersInvoicesLibelle : "" }}
+            {{ key === "Services" ? tableOrdersServicesLibelle : val }}
+            
+            
           </td>
           <td style="vertical-align: middle" v-if="admin">
             <div class="" role="group">

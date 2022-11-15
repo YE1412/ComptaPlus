@@ -267,7 +267,9 @@ export default defineComponent({
             () => {
               this.forceTableRerender();
             },
-            () => {}
+            () => {
+              this.forceTableRerender();
+            }
           )
           .catch((err) => {
             console.log(err);

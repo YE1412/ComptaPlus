@@ -136,12 +136,14 @@ orderModelObj.services = orderModelObj.belongsToMany(serviceModelObj, {
   foreignKey: "serviceId",
   onUpdate: "CASCADE",
   onDelete: "CASCADE",
+  as: "Services"
 });
 serviceModelObj.orders = serviceModelObj.belongsToMany(orderModelObj, {
   through: "contains",
   foreignKey: "orderId",
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
+  as: "Orders"
 });
 
 langueModelObj.invoices = langueModelObj.hasMany(invoiceModelObj, {

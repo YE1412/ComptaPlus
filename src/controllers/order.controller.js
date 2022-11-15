@@ -2,28 +2,66 @@ import db from "../models/index.js";
 
 const order = db.order;
 // const invoice = db.invoice;
-const service = db.service;
+// const service = db.service;
+// const contains = db.contains;
 // const Op = db.Sequelize.Op;
 
-const create = (req, res) => {
+const create = async (req, res) => {
   const body = req.body;
+  let serviceTab = [];
+  let serviceRow = [];
+  for (const key in body.services){
+    serviceTab.push({
+      serviceId: body.services[key].value,
+      nom: body.services[key].nom,
+      montantHt: body.services[key].montantHt,
+      quantite: body.services[key].quantite
+    });
+  }
   const orderObj = {
-    cp: body.cp,
-    email: body.email,
-    nom: body.nom,
-    prenom: body.prenom,
-    nomRue: body.nomRue,
-    numCommercant: body.numCommercant,
-    numRue: body.numRue,
-    tel: body.tel,
-    ville: body.ville,
-    actorTypeId: body.type,
+    contenuAdditionnel: body.contenuAdditionnel,
+    priceHt: body.priceHt,
+    produitservice: serviceTab,
   };
-  // Save order in db
-  order
-    .create(orderObj)
-    .then((data) => {
-      res.send(data);
+
+  // console.log(order);
+
+  // 1. INSERT a new order
+  const orderStatement = await order.create(orderObj,
+    {
+      include: [{
+        association: order.services,
+        as: "Services"
+      }],
+    })
+    .then(async (data) => {
+      // 2. Find the services rows
+      for (const key in body.services){
+        serviceRow[key] = await service.findByPk(body.services[key].value)
+          .then((data2) => {
+            return data2;
+          })
+          .catch((err) => {
+            res.status(500).send({
+              message: err.message || "Some error occured while fetching service with id="+body.services[key].value,
+              error: err,
+            });
+          });
+      }
+      // console.log(data);
+      // 3. INSERT the association in contains table
+      data
+        .addServices(serviceRow, { through: contains })
+        .then((data2) => {
+          res.send(data2);
+        })
+        .catch((err) => {
+          res.status(500).send({
+            message: err.message || "Some error occured while inserting in associated table contains with order id="+orderStatement.orderId,
+            error: err,
+          });
+        });
+      return data;
     })
     .catch((err) => {
       res.status(500).send({
@@ -36,9 +74,12 @@ const create = (req, res) => {
 const findAll = (req, res) => {
   order
     .findAll({
-      attributes: ["orderId", "contenuAdditionnel", "priceHt", "factureId"],
+      attributes: ["orderId", "contenuAdditionnel", "priceHt", "Services.serviceId"],
       where: {},
-      // include: type,
+      include: [
+        order.services,
+        order.invoice
+      ],
     })
     .then((data) => {
       res.send(data);

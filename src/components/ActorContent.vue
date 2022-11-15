@@ -315,7 +315,7 @@ export default defineComponent({
 
         if (!this.errors.length) {
           const ret = await this.insertNewActor();
-          console.log(ret);
+          // console.log(ret);
           if (ret) {
             this.form = false;
             this.update = false;
@@ -534,7 +534,9 @@ export default defineComponent({
             () => {
               this.forceTableRerender();
             },
-            () => {}
+            () => {
+              this.forceTableRerender();
+            }
           )
           .catch((err) => {
             console.log(err);

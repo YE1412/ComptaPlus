@@ -3,6 +3,7 @@
 @import "~/bootstrap-icons/font/bootstrap-icons.css";
 @import "~/flag-icons/css/flag-icons.min.css";
 @import '~/mdb-ui-kit/css/mdb.min.css';
+@import '~/vue-select/dist/vue-select.css';
 @font-face {
     font-family: 'Poiret';
     src: url('./fonts/poiret-one/PoiretOne.eot');
