@@ -33,7 +33,7 @@ export default defineComponent({
     UserIcon,
     LockIcon,
     ModalItem,
-    MessagesItem
+    MessagesItem,
   },
   data() {
     return {
@@ -138,7 +138,7 @@ export default defineComponent({
 </i18n>
 
 <template>
-  <div style="margin-top: 80px;">
+  <div style="margin-top: 80px">
     <MessagesItem v-if="messageStore.getMessagesVisibility"></MessagesItem>
   </div>
   <div class="cont">

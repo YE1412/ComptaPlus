@@ -90,12 +90,31 @@ export default defineComponent({
       objContents: [],
       idents: [],
       contents: [],
+      contentVal: "",
     };
   },
   computed: {
     objectsLength() {
       // console.log(this.objContents);
       return this.objContents.length;
+    },
+    contentsForDisp() {
+      let ret = [];
+      for (const key in this.contents) {
+        ret[key] = {};
+        for (const key2 in this.contents[key]) {
+          if (key2 === "personne_type") {
+            ret[key][key2] = this.tableActorsTypeLibelle[key];
+          } else if (key2 === "facture") {
+            ret[key][key2] = this.tableOrdersInvoiceLibelle;
+          } else if (key2 === "Services") {
+            ret[key][key2] = this.tableOrdersServicesLibelle;
+          } else {
+            ret[key][key2] = this.contents[key][key2];
+          }
+        }
+      }
+      return ret;
     },
     tableHeadForDisplay() {
       if (this.display) {
@@ -136,9 +155,12 @@ export default defineComponent({
         for (const k in this.contents) {
           for (const l in this.contents[k]) {
             if (l === "Services") {
-              for(const m in this.contents[k][l]){
+              for (const m in this.contents[k][l]) {
                 let libelle = `${this.contents[k][l][m].serviceId} - ${this.contents[k][l][m].nom}`;
-                ret += m != (this.contents[k][l].length - 1) ? `${libelle}, ` : libelle;
+                ret +=
+                  m != this.contents[k][l].length - 1
+                    ? `${libelle}, `
+                    : libelle;
               }
             }
           }
@@ -146,13 +168,13 @@ export default defineComponent({
       }
       return ret;
     },
-    tableOrdersInvoicesLibelle() {
+    tableOrdersInvoiceLibelle() {
       let ret = "";
       if (this.src === "orders") {
         for (const k in this.contents) {
           for (const l in this.contents[k]) {
             if (l === "facture") {
-              let libelle = "null";
+              let libelle = this.$i18n.t("emptyOrdersInvoiceLibelle");
               if (this.contents[k][l] !== null)
                 libelle = `${this.contents[k][l].factureId} - `;
               ret = libelle;
@@ -294,12 +316,14 @@ export default defineComponent({
   "fr": {
     "actorTypeBothLibelle": "Acheteur, Vendeur",
     "actorTypeSellerLibelle": "Vendeur",
-    "actorTypeBuyerLibelle": "Acheteur"
+    "actorTypeBuyerLibelle": "Acheteur",
+    "emptyOrdersInvoiceLibelle": "Aucune"
   },
   "en": {
     "actorTypeBothLibelle": "Buyer, Seller",
     "actorTypeSellerLibelle": "Seller",
-    "actorTypeBuyerLibelle": "Buyer"    
+    "actorTypeBuyerLibelle": "Buyer",
+    "emptyOrdersInvoiceLibelle": "None"    
   }
 }
 </i18n>
@@ -334,7 +358,7 @@ export default defineComponent({
       </tbody>
       <tbody v-if="objectsLength && !isForm">
         <tr
-          v-for="(obj, index) in contents"
+          v-for="(obj, index) in contentsForDisp"
           v-bind:key="index"
           class="text-center"
         >
@@ -346,11 +370,7 @@ export default defineComponent({
             v-bind:key="key"
             style="vertical-align: middle"
           >
-            {{ key === "personne_type" ? tableActorsTypeLibelle[index] : "" }}   
-            {{ key === "facture" ? tableOrdersInvoicesLibelle : "" }}
-            {{ key === "Services" ? tableOrdersServicesLibelle : val }}
-            
-            
+            {{ val }}
           </td>
           <td style="vertical-align: middle" v-if="admin">
             <div class="" role="group">

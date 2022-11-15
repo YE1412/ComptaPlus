@@ -11,7 +11,7 @@ import orderAxiosService from "../services/order.service";
 import ModalItem from "./ModalItem.vue";
 const renderComponent = ref(true);
 import "../globals";
-import vSelect from 'vue-select'
+import vSelect from "vue-select";
 
 export default defineComponent({
   name: "OrderContent",
@@ -73,8 +73,14 @@ export default defineComponent({
       this.$i18n.t("actionTableHeadText"),
     ];
     let servicesOpt = [];
-    servicesOpt.push({ text: this.$i18n.t('servicesPlaceholder'), value: 0, montantHt: 0, quantite: 0, nom: "default" });
-    for(const key in this.servicesObj){
+    servicesOpt.push({
+      text: this.$i18n.t("servicesPlaceholder"),
+      value: 0,
+      montantHt: 0,
+      quantite: 0,
+      nom: "default",
+    });
+    for (const key in this.servicesObj) {
       let service = {};
       service.text = `${this.servicesObj[key].nom} - ${this.servicesObj[key].montantHt}`;
       service.value = this.servicesObj[key].serviceId;
@@ -98,7 +104,6 @@ export default defineComponent({
         disabled: false,
       },
       services: {
-        servicesOption: servicesOpt,
         value: "",
         type: "",
         label: this.$i18n.t("servicesInputLabel"),
@@ -125,6 +130,7 @@ export default defineComponent({
       priceHt: 0,
       services: [],
       selectedServices: [],
+      servicesOption: servicesOpt,
       // For update
       updateInputObject: {},
       updateInputObjectId: 0,
@@ -137,40 +143,7 @@ export default defineComponent({
       tableColSpan: "5",
     };
   },
-  computed: {
-    // typesInputForAdding() {
-    //   let ret = [];
-    //   for (const key in this.types) {
-    //     let label = "",
-    //       model;
-    //     label =
-    //       this.types[key].seller && !this.types[key].buyer
-    //         ? this.$i18n.t("typeInputSellerLabel")
-    //         : label;
-    //     label =
-    //       !this.types[key].seller && this.types[key].buyer
-    //         ? this.$i18n.t("typeInputBuyerLabel")
-    //         : label;
-    //     model =
-    //       this.types[key].seller && !this.types[key].buyer ? "seller" : model;
-    //     model =
-    //       !this.types[key].seller && this.types[key].buyer ? "buyer" : model;
-    //     if (!this.types[key].seller || !this.types[key].buyer) {
-    //       ret[key] = {};
-    //       ret[key].label = label;
-    //       ret[key].id = `type-${this.types[key].actorTypeId}`;
-    //       ret[key].model = model;
-    //       ret[key].ariaLabel = `actorType-${model}`;
-    //       ret[key].required = true;
-    //       ret[key].isValid = false;
-    //       ret[key].validFeedback = "";
-    //       ret[key].invalidFeedback = "";
-    //       ret[key].btnCheck = false;
-    //     }
-    //   }
-    //   return ret;
-    // },
-  },
+  computed: {},
   components: {
     MessagesItem,
     TableItem,
@@ -178,9 +151,32 @@ export default defineComponent({
     MDBRow,
     ModalItem,
     MDBTextarea,
-    vSelect
+    vSelect,
   },
   methods: {
+    setSelectedServicesForUpdate() {
+      let ret = [];
+      ret.push({
+        text: this.$i18n.t("servicesPlaceholder"),
+        value: 0,
+        montantHt: 0,
+        quantite: 0,
+        nom: "default",
+      });
+      return this.serviceStore.getAllServices().then((res) => {
+        for (const key in this.serviceStore.getServices) {
+          let service = {};
+          service.text = `${this.serviceStore.getServices[key].nom} - ${this.serviceStore.getServices[key].montantHt}`;
+          service.value = this.serviceStore.getServices[key].serviceId;
+          service.montantHt = this.serviceStore.getServices[key].montantHt;
+          service.quantite = this.serviceStore.getServices[key].quantite;
+          service.nom = this.serviceStore.getServices[key].nom;
+          ret.push(service);
+        }
+        // console.log(ret);
+        return ret;
+      });
+    },
     async addClickFromChild(db: boolean) {
       if (!db) {
         // click to add new order line
@@ -202,8 +198,10 @@ export default defineComponent({
         // console.log(this.selectedServices);
         // HtPrice calculation
         this.priceHt = 0;
-        for (const key in this.selectedServices){
-          this.priceHt += (this.selectedServices[key].montantHt * this.selectedServices[key].quantite);
+        for (const key in this.selectedServices) {
+          this.priceHt +=
+            this.selectedServices[key].montantHt *
+            this.selectedServices[key].quantite;
         }
         this.inputsCheck(this.addInputObject);
 
@@ -214,6 +212,13 @@ export default defineComponent({
             this.form = false;
             this.update = false;
             this.add = true;
+            this.tableHeading = [
+              this.$i18n.t("additionalContentTableHeadText"),
+              this.$i18n.t("priceHtHeadText"),
+              this.$i18n.t("servicesTableHeadText"),
+              this.$i18n.t("invoiceHeadText"),
+              this.$i18n.t("actionTableHeadText"),
+            ];
             this.orderStore
               .getAllOrders()
               .then(
@@ -238,6 +243,12 @@ export default defineComponent({
         this.add = false;
         this.orderId = id;
         this.contenuAdditionnel = obj.contenuAdditionnel;
+        // this.servicesOption = this.setSelectedServicesForUpdate
+        this.setSelectedServicesForUpdate().then((res) => {
+          this.servicesOption = res;
+          // console.log(this.servicesOption);
+        });
+        this.selectedServices = [];
         this.tableHeading = [
           this.$i18n.t("additionalContentTableHeadText"),
           this.$i18n.t("servicesTableHeadText"),
@@ -247,7 +258,10 @@ export default defineComponent({
         // console.log(obj);
         const updateInputObj = {
           contenuAdditionnel: {
-            value: obj["contenuAdditionnel"],
+            value:
+              obj["contenuAdditionnel"] !== null
+                ? obj["contenuAdditionnel"]
+                : "",
             type: "",
             label: this.$i18n.t("additionalContentInputLabel"),
             name: "addFormTextArea",
@@ -276,7 +290,12 @@ export default defineComponent({
       } else {
         // click to register the new order
         this.errors = [];
-
+        this.priceHt = 0;
+        for (const key in this.selectedServices) {
+          this.priceHt +=
+            this.selectedServices[key].montantHt *
+            this.selectedServices[key].quantite;
+        }
         this.inputsCheck(this.updateInputObject);
 
         if (!this.errors.length) {
@@ -286,10 +305,15 @@ export default defineComponent({
             this.form = false;
             this.update = false;
             this.add = true;
-            // console.log(this.messageStore.getMessages);
-            // console.log(this.messageStore.getMessagesVisibility);
+            this.tableHeading = [
+              this.$i18n.t("additionalContentTableHeadText"),
+              this.$i18n.t("priceHtHeadText"),
+              this.$i18n.t("servicesTableHeadText"),
+              this.$i18n.t("invoiceHeadText"),
+              this.$i18n.t("actionTableHeadText"),
+            ];
             this.orderStore
-              .getAllActors()
+              .getAllOrders()
               .then(
                 () => {
                   this.forceTableRerender();
@@ -360,7 +384,7 @@ export default defineComponent({
       for (const k in obj) {
         if (typeof obj[k] === "string") {
           obj[k] = __CRYPTAPI__.crypt(obj[k], __KEY__);
-        }else if(typeof obj[k] === "object"){
+        } else if (typeof obj[k] === "object") {
           this.transformObject(obj[k]);
         }
       }
@@ -373,7 +397,7 @@ export default defineComponent({
       const obj = {
         contenuAdditionnel: this.contenuAdditionnel,
         priceHt: this.priceHt,
-        services: this.selectedServices
+        services: this.selectedServices,
       };
       this.transformObject(obj);
       return orderAxiosService
@@ -414,8 +438,8 @@ export default defineComponent({
     updateOrder() {
       const obj = {
         contenuAdditionnel: this.contenuAdditionnel,
-        priceHT: null,
-        factureId: null,
+        priceHt: this.priceHt,
+        services: this.selectedServices,
       };
       this.transformObject(obj);
       return orderAxiosService
@@ -498,6 +522,15 @@ export default defineComponent({
         obj["contenuAdditionnel"].validFeed = this.$i18n.t("validFeed");
         obj["contenuAdditionnel"].invalidFeed = "";
       }
+
+      if (!this.selectedServices.length) {
+        this.errors.push(this.$i18n.t("emptyServicesInvalidFeed"));
+        this.modalTitle = this.$i18n.t("modalTitleKo");
+        this.modalContent = this.$i18n.t("modalAddContentKo", {
+          err: this.$i18n.t("emptyServicesInvalidFeed"),
+        });
+        this.orderModal = true;
+      }
     },
     async forceTableRerender() {
       // Remove MyComponent from the DOM
@@ -542,7 +575,7 @@ export default defineComponent({
     "modalUpdateContentOk": "Commande mis à jour avec succès !",
     "modalDeleteContentOk": "Commande supprimé avec succès !",
     "modalTitleKo": "Oups !",
-    "modalAddContentKo": "Une erreur est survenue lors de l'ajout de la commande : {err}!",
+    "modalAddContentKo": "Une erreur est survenue lors de l'ajout de la commande : {err}",
     "modalUpdateContentKo": "Une erreur est survenue lors de la modification de la commande : {err}!",
     "modalDeleteContentKo": "Une erreur est survenue lors de la suppression de la commande : {err}!",
 
@@ -575,7 +608,7 @@ export default defineComponent({
     "modalUpdateContentOk": "Order updated successfully !",
     "modalDeleteContentOk": "Order deleted successfully !",
     "modalTitleKo": "Error !",
-    "modalAddContentKo": "An error occured while adding order : {err} !",
+    "modalAddContentKo": "An error occured while adding order : {err}",
     "modalUpdateContentKo": "An error occured while updating order : {err} !",
     "modalDeleteContentKo": "An error occured while deleting order : {err} !",
 
@@ -663,14 +696,7 @@ export default defineComponent({
           </MDBCol>
         </MDBRow>
       </template>
-      <template
-        #addFormSelect="{
-          size,
-          ariaLabel,
-          label,
-          required,
-        }"
-      >
+      <template #addFormSelect="{ size, ariaLabel, label, required }">
         <MDBRow class="g-3 d-flex justify-content-center">
           <MDBCol :md="size" class="input-group">
             <!-- <div class="input-group-prepend">
@@ -681,15 +707,15 @@ export default defineComponent({
             <vSelect
               :required="required"
               :aria-label="ariaLabel"
-              label="text"
+              :label="label"
               v-model="selectedServices"
               :multiple="true"
-              :options="addInputObject.services.servicesOption"
+              :options="servicesOption"
               id="services"
               class="custom-select w-100"
               :selectable="(option) => option.value !== 0"
             >
-              <template #search="{attributes, events}">
+              <template #search="{ attributes, events }">
                 <input
                   class="vs__search"
                   :required="!selectedServices"

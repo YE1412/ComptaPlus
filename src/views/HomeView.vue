@@ -21,10 +21,8 @@ export default defineComponent({
     TheToolbarIn,
     Sidenav,
   },
-  methods: {
-  },
-  mounted() {
-  },
+  methods: {},
+  mounted() {},
   data() {
     this.$i18n.locale =
       this.counterStore.getLanguages[

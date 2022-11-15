@@ -2,20 +2,20 @@ import db from "../models/index.js";
 
 const order = db.order;
 // const invoice = db.invoice;
-// const service = db.service;
-// const contains = db.contains;
+const service = db.service;
+const contains = db.contains;
 // const Op = db.Sequelize.Op;
 
 const create = async (req, res) => {
   const body = req.body;
   let serviceTab = [];
   let serviceRow = [];
-  for (const key in body.services){
+  for (const key in body.services) {
     serviceTab.push({
       serviceId: body.services[key].value,
       nom: body.services[key].nom,
       montantHt: body.services[key].montantHt,
-      quantite: body.services[key].quantite
+      quantite: body.services[key].quantite,
     });
   }
   const orderObj = {
@@ -24,26 +24,30 @@ const create = async (req, res) => {
     produitservice: serviceTab,
   };
 
-  // console.log(order);
-
   // 1. INSERT a new order
-  const orderStatement = await order.create(orderObj,
-    {
-      include: [{
-        association: order.services,
-        as: "Services"
-      }],
+  const orderStatement = await order
+    .create(orderObj, {
+      include: [
+        {
+          association: order.services,
+          as: "Services",
+        },
+      ],
     })
     .then(async (data) => {
       // 2. Find the services rows
-      for (const key in body.services){
-        serviceRow[key] = await service.findByPk(body.services[key].value)
+      for (const key in body.services) {
+        serviceRow[key] = await service
+          .findByPk(body.services[key].value)
           .then((data2) => {
             return data2;
           })
           .catch((err) => {
             res.status(500).send({
-              message: err.message || "Some error occured while fetching service with id="+body.services[key].value,
+              message:
+                err.message ||
+                "Some error occured while fetching service with id=" +
+                  body.services[key].value,
               error: err,
             });
           });
@@ -57,7 +61,10 @@ const create = async (req, res) => {
         })
         .catch((err) => {
           res.status(500).send({
-            message: err.message || "Some error occured while inserting in associated table contains with order id="+orderStatement.orderId,
+            message:
+              err.message ||
+              "Some error occured while inserting in associated table contains with order id=" +
+                orderStatement.orderId,
             error: err,
           });
         });
@@ -74,12 +81,14 @@ const create = async (req, res) => {
 const findAll = (req, res) => {
   order
     .findAll({
-      attributes: ["orderId", "contenuAdditionnel", "priceHt", "Services.serviceId"],
-      where: {},
-      include: [
-        order.services,
-        order.invoice
+      attributes: [
+        "orderId",
+        "contenuAdditionnel",
+        "priceHt",
+        "Services.serviceId",
       ],
+      where: {},
+      include: [order.services, order.invoice],
     })
     .then((data) => {
       res.send(data);
@@ -90,22 +99,6 @@ const findAll = (req, res) => {
       });
     });
 };
-
-// const findAllTypes = (req, res) => {
-//   type
-//     .findAll({
-//       where: {},
-//     })
-//     .then((data) => {
-//       res.send(data);
-//     })
-//     .catch((err) => {
-//       res.status(500).send({
-//         message:
-//           err.message || "Some error occured while retieving actor type.",
-//       });
-//     });
-// };
 
 const findOne = (req, res) => {
   const query = req.query;
@@ -119,12 +112,7 @@ const findOne = (req, res) => {
 
   order
     .findByPk(query.orderId, {
-      include: [
-        {
-          model: service,
-          through: { attributes: [] },
-        },
-      ],
+      include: [order.services, order.invoice],
     })
     .then((data) => {
       res.send(data);
@@ -136,30 +124,89 @@ const findOne = (req, res) => {
     });
 };
 
-const update = (req, res) => {
+const update = async (req, res) => {
   const params = req.params;
+  const body = req.body;
 
-  order
-    .update(req.body, {
-      where: {
-        orderId: params.id,
+  let serviceTab = [];
+  let serviceRow = [];
+  for (const key in body.services) {
+    serviceTab.push({
+      serviceId: body.services[key].value,
+      nom: body.services[key].nom,
+      montantHt: body.services[key].montantHt,
+      quantite: body.services[key].quantite,
+    });
+  }
+  const orderObj = {
+    contenuAdditionnel: body.contenuAdditionnel,
+    priceHt: body.priceHt,
+    produitservice: serviceTab,
+  };
+
+  // 1. UPDATE a new order
+  const orderModel = await order.findByPk(params.id, {
+    include: [order.services, order.invoice],
+  });
+  const orderStatement = await order
+    .update(
+      orderObj,
+      {
+        where: {
+          orderId: params.id,
+        },
       },
-    })
-    .then((result) => {
-      // console.log(result);
-      if (result[0] === 1) {
-        res.send({
-          message: "Order was updated successfully !",
-        });
-      } else {
-        res.send({
-          message: `Cannot update actor with id=${params.id}. Maybe Order was not found or req.body is empty !`,
-        });
+      {
+        include: [
+          {
+            association: order.services,
+            as: "Services",
+          },
+        ],
       }
+    )
+    .then(async (data) => {
+      // 2. Find the services rows
+      for (const key in body.services) {
+        serviceRow[key] = await service
+          .findByPk(body.services[key].value)
+          .then((data2) => {
+            return data2;
+          })
+          .catch((err) => {
+            res.status(500).send({
+              message:
+                err.message ||
+                "Some error occured while fetching service with id=" +
+                  body.services[key].value,
+              error: err,
+            });
+          });
+      }
+      // console.log(data);
+      // 3. DELETE the old association in contains table
+      await orderModel.removeServices(orderModel.Services);
+      // 4. INSERT the association in contains table
+      orderModel
+        .addServices(serviceRow, { through: contains })
+        .then((data2) => {
+          res.send(data2);
+        })
+        .catch((err) => {
+          res.status(500).send({
+            message:
+              err.message ||
+              "Some error occured while inserting in associated table contains with order id=" +
+                orderStatement.orderId,
+            error: err,
+          });
+        });
+      return data;
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Error updating Order with id=" + params.id,
+        message: err.message || "Some error occured while updating order.",
+        error: err,
       });
     });
 };
@@ -208,42 +255,6 @@ const deleteAll = (req, res) => {
       });
     });
 };
-
-// const findByTypes = (req, res) => {
-//   const params = req.params;
-
-//   let whereClause = {};
-//   if (params.types !== undefined) {
-//     whereClause.actorTypeId = {
-//       [Op.or]: params.types,
-//     };
-//   } else {
-//     res.status(500).send({
-//       message: "Some error occured while retrieving orders.",
-//     });
-//     return;
-//   }
-
-//   order
-//     .findAll(
-//       {
-//         where: whereClause,
-//       },
-//       {
-//         include: type,
-//       }
-//     )
-//     .then((data) => {
-//       res.send(data);
-//     })
-//     .catch((err) => {
-//       res.status(500).send({
-//         message:
-//           err.message ||
-//           `Some error occured while retieving orders with type=${params.type}.`,
-//       });
-//     });
-// };
 
 export default {
   create: create,

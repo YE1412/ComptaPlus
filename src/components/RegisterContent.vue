@@ -23,7 +23,7 @@ export default defineComponent({
     const messageStore = useMessageStore();
 
     return {
-      messageStore
+      messageStore,
     };
   },
   data() {
@@ -70,7 +70,7 @@ export default defineComponent({
     MDBListGroupItem,
     MDBListGroup,
     ModalItem,
-    MessagesItem
+    MessagesItem,
   },
   methods: {
     lastnameChanges(text: String) {
