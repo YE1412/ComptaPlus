@@ -1075,7 +1075,7 @@ export default defineComponent({
     "typeInputSellerLabel": "Seller",
     "typeInputBuyerLabel": "Buyer",
 
-    "servicesLinkTarget": "/actors"
+    "actorsLinkTarget": "/actors"
   }
 }
 </i18n>

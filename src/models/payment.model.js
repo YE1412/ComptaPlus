@@ -32,7 +32,7 @@ const model = (sequelize) => {
           model: "facture",
           key: "factureId",
         },
-        allowNull: false,
+        allowNull: true,
       },
     },
     {

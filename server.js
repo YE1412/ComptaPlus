@@ -61,7 +61,12 @@ async function createViteServer() {
     app.use(vite.middlewares);
   }
 
-  var userRouter, serviceRouter, sessionsRouter, actorRouter, orderRouter;
+  var userRouter, 
+    serviceRouter, 
+    sessionsRouter, 
+    actorRouter, 
+    orderRouter,
+    paymentRouter;
   let prefix = "./";
   // console.log(import("./src/routes/user.route.js")(app));
   if (env === "development") {
@@ -79,6 +84,7 @@ async function createViteServer() {
   sessionsRouter = await import(`${prefix}src/routes/sessions.route.js`);
   actorRouter = await import(`${prefix}src/routes/actor.route.js`);
   orderRouter = await import(`${prefix}src/routes/order.route.js`);
+  paymentRouter = await import(`${prefix}src/routes/payment.route.js`);
   //  Populate req.cookies
   app.use(cookieParser());
   //  Session setup
@@ -110,6 +116,7 @@ async function createViteServer() {
   app.use("/api/sessions", sessionsRouter.default());
   app.use("/api/actors", actorRouter.default());
   app.use("/api/orders", orderRouter.default());
+  app.use("/api/payments", paymentRouter.default());
   app.get("/api/session", (request, response) => {
     request.session.appSession = uuidv4();
     // console.log(`GET - Session`);
@@ -197,14 +204,17 @@ async function createViteServer() {
 //   const devise = db.devise;
 
 //   userType.create({
+//     userTypeId: 1,
 //     regular: true,
 //     admin: false,
 //   });
 //   userType.create({
+//     userTypeId: 2,
 //     regular: false,
 //     admin: true,
 //   });
 //   userType.create({
+//     userTypeId: 3,
 //     regular: true,
 //     admin: true,
 //   });
@@ -226,37 +236,45 @@ async function createViteServer() {
 //   });
 
 //   lang.create({
+//     langueId: 2,
 //     libelle: "Français",
 //     nom: "fr",
 //   });
 //   lang.create({
+//     langueId: 1,
 //     libelle: "English",
 //     nom: "us",
 //   });
 
 //   paymentType.create({
+//     paymentTypeId: 1,
 //     cb: true,
 //     esp: false,
 //     chq: false,
 //   });
 //   paymentType.create({
+//     paymentTypeId: 2,
 //     cb: false,
 //     esp: true,
 //     chq: false,
 //   });
 //   paymentType.create({
+//     paymentTypeId: 3,
 //     cb: false,
 //     esp: false,
 //     chq: true,
 //   });
 
 //   devise.create({
+//     deviseId: 3,
 //     symbole: "€",
 //   });
 //   devise.create({
+//     deviseId: 1,
 //     symbole: "$",
 //   });
 //   devise.create({
+//     deviseId: 2,
 //     symbole: "£",
 //   });
 // }

@@ -5,10 +5,6 @@ class OrderDataService {
     return http.get("/orders");
   }
 
-  // getAllTypes() {
-  //   return http.get("/orders/types");
-  // }
-
   get(id: number) {
     return http.get(`/orders/find`, {
       params: {
@@ -32,10 +28,6 @@ class OrderDataService {
   deleteAll() {
     return http.delete(`/orders`);
   }
-
-  // findByTypes(types: any) {
-  //   return http.get(`/orders/types/${types}`);
-  // }
 }
 
 export default new OrderDataService();

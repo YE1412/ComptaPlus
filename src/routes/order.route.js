@@ -9,12 +9,6 @@ export default () => {
   // Retrieve all Orders
   router.get("/", orders.findAll);
 
-  // Retrieve all Orders type
-  // router.get("/types", orders.findAllTypes);
-
-  // Retrieve all Orders by type
-  // router.get("/types/:type", orders.findByTypes);
-
   // Retrieve a single Order with id
   router.get("/find", orders.findOne);
 
