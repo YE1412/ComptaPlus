@@ -61,10 +61,10 @@ async function createViteServer() {
     app.use(vite.middlewares);
   }
 
-  var userRouter, 
-    serviceRouter, 
-    sessionsRouter, 
-    actorRouter, 
+  var userRouter,
+    serviceRouter,
+    sessionsRouter,
+    actorRouter,
     orderRouter,
     paymentRouter;
   let prefix = "./";

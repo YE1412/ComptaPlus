@@ -5,6 +5,7 @@ import { MDBRow, MDBInput } from "mdb-vue-ui-kit";
 import { useServiceStore } from "@/stores/service";
 import { useActorStore } from "@/stores/actor";
 import { useOrderStore } from "@/stores/order";
+import { usePaymentStore } from "@/stores/payment";
 
 export default defineComponent({
   name: "TableItem",
@@ -78,11 +79,12 @@ export default defineComponent({
     const servStore = useServiceStore();
     const actStore = useActorStore();
     const ordStore = useOrderStore();
-
+    const payStore = usePaymentStore();
     return {
       serviceStore: servStore,
       actorStore: actStore,
       orderStore: ordStore,
+      paymentStore: payStore,
     };
   },
   data() {
@@ -109,6 +111,12 @@ export default defineComponent({
             ret[key][key2] = this.tableOrdersInvoiceLibelle;
           } else if (key2 === "Services") {
             ret[key][key2] = this.tableOrdersServicesLibelle;
+          } else if (key2 === "payment_type") {
+            ret[key][key2] = this.tablePaymentsTypeLibelle;
+          } else if (key2 === "commande") {
+            ret[key][key2] = this.tablePaymentsOrderLibelle;
+          } else if (key2 === "etat") {
+            ret[key][key2] = this.tablePaymentsStateLibelle;
           } else {
             ret[key][key2] = this.contents[key][key2];
           }
@@ -177,6 +185,63 @@ export default defineComponent({
               let libelle = this.$i18n.t("emptyOrdersInvoiceLibelle");
               if (this.contents[k][l] !== null)
                 libelle = `${this.contents[k][l].factureId} - `;
+              ret = libelle;
+            }
+          }
+        }
+      }
+      return ret;
+    },
+    tablePaymentsStateLibelle() {
+      let ret = "";
+      if (this.src === "payments") {
+        for (const k in this.contents) {
+          for (const l in this.contents[k]) {
+            if (l === "etat") {
+              let libelle =
+                this.contents[k][l] === 1
+                  ? this.$i18n.t("paymentStateOkLibelle")
+                  : "";
+              libelle =
+                this.contents[k][l] === 0
+                  ? this.$i18n.t("paymentStateKoLibelle")
+                  : libelle;
+              ret = libelle;
+            }
+          }
+        }
+      }
+      return ret;
+    },
+    tablePaymentsTypeLibelle() {
+      let ret = "";
+      if (this.src === "payments") {
+        for (const k in this.contents) {
+          for (const l in this.contents[k]) {
+            if (l === "payment_type") {
+              let libelle = this.contents[k][l].cb
+                ? this.$i18n.t("paymentTypeCBLibelle")
+                : "";
+              libelle = this.contents[k][l].esp
+                ? this.$i18n.t("paymentTypeESPLibelle")
+                : libelle;
+              libelle = this.contents[k][l].chq
+                ? this.$i18n.t("paymentTypeCHQLibelle")
+                : libelle;
+              ret = libelle;
+            }
+          }
+        }
+      }
+      return ret;
+    },
+    tablePaymentsOrderLibelle() {
+      let ret = "";
+      if (this.src === "payments") {
+        for (const k in this.contents) {
+          for (const l in this.contents[k]) {
+            if (l === "commande") {
+              let libelle = `${this.contents[k][l].orderId} - ${this.contents[k][l].priceHt}`;
               ret = libelle;
             }
           }
@@ -253,6 +318,20 @@ export default defineComponent({
           .catch((err) => {
             return [];
           }));
+      } else if (this.src === "payments") {
+        return (contentTab = await this.paymentStore
+          .getAllPayments()
+          .then(
+            (res) => {
+              return res;
+            },
+            (rej) => {
+              return [];
+            }
+          )
+          .catch((err) => {
+            return [];
+          }));
       } else {
         return contentTab;
       }
@@ -307,6 +386,10 @@ export default defineComponent({
       e.preventDefault();
       this.$emit(this.deleteActionName, id);
     },
+    // inputChanges(e: Event) {
+    //   console.log(e.target.value);
+    //   this.$emit("inputChanges", e);
+    // },
   },
 });
 </script>
@@ -317,12 +400,22 @@ export default defineComponent({
     "actorTypeBothLibelle": "Acheteur, Vendeur",
     "actorTypeSellerLibelle": "Vendeur",
     "actorTypeBuyerLibelle": "Acheteur",
+    "paymentTypeCBLibelle": "Carte bancaire",
+    "paymentTypeESPLibelle": "Espèces",
+    "paymentTypeCHQLibelle": "Chèque",
+    "paymentStateOkLibelle": "Payé",
+    "paymentStateKoLibelle": "Impayé",
     "emptyOrdersInvoiceLibelle": "Aucune"
   },
   "en": {
     "actorTypeBothLibelle": "Buyer, Seller",
     "actorTypeSellerLibelle": "Seller",
     "actorTypeBuyerLibelle": "Buyer",
+    "paymentTypeCBLibelle": "Credit card",
+    "paymentTypeESPLibelle": "Cash",
+    "paymentTypeCHQLibelle": "Check",
+    "paymentStateOkLibelle": "Paid",
+    "paymentStateKoLibelle": "Not paid",
     "emptyOrdersInvoiceLibelle": "None"    
   }
 }

@@ -696,7 +696,7 @@ export default defineComponent({
           </MDBCol>
         </MDBRow>
       </template>
-      <template #addFormSelect="{ size, ariaLabel, label, required }">
+      <template #addFormSelect="{ size, ariaLabel, required }">
         <MDBRow class="g-3 d-flex justify-content-center">
           <MDBCol :md="size" class="input-group">
             <!-- <div class="input-group-prepend">
@@ -730,7 +730,7 @@ export default defineComponent({
     </TableItem>
   </div>
   <ModalItem
-    @actorModal="modalChange"
+    @orderModal="modalChange"
     input="orderModal"
     id="orderModal"
     tabIndex="-1"

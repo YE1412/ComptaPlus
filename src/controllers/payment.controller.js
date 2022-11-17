@@ -2,8 +2,8 @@ import db from "../models/index.js";
 
 const payment = db.payment;
 const paymentType = db.paymentType;
-// const service = db.service;
-// const contains = db.contains;
+const order = db.order;
+// const invoice = db.invoice;
 const Op = db.Sequelize.Op;
 
 const create = async (req, res) => {
@@ -11,12 +11,13 @@ const create = async (req, res) => {
   const paymentObj = {
     etat: body.etat,
     paymentValue: body.paymentValue,
-    paymentType: body.paymentTypeId,
-    factureId: body.factureId
+    paymentType: body.paymentType,
+    orderId: body.orderId,
+    factureId: body.factureId,
   };
 
   // 1. INSERT a new payment
-  const paymentStatement = await payment
+  await payment
     .create(paymentObj)
     .then(async (data) => {
       res.send(data);
@@ -36,11 +37,11 @@ const findAll = (req, res) => {
         "paymentId",
         "etat",
         "paymentValue",
-        "paymentType.paymentTypeId",
-        "facture.factureId"
+        "payment_type.paymentTypeId",
+        "commande.orderId",
       ],
       where: {},
-      include: [payment.paymentType, payment.invoice],
+      include: [payment.paymentType, payment.order],
     })
     .then((data) => {
       res.send(data);
@@ -64,14 +65,16 @@ const findOne = (req, res) => {
 
   payment
     .findByPk(query.paymentId, {
-      include: [payment.paymentType, payment.invoice],
+      include: [payment.paymentType, payment.order],
     })
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || `Some error occured while retieving payment with id=${query.paymentId}.`,
+        message:
+          err.message ||
+          `Some error occured while retieving payment with id=${query.paymentId}.`,
       });
     });
 };
@@ -82,25 +85,24 @@ const update = async (req, res) => {
   const paymentObj = {
     etat: body.etat,
     paymentValue: body.paymentValue,
-    paymentType: body.paymentTypeId,
-    factureId: body.factureId
+    paymentType: body.paymentType,
+    orderId: body.orderId,
   };
 
-  const paymentStatement = await payment
-    .update(
-      paymentObj,
-      {
-        where: {
-          paymentId: params.id,
-        },
-      }
-    )
+  await payment
+    .update(paymentObj, {
+      where: {
+        paymentId: params.id,
+      },
+    })
     .then(async (data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || `Some error occured while updating payment with id=${params.id}.`,
+        message:
+          err.message ||
+          `Some error occured while updating payment with id=${params.id}.`,
         error: err,
       });
     });
@@ -154,17 +156,48 @@ const deleteAll = (req, res) => {
 const findAllTypes = (req, res) => {
   paymentType
     .findAll({
-      where: {}
+      where: {},
     })
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occured while retieving payment types.",
+        message:
+          err.message || "Some error occured while retieving payment types.",
       });
     });
 };
+
+const findAllOrders = (req, res) => {
+  order
+    .findAll({
+      where: {},
+    })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occured while retieving orders.",
+      });
+    });
+};
+
+// const findAllInvoices = (req, res) => {
+//   invoice
+//     .findAll({
+//       where: {}
+//     })
+//     .then((data) => {
+//       res.send(data);
+//     })
+//     .catch((err) => {
+//       res.status(500).send({
+//         message: err.message || "Some error occured while retieving invoices.",
+//       });
+//     });
+// };
 
 const findByTypes = (req, res) => {
   const params = req.params;
@@ -183,14 +216,16 @@ const findByTypes = (req, res) => {
 
   paymentType
     .find({
-      where: whereClause
+      where: whereClause,
     })
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || `Some error occured while retieving payment types with ids=${params.paymentTypesId}.`,
+        message:
+          err.message ||
+          `Some error occured while retieving payment types with ids=${params.paymentTypesId}.`,
       });
     });
 };
@@ -201,6 +236,8 @@ export default {
   findOne: findOne,
   findByTypes: findByTypes,
   findAllTypes: findAllTypes,
+  findAllOrders: findAllOrders,
+  // findAllInvoices: findAllInvoices,
   update: update,
   deleteOne: deleteOne,
   deleteAll: deleteAll,

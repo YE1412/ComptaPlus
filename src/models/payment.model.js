@@ -19,21 +19,29 @@ const model = (sequelize) => {
         allowNull: false,
       },
       paymentType: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.INTEGER,
         allowNull: false,
         reference: {
           model: "payment_type",
           key: "paymentTypeId",
         },
       },
-      factureId: {
+      orderId: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         reference: {
-          model: "facture",
-          key: "factureId",
+          model: "commande",
+          key: "orderId",
         },
-        allowNull: true,
       },
+      // factureId: {
+      //   type: DataTypes.INTEGER,
+      //   reference: {
+      //     model: "facture",
+      //     key: "factureId",
+      //   },
+      //   allowNull: true,
+      // },
     },
     {
       freezeTableName: true,

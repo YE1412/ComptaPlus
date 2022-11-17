@@ -9,6 +9,14 @@ class PaymentDataService {
     return http.get("/payments/types");
   }
 
+  getAllOrders() {
+    return http.get("/payments/orders");
+  }
+
+  // getAllInvoices() {
+  //   return http.get("/payments/invoices");
+  // }
+
   get(id: number) {
     return http.get(`/payments/find`, {
       params: {

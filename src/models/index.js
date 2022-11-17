@@ -80,20 +80,20 @@ actorModelObj.type = actorModelObj.belongsTo(actorTypeModelObj, {
 paymentTypeModelObj.payments = paymentTypeModelObj.hasMany(paymentModelObj, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
-  foreignKey: "paymentTypeId",
+  foreignKey: "paymentType",
 });
 paymentModelObj.paymentType = paymentModelObj.belongsTo(paymentTypeModelObj, {
-  foreignKey: "paymentTypeId",
+  foreignKey: "paymentType",
 });
 
-invoiceModelObj.payments = invoiceModelObj.hasMany(paymentModelObj, {
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-  foreignKey: "factureId",
-});
-paymentModelObj.invoice = paymentModelObj.belongsTo(invoiceModelObj, {
-  foreignKey: "factureId",
-});
+// invoiceModelObj.payments = invoiceModelObj.hasMany(paymentModelObj, {
+//   onDelete: "CASCADE",
+//   onUpdate: "CASCADE",
+//   foreignKey: "factureId",
+// });
+// paymentModelObj.invoice = paymentModelObj.belongsTo(invoiceModelObj, {
+//   foreignKey: "factureId",
+// });
 
 actorModelObj.invoicesReceived = actorModelObj.hasMany(invoiceModelObj, {
   onDelete: "CASCADE",
@@ -144,6 +144,15 @@ serviceModelObj.orders = serviceModelObj.belongsToMany(orderModelObj, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
   as: "Orders",
+});
+
+orderModelObj.payments = orderModelObj.hasMany(paymentModelObj, {
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+  foreignKey: "orderId",
+});
+paymentModelObj.order = paymentModelObj.belongsTo(orderModelObj, {
+  foreignKey: "orderId",
 });
 
 langueModelObj.invoices = langueModelObj.hasMany(invoiceModelObj, {

@@ -39,17 +39,45 @@ export default defineComponent({
     const messageStore = useMessageStore();
     const typesObj = await paymentStore
       .getAllPaymentTypes()
-      .then((res) => {
-        return res;
-      },
-      () => {
-        return [];
-      })
+      .then(
+        (res) => {
+          return res;
+        },
+        () => {
+          return [];
+        }
+      )
       .catch((err) => {
         console.log(err);
         return [];
       });
-    return { paymentStore, messageStore, typesObj };
+    const ordersObj = await paymentStore
+      .getAllOrders()
+      .then(
+        (res) => {
+          return res;
+        },
+        () => {
+          return [];
+        }
+      )
+      .catch((err) => {
+        console.log(err);
+        return [];
+      });
+    // const invoicesObj = await paymentStore
+    //   .getAllInvoices()
+    //   .then((res) => {
+    //     return res;
+    //   },
+    //   () => {
+    //     return [];
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     return [];
+    //   });
+    return { paymentStore, messageStore, typesObj, ordersObj };
   },
   beforeCreate() {
     // console.log(`Before Create`);
@@ -64,23 +92,25 @@ export default defineComponent({
       this.$i18n.t("stateTableHeadText"),
       this.$i18n.t("valueTableHeadText"),
       this.$i18n.t("typeTableHeadText"),
-      this.$i18n.t("invoiceTableHeadText"),
+      this.$i18n.t("orderTableHeadText"),
+      // this.$i18n.t("invoiceTableHeadText"),
       this.$i18n.t("actionTableHeadText"),
     ];
-    let paymentTypesOpt = [], 
-      paymentStatesOpt = [], 
-      paymentInvoicesOpt = [];
+    let paymentTypesOpt = [],
+      paymentStatesOpt = [],
+      paymentInvoicesOpt = [],
+      paymentOrdersOpt = [];
     paymentStatesOpt.push({
       text: this.$i18n.t("stateInputLabel"),
-      value: 0
+      value: "default",
     });
     paymentStatesOpt.push({
       text: this.$i18n.t("stateOkLibelle"),
-      value: 1
+      value: true,
     });
     paymentStatesOpt.push({
       text: this.$i18n.t("stateKoLibelle"),
-      value: 2
+      value: false,
     });
     paymentTypesOpt.push({
       text: this.$i18n.t("typeInputLabel"),
@@ -90,16 +120,33 @@ export default defineComponent({
       chq: false,
     });
     for (const key in this.typesObj) {
-      let type = {}, libelle = "";
-      libelle = this.typesObj[key].cb ? this.$i18n.t('typeCBLibelle') : "" ;
-      libelle = this.typesObj[key].esp ? this.$i18n.t('typeESPLibelle') : libelle ;
-      libelle = this.typesObj[key].chq ? this.$i18n.t('typeCHQLibelle') : libelle ;
+      let type = {},
+        libelle = "";
+      libelle = this.typesObj[key].cb ? this.$i18n.t("typeCBLibelle") : "";
+      libelle = this.typesObj[key].esp
+        ? this.$i18n.t("typeESPLibelle")
+        : libelle;
+      libelle = this.typesObj[key].chq
+        ? this.$i18n.t("typeCHQLibelle")
+        : libelle;
       type.text = libelle;
       type.value = this.typesObj[key].paymentTypeId;
       type.cb = this.typesObj[key].cb;
       type.esp = this.typesObj[key].esp;
       type.chq = this.typesObj[key].chq;
       paymentTypesOpt.push(type);
+    }
+    paymentOrdersOpt.push({
+      text: this.$i18n.t("orderInputLabel"),
+      value: 0,
+      priceHt: 0,
+    });
+    for (const key in this.ordersObj) {
+      let order = {};
+      order.text = `${this.ordersObj[key].orderId} - ${this.ordersObj[key].priceHt}`;
+      order.value = this.ordersObj[key].orderId;
+      order.priceHt = this.ordersObj[key].priceHt;
+      paymentOrdersOpt.push(order);
     }
     paymentInvoicesOpt.push({
       text: this.$i18n.t("invoiceInputLabel"),
@@ -145,19 +192,32 @@ export default defineComponent({
         size: "12",
         disabled: false,
       },
-      factureId: {
+      paymentOrder: {
         value: "",
         type: "",
-        label: this.$i18n.t("invoiceInputLabel"),
-        name: "addFormInvoiceSelect",
+        label: this.$i18n.t("orderInputLabel"),
+        name: "addFormOrderSelect",
         invalidFeed: "",
         validFeed: "",
         isValid: false,
         required: true,
-        placeholder: this.$i18n.t("invoicePlaceholder"),
+        placeholder: this.$i18n.t("orderPlaceholder"),
         size: "12",
         disabled: false,
       },
+      // factureId: {
+      //   value: "",
+      //   type: "",
+      //   label: this.$i18n.t("invoiceInputLabel"),
+      //   name: "addFormInvoiceSelect",
+      //   invalidFeed: "",
+      //   validFeed: "",
+      //   isValid: false,
+      //   required: true,
+      //   placeholder: this.$i18n.t("invoicePlaceholder"),
+      //   size: "12",
+      //   disabled: false,
+      // },
     };
     return {
       tableHeading: headTable,
@@ -169,15 +229,18 @@ export default defineComponent({
       addInputObject: addInputObj,
       paymentId: 0,
       etat: "",
-      paymentValue: 0,
+      paymentValue: null,
       paymentType: 0,
-      selectedPaymentType: [],
-      paymentTypesOption: paymentTypesOpt,
       factureId: 0,
-      selectedPaymentState: [],
+      orderId: 0,
+      selectedPaymentType: null,
+      paymentTypesOption: paymentTypesOpt,
+      selectedPaymentState: null,
       paymentStatesOption: paymentStatesOpt,
-      selectedPaymentInvoice: [],
-      paymentInvoicesOption: paymentInvoicesOpt,
+      selectedPaymentInvoice: null,
+      paymentInvoicesOption: [],
+      selectedPaymentOrder: null,
+      paymentOrdersOption: paymentOrdersOpt,
       // For update
       updateInputObject: {},
       updateInputObjectId: 0,
@@ -231,36 +294,20 @@ export default defineComponent({
         this.update = false;
         this.add = true;
       } else {
-        // console.log(this.buyer);
-        // console.log(this.seller);
-        // console.log(this.both);
         // click to register a new payment
         this.errors = [];
-        // console.log("addClick !");
-        // console.log(this.selectedServices);
-        // HtPrice calculation
-        this.priceHt = 0;
-        for (const key in this.selectedServices) {
-          this.priceHt +=
-            this.selectedServices[key].montantHt *
-            this.selectedServices[key].quantite;
-        }
+        // console.log(this.selectedPaymentState);
+        // console.log(this.paymentValue);
+        // console.log(this.selectedPaymentType);
+        // console.log(this.selectedPaymentOrder);
         this.inputsCheck(this.addInputObject);
 
         if (!this.errors.length) {
-          const ret = await this.insertNewOrder();
-          // console.log(ret);
+          const ret = await this.insertNewPayment();
           if (ret) {
             this.form = false;
             this.update = false;
             this.add = true;
-            this.tableHeading = [
-              this.$i18n.t("additionalContentTableHeadText"),
-              this.$i18n.t("priceHtHeadText"),
-              this.$i18n.t("servicesTableHeadText"),
-              this.$i18n.t("invoiceHeadText"),
-              this.$i18n.t("actionTableHeadText"),
-            ];
             this.paymentStore
               .getAllPayments()
               .then(
@@ -284,76 +331,71 @@ export default defineComponent({
         this.update = true;
         this.add = false;
         this.paymentId = id;
-        this.contenuAdditionnel = obj.contenuAdditionnel;
-        // this.servicesOption = this.setSelectedServicesForUpdate
-        this.setSelectedServicesForUpdate().then((res) => {
-          this.servicesOption = res;
-          // console.log(this.servicesOption);
-        });
-        this.selectedServices = [];
-        this.tableHeading = [
-          this.$i18n.t("additionalContentTableHeadText"),
-          this.$i18n.t("servicesTableHeadText"),
-          this.$i18n.t("actionTableHeadText"),
-        ];
-        // this.services = obj.nom;
         // console.log(obj);
         const updateInputObj = {
-          contenuAdditionnel: {
-            value:
-              obj["contenuAdditionnel"] !== null
-                ? obj["contenuAdditionnel"]
-                : "",
+          etat: {
+            value: obj["etat"],
             type: "",
-            label: this.$i18n.t("additionalContentInputLabel"),
-            name: "addFormTextArea",
+            label: "text",
+            name: "addFormStateSelect",
             invalidFeed: "",
             validFeed: this.$i18n.t("validFeed"),
             isValid: true,
             required: true,
-            placeholder: this.$i18n.t("additionalContentPlaceholder"),
+            placeholder: this.$i18n.t("statePlaceholder"),
             size: "12",
           },
-          services: {
-            value: "",
+          paymentValue: {
+            value: obj["paymentValue"],
             type: "",
-            label: this.$i18n.t("servicesInputLabel"),
-            name: "addFormSelect",
+            label: this.$i18n.t("valueInputLabel"),
+            name: "addFormInput",
             invalidFeed: "",
             validFeed: this.$i18n.t("validFeed"),
             isValid: true,
             required: true,
-            placeholder: this.$i18n.t("servicesPlaceholder"),
+            placeholder: this.$i18n.t("valuePlaceholder"),
+            size: "12",
+          },
+          paymentType: {
+            value: obj["payment_type"],
+            type: "",
+            label: "text",
+            name: "addFormTypeSelect",
+            invalidFeed: "",
+            validFeed: this.$i18n.t("validFeed"),
+            isValid: true,
+            required: true,
+            placeholder: this.$i18n.t("typePlaceholder"),
+            size: "12",
+          },
+          paymentOrder: {
+            value: obj["commande"],
+            type: "",
+            label: "text",
+            name: "addFormOrderSelect",
+            invalidFeed: "",
+            validFeed: this.$i18n.t("validFeed"),
+            isValid: true,
+            required: true,
+            placeholder: this.$i18n.t("orderPlaceholder"),
             size: "12",
           },
         };
         this.updateInputObject = updateInputObj;
         this.updateInputObjectId = id;
       } else {
-        // click to register the new payment
+        // click to update payment
         this.errors = [];
-        this.priceHt = 0;
-        for (const key in this.selectedServices) {
-          this.priceHt +=
-            this.selectedServices[key].montantHt *
-            this.selectedServices[key].quantite;
-        }
         this.inputsCheck(this.updateInputObject);
 
         if (!this.errors.length) {
           // console.log("perfect !");
-          const ret = await this.updateOrder();
+          const ret = await this.updatePayment();
           if (ret) {
             this.form = false;
             this.update = false;
             this.add = true;
-            this.tableHeading = [
-              this.$i18n.t("additionalContentTableHeadText"),
-              this.$i18n.t("priceHtHeadText"),
-              this.$i18n.t("servicesTableHeadText"),
-              this.$i18n.t("invoiceHeadText"),
-              this.$i18n.t("actionTableHeadText"),
-            ];
             this.paymentStore
               .getAllPayments()
               .then(
@@ -373,7 +415,7 @@ export default defineComponent({
     async deleteClickFromChild(id: number) {
       // click to delete an payment
       this.paymentId = id;
-      const ret = await this.deleteOrder();
+      const ret = await this.deletePayment();
       if (ret) {
         this.form = false;
         this.update = false;
@@ -396,30 +438,29 @@ export default defineComponent({
           });
       }
     },
-    inputChanges(e: Event) {
-      // console.log(this.buyer);
-      // console.log(this.seller);
-      // console.log(this.both);
-      // console.log(e.target.getAttribute("id"));
-      // console.log(e.target.getAttribute("id").value);
-      switch (e.target.getAttribute("aria-label")) {
-        case "contenuAdditionnel":
-          this.contenuAdditionnel = e.target.value;
-          break;
-        case "services":
-          this.services = e.target.value;
-          break;
-        default:
-          break;
-      }
-      // console.log(e.target);
-      // console.log("changes !");
+    // inputChanges(e: Event) {
+    //   switch (e.target.getAttribute("aria-label")) {
+    //     case "paymentValue":
+    //       this.paymentValue = parseFloat(e.target.value);
+    //       break;
+    //     default:
+    //       break;
+    //   }
+    // },
+    inputOrderChanges(e: any) {
+      // console.log(e);
+      this.paymentValue = null;
     },
-    validContenuAdditionnel: function () {
-      var re = /^([a-zA-Z\s])*$/;
-      return re.test(this.nom);
+    validEtat: function () {
+      return true;
     },
-    validServices: function () {
+    validPaymentValue: function () {
+      return this.selectedPaymentOrder.priceHt >= this.paymentValue;
+    },
+    validPaymentType: function () {
+      return true;
+    },
+    validOrderId: function () {
       return true;
     },
     transformObject(obj) {
@@ -435,20 +476,21 @@ export default defineComponent({
       const ret = __CRYPTAPI__.crypt(val, __KEY__);
       return ret;
     },
-    insertNewOrder() {
+    insertNewPayment() {
       const obj = {
-        contenuAdditionnel: this.contenuAdditionnel,
-        priceHt: this.priceHt,
-        services: this.selectedServices,
+        etat: this.etat,
+        paymentValue: this.paymentValue,
+        paymentType: this.paymentType,
+        orderId: this.orderId,
       };
       this.transformObject(obj);
       return paymentAxiosService
         .create(obj)
         .then((res) => {
           // MODALS (set actorModal to TRUE to active)
-          this.modalTitle = this.$i18n.t("modalTitleOk");
-          this.modalContent = this.$i18n.t("modalAddContentOk");
-          this.paymentModal = false;
+          // this.modalTitle = this.$i18n.t("modalTitleOk");
+          // this.modalContent = this.$i18n.t("modalAddContentOk");
+          // this.paymentModal = false;
           // MESSAGES
           this.messageStore.messages.push({
             severity: false,
@@ -460,11 +502,11 @@ export default defineComponent({
         })
         .catch((err) => {
           // MODALS (set actorModal to TRUE to active)
-          this.modalTitle = this.$i18n.t("modalTitleKo");
-          this.modalContent = this.$i18n.t("modalAddContentKo", {
-            err: err.response.data.message || err.message,
-          });
-          this.paymentModal = false;
+          // this.modalTitle = this.$i18n.t("modalTitleKo");
+          // this.modalContent = this.$i18n.t("modalAddContentKo", {
+          //   err: err.response.data.message || err.message,
+          // });
+          // this.paymentModal = false;
           // MESSAGES
           this.messageStore.messages.push({
             severity: true,
@@ -477,20 +519,21 @@ export default defineComponent({
           return false;
         });
     },
-    updateOrder() {
+    updatePayment() {
       const obj = {
-        contenuAdditionnel: this.contenuAdditionnel,
-        priceHt: this.priceHt,
-        services: this.selectedServices,
+        etat: this.etat,
+        paymentValue: this.paymentValue,
+        paymentType: this.paymentType,
+        orderId: this.orderId,
       };
       this.transformObject(obj);
       return paymentAxiosService
         .update(this.paymentId, obj)
         .then((res) => {
           // MODALS (set actorModal to TRUE to active)
-          this.modalTitle = this.$i18n.t("modalTitleOk");
-          this.modalContent = this.$i18n.t("modalUpdateContentOk");
-          this.paymentModal = false;
+          // this.modalTitle = this.$i18n.t("modalTitleOk");
+          // this.modalContent = this.$i18n.t("modalUpdateContentOk");
+          // this.paymentModal = false;
           // MESSAGES
           this.messageStore.messages.push({
             severity: false,
@@ -502,11 +545,11 @@ export default defineComponent({
         })
         .catch((err) => {
           // MODALS (set actorModal to TRUE to active)
-          this.modalTitle = this.$i18n.t("modalTitleKo");
-          this.modalContent = this.$i18n.t("modalUpdateContentKo", {
-            err: err.response.data.message || err.message,
-          });
-          this.paymentModal = false;
+          // this.modalTitle = this.$i18n.t("modalTitleKo");
+          // this.modalContent = this.$i18n.t("modalUpdateContentKo", {
+          //   err: err.response.data.message || err.message,
+          // });
+          // this.paymentModal = false;
           // MESSAGES
           this.messageStore.messages.push({
             severity: true,
@@ -517,14 +560,14 @@ export default defineComponent({
           return false;
         });
     },
-    deleteOrder() {
+    deletePayment() {
       return paymentAxiosService
         .delete(this.paymentId)
         .then((res) => {
           // MODALS (set actorModal to TRUE to active)
-          this.modalTitle = this.$i18n.t("modalTitleOk");
-          this.modalContent = this.$i18n.t("modalDeleteContentOk");
-          this.paymentModal = false;
+          // this.modalTitle = this.$i18n.t("modalTitleOk");
+          // this.modalContent = this.$i18n.t("modalDeleteContentOk");
+          // this.paymentModal = false;
           // MESSAGES
           this.messageStore.messages.push({
             severity: false,
@@ -536,11 +579,11 @@ export default defineComponent({
         })
         .catch((err) => {
           // MODALS (set actorModal to TRUE to active)
-          this.modalTitle = this.$i18n.t("modalTitleKo");
-          this.modalContent = this.$i18n.t("modalDeleteContentKo", {
-            err: err.response.data.message || err.message,
-          });
-          this.paymentModal = false;
+          // this.modalTitle = this.$i18n.t("modalTitleKo");
+          // this.modalContent = this.$i18n.t("modalDeleteContentKo", {
+          //   err: err.response.data.message || err.message,
+          // });
+          // this.paymentModal = false;
           // MESSAGES
           this.messageStore.messages.push({
             severity: true,
@@ -552,26 +595,64 @@ export default defineComponent({
         });
     },
     inputsCheck(obj: any) {
-      if (this.contenuAdditionnel && !this.validContenuAdditionnel()) {
-        this.errors.push(this.$i18n.t("errorAdditionalContentInvalidFeed"));
-        obj["contenuAdditionnel"].isValid = false;
-        obj["contenuAdditionnel"].invalidFeed = this.$i18n.t(
-          "errorAdditionalContentInvalidFeed"
-        );
-      } else {
-        this.contenuAdditionnel = null;
-        obj["contenuAdditionnel"].isValid = true;
-        obj["contenuAdditionnel"].validFeed = this.$i18n.t("validFeed");
-        obj["contenuAdditionnel"].invalidFeed = "";
-      }
-
-      if (!this.selectedServices.length) {
-        this.errors.push(this.$i18n.t("emptyServicesInvalidFeed"));
+      // console.log(this.selectedPaymentState);
+      if (this.selectedPaymentState === null) {
+        this.errors.push(this.$i18n.t("emptyStateInvalidFeed"));
+        // obj["etat"].isValid = false;
+        // obj["etat"].invalidFeed = this.$i18n.t(
+        //   "emptyStateInvalidFeed"
+        // );
         this.modalTitle = this.$i18n.t("modalTitleKo");
         this.modalContent = this.$i18n.t("modalAddContentKo", {
-          err: this.$i18n.t("emptyServicesInvalidFeed"),
+          err: this.$i18n.t("emptyStateInvalidFeed"),
         });
         this.paymentModal = true;
+      } else {
+        this.etat = this.selectedPaymentState.value;
+      }
+
+      if (this.paymentValue === null || !this.paymentValue) {
+        this.errors.push(this.$i18n.t("emptyValueInvalidFeed"));
+        obj["paymentValue"].isValid = false;
+        obj["paymentValue"].invalidFeed = this.$i18n.t("emptyValueInvalidFeed");
+      } else if (!this.validPaymentValue()) {
+        this.errors.push(
+          this.$i18n.t("errorValueInvalidFeed.linked", {
+            price: this.selectedPaymentOrder.priceHt,
+          })
+        );
+        obj["paymentValue"].isValid = false;
+        obj["paymentValue"].invalidFeed = this.$i18n.t(
+          "errorValueInvalidFeed.linked",
+          { price: this.selectedPaymentOrder.priceHt }
+        );
+      } else {
+        this.paymentValue = parseFloat(this.paymentValue);
+        obj["paymentValue"].isValid = true;
+        obj["paymentValue"].validFeed = this.$i18n.t("validFeed");
+        obj["paymentValue"].invalidFeed = "";
+      }
+
+      if (this.selectedPaymentType === null) {
+        this.errors.push(this.$i18n.t("emptyTypeInvalidFeed"));
+        this.modalTitle = this.$i18n.t("modalTitleKo");
+        this.modalContent = this.$i18n.t("modalAddContentKo", {
+          err: this.$i18n.t("emptyTypeInvalidFeed"),
+        });
+        this.paymentModal = true;
+      } else {
+        this.paymentType = this.selectedPaymentType.value;
+      }
+
+      if (this.selectedPaymentOrder === null) {
+        this.errors.push(this.$i18n.t("emptyOrderInvalidFeed"));
+        this.modalTitle = this.$i18n.t("modalTitleKo");
+        this.modalContent = this.$i18n.t("modalAddContentKo", {
+          err: this.$i18n.t("emptyOrderInvalidFeed"),
+        });
+        this.paymentModal = true;
+      } else {
+        this.orderId = this.selectedPaymentOrder.value;
       }
     },
     async forceTableRerender() {
@@ -597,6 +678,7 @@ export default defineComponent({
     "stateTableHeadText": "État",
     "valueTableHeadText": "Valeur",
     "typeTableHeadText": "Type",
+    "orderTableHeadText": "Commande",
     "invoiceTableHeadText": "Facture",
     "emptyTableBodyContentText": "Aucun Paiement.",
     "addButtonText": "Ajouter",
@@ -608,11 +690,19 @@ export default defineComponent({
     "emptyStateInvalidFeed": "L'état du paiement doit être renseigné!",
     "errorStateInvalidFeed": "État incorrect!",
     "valuePlaceholder": "Valeur",
-    "emptyValueInvalidFeed": "La valeur du paiement doit être renseigné!",
-    "errorValueInvalidFeed": "Valeur incorrect!",
+    "emptyValueInvalidFeed": "La valeur du paiement doit être renseignée!",
+    "errorValueInvalidFeed": {
+      "start": "Valeur incorrecte",
+      "price": ", le prix ne doit pas dépasser {price}",
+      "end": "!",
+      "linked": "@:errorValueInvalidFeed.start @:errorValueInvalidFeed.price @:errorValueInvalidFeed.end"
+    },
     "typePlaceholder": "Type",
     "emptyTypeInvalidFeed": "Le type du paiement doit être renseigné!",
     "errorTypeInvalidFeed": "Type incorrect!",
+    "orderPlaceholder": "Commande",
+    "emptyOrderInvalidFeed": "La commande doit être renseignée!",
+    "errorOrderInvalidFeed": "Commande incorrecte!",
     "invoicePlaceholder": "Facture",
     "validFeed": "Validé!",
 
@@ -629,6 +719,7 @@ export default defineComponent({
     "stateInputLabel": "États",
     "valueInputLabel": "Valeur",
     "typeInputLabel": "Types",
+    "orderInputLabel": "Commandes",
     "invoiceInputLabel": "Factures",
 
     "stateOkLibelle": "Payé",
@@ -643,6 +734,7 @@ export default defineComponent({
     "stateTableHeadText": "State",
     "valueTableHeadText": "Value",
     "typeTableHeadText": "Type",
+    "orderTableHeadText": "Order",
     "invoiceTableHeadText": "Invoice",
     "emptyTableBodyContentText": "No Payment.",
     "addButtonText": "Add",
@@ -655,10 +747,18 @@ export default defineComponent({
     "errorStateInvalidFeed": "Bad state supplied!",
     "valuePlaceholder": "Value",
     "emptyValueInvalidFeed": "Value can't be empty!",
-    "errorValueInvalidFeed": "Bad value supplied!",
+    "errorValueInvalidFeed": {
+      "start": "Bad price supplied",
+      "price": ", the price value must be lower than {price}",
+      "end": "!",
+      "linked": "@:errorValueInvalidFeed.start @:errorValueInvalidFeed.price @:errorValueInvalidFeed.end"
+    },
     "typePlaceholder": "Type",
     "emptyTypeInvalidFeed": "Type can't be empty!",
     "errorTypeInvalidFeed": "Bad type supplied!",
+    "orderPlaceholder": "Order",
+    "emptyOrderInvalidFeed": "Order can't be empty!",
+    "errorOrderInvalidFeed": "Bad order supplied!",
     "invoicePlaceholder": "Invoice",
     "validFeed": "Ok!",
 
@@ -675,6 +775,7 @@ export default defineComponent({
     "stateInputLabel": "States",
     "valueInputLabel": "Value",
     "typeInputLabel": "Types",
+    "orderInputLabel": "Orders",
     "invoiceInputLabel": "Invoices",
 
     "stateOkLibelle": "Paid",
@@ -733,7 +834,6 @@ export default defineComponent({
           inputGroup,
           ariaLabel,
           label,
-          model,
           invalidFeedback,
           validFeedback,
           isValid,
@@ -750,7 +850,7 @@ export default defineComponent({
               :aria-label="ariaLabel"
               aria-describedby="basic"
               :label="label"
-              :model="model"
+              v-model="paymentValue"
               :invalidFeedback="invalidFeedback"
               :validFeedback="validFeedback"
               :isValid="isValid"
@@ -758,13 +858,12 @@ export default defineComponent({
               :required="required"
               :placeholder="placeholder"
               :type="type"
-              @input="inputChanges($event)"
             >
             </MDBInput>
           </MDBCol>
         </MDBRow>
       </template>
-      <template #addFormStateSelect="{ size, ariaLabel, label, required }">
+      <template #addFormStateSelect="{ size, ariaLabel, required }">
         <MDBRow class="g-3 d-flex justify-content-center">
           <MDBCol :md="size" class="input-group">
             <!-- <div class="input-group-prepend">
@@ -775,7 +874,7 @@ export default defineComponent({
             <vSelect
               :required="required"
               :aria-label="ariaLabel"
-              :label="label"
+              label="text"
               v-model="selectedPaymentState"
               :multiple="false"
               :options="paymentStatesOption"
@@ -795,7 +894,7 @@ export default defineComponent({
           </MDBCol>
         </MDBRow>
       </template>
-      <template #addFormTypeSelect="{ size, ariaLabel, label, required }">
+      <template #addFormTypeSelect="{ size, ariaLabel, required }">
         <MDBRow class="g-3 d-flex justify-content-center">
           <MDBCol :md="size" class="input-group">
             <!-- <div class="input-group-prepend">
@@ -812,7 +911,9 @@ export default defineComponent({
               :options="paymentTypesOption"
               id="types"
               class="custom-select w-100"
-              :selectable="(option) => option.value !== 0"
+              :selectable="
+                (option) => option.value !== 0 || option.value !== 'default'
+              "
             >
               <template #search="{ attributes, events }">
                 <input
@@ -826,7 +927,39 @@ export default defineComponent({
           </MDBCol>
         </MDBRow>
       </template>
-      <template #addFormInvoiceSelect="{ size, ariaLabel, label, required }">
+      <template #addFormOrderSelect="{ size, ariaLabel, required }">
+        <MDBRow class="g-3 d-flex justify-content-center">
+          <MDBCol :md="size" class="input-group">
+            <!-- <div class="input-group-prepend">
+              <label class="input-group-text" for="services">
+                {{ label }}
+              </label>
+            </div> -->
+            <vSelect
+              :required="required"
+              :aria-label="ariaLabel"
+              label="text"
+              v-model="selectedPaymentOrder"
+              :multiple="false"
+              :options="paymentOrdersOption"
+              inputId="types"
+              class="custom-select w-100"
+              :selectable="(option) => option.value !== 0"
+              @option:selected="inputOrderChanges($event)"
+            >
+              <template #search="{ attributes, events }">
+                <input
+                  class="vs__search"
+                  :required="!selectedPaymentType"
+                  v-bind="attributes"
+                  v-on="events"
+                />
+              </template>
+            </vSelect>
+          </MDBCol>
+        </MDBRow>
+      </template>
+      <template #addFormInvoiceSelect="{ size, ariaLabel, required }">
         <MDBRow class="g-3 d-flex justify-content-center">
           <MDBCol :md="size" class="input-group">
             <!-- <div class="input-group-prepend">
@@ -860,7 +993,7 @@ export default defineComponent({
     </TableItem>
   </div>
   <ModalItem
-    @actorModal="modalChange"
+    @paymentModal="modalChange"
     input="paymentModal"
     id="paymentModal"
     tabIndex="-1"
