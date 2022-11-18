@@ -26,22 +26,22 @@ const model = (sequelize) => {
           key: "paymentTypeId",
         },
       },
-      orderId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        reference: {
-          model: "commande",
-          key: "orderId",
-        },
-      },
-      // factureId: {
+      // orderId: {
       //   type: DataTypes.INTEGER,
+      //   allowNull: false,
       //   reference: {
-      //     model: "facture",
-      //     key: "factureId",
+      //     model: "commande",
+      //     key: "orderId",
       //   },
-      //   allowNull: true,
       // },
+      factureId: {
+        type: DataTypes.INTEGER,
+        reference: {
+          model: "facture",
+          key: "factureId",
+        },
+        allowNull: true,
+      },
     },
     {
       freezeTableName: true,

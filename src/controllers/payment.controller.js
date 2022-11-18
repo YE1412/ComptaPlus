@@ -2,7 +2,7 @@ import db from "../models/index.js";
 
 const payment = db.payment;
 const paymentType = db.paymentType;
-const order = db.order;
+const invoice = db.invoice;
 // const invoice = db.invoice;
 const Op = db.Sequelize.Op;
 
@@ -12,7 +12,6 @@ const create = async (req, res) => {
     etat: body.etat,
     paymentValue: body.paymentValue,
     paymentType: body.paymentType,
-    orderId: body.orderId,
     factureId: body.factureId,
   };
 
@@ -38,10 +37,10 @@ const findAll = (req, res) => {
         "etat",
         "paymentValue",
         "payment_type.paymentTypeId",
-        "commande.orderId",
+        "facture.factureId",
       ],
       where: {},
-      include: [payment.paymentType, payment.order],
+      include: [payment.paymentType, payment.invoice],
     })
     .then((data) => {
       res.send(data);
@@ -65,7 +64,7 @@ const findOne = (req, res) => {
 
   payment
     .findByPk(query.paymentId, {
-      include: [payment.paymentType, payment.order],
+      include: [payment.paymentType, payment.invoice],
     })
     .then((data) => {
       res.send(data);
@@ -86,7 +85,7 @@ const update = async (req, res) => {
     etat: body.etat,
     paymentValue: body.paymentValue,
     paymentType: body.paymentType,
-    orderId: body.orderId,
+    factureId: body.factureId,
   };
 
   await payment
@@ -169,8 +168,8 @@ const findAllTypes = (req, res) => {
     });
 };
 
-const findAllOrders = (req, res) => {
-  order
+const findAllInvoices = (req, res) => {
+  invoice
     .findAll({
       where: {},
     })
@@ -179,7 +178,7 @@ const findAllOrders = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occured while retieving orders.",
+        message: err.message || "Some error occured while retieving invoices.",
       });
     });
 };
@@ -236,7 +235,7 @@ export default {
   findOne: findOne,
   findByTypes: findByTypes,
   findAllTypes: findAllTypes,
-  findAllOrders: findAllOrders,
+  findAllInvoices: findAllInvoices,
   // findAllInvoices: findAllInvoices,
   update: update,
   deleteOne: deleteOne,

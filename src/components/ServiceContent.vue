@@ -299,10 +299,10 @@ export default defineComponent({
       return re.test(this.nom);
     },
     validMontantHt: function () {
-      return true;
+      return parseFloat(this.montantHt) > 0.0;
     },
     validQuantite: function () {
-      return true;
+      return parseInt(this.quantite) > 0;
     },
     transformObject(obj) {
       for (const k in obj) {

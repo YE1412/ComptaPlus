@@ -51,8 +51,8 @@ export default defineComponent({
         console.log(err);
         return [];
       });
-    const ordersObj = await paymentStore
-      .getAllOrders()
+    const invoicesObj = await paymentStore
+      .getAllInvoices()
       .then(
         (res) => {
           return res;
@@ -65,19 +65,7 @@ export default defineComponent({
         console.log(err);
         return [];
       });
-    // const invoicesObj = await paymentStore
-    //   .getAllInvoices()
-    //   .then((res) => {
-    //     return res;
-    //   },
-    //   () => {
-    //     return [];
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     return [];
-    //   });
-    return { paymentStore, messageStore, typesObj, ordersObj };
+    return { paymentStore, messageStore, typesObj, invoicesObj };
   },
   beforeCreate() {
     // console.log(`Before Create`);
@@ -92,14 +80,14 @@ export default defineComponent({
       this.$i18n.t("stateTableHeadText"),
       this.$i18n.t("valueTableHeadText"),
       this.$i18n.t("typeTableHeadText"),
-      this.$i18n.t("orderTableHeadText"),
-      // this.$i18n.t("invoiceTableHeadText"),
+      // this.$i18n.t("orderTableHeadText"),
+      this.$i18n.t("invoiceTableHeadText"),
       this.$i18n.t("actionTableHeadText"),
     ];
     let paymentTypesOpt = [],
       paymentStatesOpt = [],
-      paymentInvoicesOpt = [],
-      paymentOrdersOpt = [];
+      paymentInvoicesOpt = [];
+      // paymentOrdersOpt = [];
     paymentStatesOpt.push({
       text: this.$i18n.t("stateInputLabel"),
       value: "default",
@@ -136,22 +124,18 @@ export default defineComponent({
       type.chq = this.typesObj[key].chq;
       paymentTypesOpt.push(type);
     }
-    paymentOrdersOpt.push({
-      text: this.$i18n.t("orderInputLabel"),
-      value: 0,
-      priceHt: 0,
-    });
-    for (const key in this.ordersObj) {
-      let order = {};
-      order.text = `${this.ordersObj[key].orderId} - ${this.ordersObj[key].priceHt}`;
-      order.value = this.ordersObj[key].orderId;
-      order.priceHt = this.ordersObj[key].priceHt;
-      paymentOrdersOpt.push(order);
-    }
     paymentInvoicesOpt.push({
       text: this.$i18n.t("invoiceInputLabel"),
       value: 0,
+      invoiceTTPrice: 0,
     });
+    for (const key in this.invoicesObj) {
+      let invoice = {};
+      invoice.text = `${this.invoicesObj[key].factureId} - ${this.invoicesObj[key].invoiceTTPrice}`;
+      invoice.value = this.invoicesObj[key].factureId;
+      invoice.invoiceTTPrice = this.invoicesObj[key].invoiceTTPrice;
+      paymentInvoicesOpt.push(invoice);
+    }
     const addInputObj = {
       etat: {
         value: "",
@@ -192,32 +176,32 @@ export default defineComponent({
         size: "12",
         disabled: false,
       },
-      paymentOrder: {
-        value: "",
-        type: "",
-        label: this.$i18n.t("orderInputLabel"),
-        name: "addFormOrderSelect",
-        invalidFeed: "",
-        validFeed: "",
-        isValid: false,
-        required: true,
-        placeholder: this.$i18n.t("orderPlaceholder"),
-        size: "12",
-        disabled: false,
-      },
-      // factureId: {
+      // paymentOrder: {
       //   value: "",
       //   type: "",
-      //   label: this.$i18n.t("invoiceInputLabel"),
-      //   name: "addFormInvoiceSelect",
+      //   label: this.$i18n.t("orderInputLabel"),
+      //   name: "addFormOrderSelect",
       //   invalidFeed: "",
       //   validFeed: "",
       //   isValid: false,
       //   required: true,
-      //   placeholder: this.$i18n.t("invoicePlaceholder"),
+      //   placeholder: this.$i18n.t("orderPlaceholder"),
       //   size: "12",
       //   disabled: false,
       // },
+      factureId: {
+        value: "",
+        type: "",
+        label: this.$i18n.t("invoiceInputLabel"),
+        name: "addFormInvoiceSelect",
+        invalidFeed: "",
+        validFeed: "",
+        isValid: false,
+        required: true,
+        placeholder: this.$i18n.t("invoicePlaceholder"),
+        size: "12",
+        disabled: false,
+      },
     };
     return {
       tableHeading: headTable,
@@ -232,15 +216,15 @@ export default defineComponent({
       paymentValue: null,
       paymentType: 0,
       factureId: 0,
-      orderId: 0,
+      // orderId: 0,
       selectedPaymentType: null,
       paymentTypesOption: paymentTypesOpt,
       selectedPaymentState: null,
       paymentStatesOption: paymentStatesOpt,
       selectedPaymentInvoice: null,
-      paymentInvoicesOption: [],
-      selectedPaymentOrder: null,
-      paymentOrdersOption: paymentOrdersOpt,
+      paymentInvoicesOption: paymentInvoicesOpt,
+      // selectedPaymentOrder: null,
+      // paymentOrdersOption: paymentOrdersOpt,
       // For update
       updateInputObject: {},
       updateInputObjectId: 0,
@@ -264,24 +248,19 @@ export default defineComponent({
     vSelect,
   },
   methods: {
-    // setSelectedServicesForUpdate() {
+    // setSelectedInvoicesForUpdate() {
     //   let ret = [];
     //   ret.push({
-    //     text: this.$i18n.t("servicesPlaceholder"),
+    //     text: this.$i18n.t("invoicesPlaceholder"),
     //     value: 0,
-    //     montantHt: 0,
-    //     quantite: 0,
-    //     nom: "default",
+    //     invoiceTTPrice: 0,
     //   });
-    //   return this.serviceStore.getAllServices().then((res) => {
-    //     for (const key in this.serviceStore.getServices) {
-    //       let service = {};
-    //       service.text = `${this.serviceStore.getServices[key].nom} - ${this.serviceStore.getServices[key].montantHt}`;
-    //       service.value = this.serviceStore.getServices[key].serviceId;
-    //       service.montantHt = this.serviceStore.getServices[key].montantHt;
-    //       service.quantite = this.serviceStore.getServices[key].quantite;
-    //       service.nom = this.serviceStore.getServices[key].nom;
-    //       ret.push(service);
+    //   return this.paymentStore.getAllInvoices().then((res) => {
+    //     for (const key in this.paymentStore.getInvoices) {
+    //       let invoice = {};
+    //       invoice.text = `${this.paymentStore.getInvoices[key].factureId} - ${this.paymentStore.getInvoices[key].invoiceTTPrice}`;
+    //       invoice.value = this.paymentStore.getInvoices[key].factureId;
+    //       ret.push(invoice);
     //     }
     //     // console.log(ret);
     //     return ret;
@@ -369,16 +348,16 @@ export default defineComponent({
             placeholder: this.$i18n.t("typePlaceholder"),
             size: "12",
           },
-          paymentOrder: {
-            value: obj["commande"],
+          factureId: {
+            value: obj["facture"],
             type: "",
             label: "text",
-            name: "addFormOrderSelect",
+            name: "addFormInvoiceSelect",
             invalidFeed: "",
             validFeed: this.$i18n.t("validFeed"),
             isValid: true,
             required: true,
-            placeholder: this.$i18n.t("orderPlaceholder"),
+            placeholder: this.$i18n.t("invoicePlaceholder"),
             size: "12",
           },
         };
@@ -447,7 +426,7 @@ export default defineComponent({
     //       break;
     //   }
     // },
-    inputOrderChanges(e: any) {
+    inputInvoiceChanges(e: any) {
       // console.log(e);
       this.paymentValue = null;
     },
@@ -455,7 +434,8 @@ export default defineComponent({
       return true;
     },
     validPaymentValue: function () {
-      return this.selectedPaymentOrder.priceHt >= this.paymentValue;
+      let ttPriceBoolean = this.selectedPaymentInvoice !== null ? parseFloat(this.paymentValue) <= this.selectedPaymentInvoice.invoiceTTPrice : true;
+      return parseFloat(this.paymentValue) > 0.0 && ttPriceBoolean;
     },
     validPaymentType: function () {
       return true;
@@ -481,7 +461,7 @@ export default defineComponent({
         etat: this.etat,
         paymentValue: this.paymentValue,
         paymentType: this.paymentType,
-        orderId: this.orderId,
+        factureId: this.factureId,
       };
       this.transformObject(obj);
       return paymentAxiosService
@@ -524,7 +504,7 @@ export default defineComponent({
         etat: this.etat,
         paymentValue: this.paymentValue,
         paymentType: this.paymentType,
-        orderId: this.orderId,
+        factureId: this.factureId,
       };
       this.transformObject(obj);
       return paymentAxiosService
@@ -618,14 +598,15 @@ export default defineComponent({
       } else if (!this.validPaymentValue()) {
         this.errors.push(
           this.$i18n.t("errorValueInvalidFeed.linked", {
-            price: this.selectedPaymentOrder.priceHt,
+            price: this.selectedPaymentInvoice !== null ?
+              this.selectedPaymentInvoice.invoiceTTPrice : "'inf'",
           })
         );
         obj["paymentValue"].isValid = false;
-        obj["paymentValue"].invalidFeed = this.$i18n.t(
-          "errorValueInvalidFeed.linked",
-          { price: this.selectedPaymentOrder.priceHt }
-        );
+        obj["paymentValue"].invalidFeed = this.$i18n.t("errorValueInvalidFeed.linked", {
+            price: this.selectedPaymentInvoice !== null ?
+              this.selectedPaymentInvoice.invoiceTTPrice : "'inf'",
+        });
       } else {
         this.paymentValue = parseFloat(this.paymentValue);
         obj["paymentValue"].isValid = true;
@@ -644,15 +625,16 @@ export default defineComponent({
         this.paymentType = this.selectedPaymentType.value;
       }
 
-      if (this.selectedPaymentOrder === null) {
-        this.errors.push(this.$i18n.t("emptyOrderInvalidFeed"));
-        this.modalTitle = this.$i18n.t("modalTitleKo");
-        this.modalContent = this.$i18n.t("modalAddContentKo", {
-          err: this.$i18n.t("emptyOrderInvalidFeed"),
-        });
-        this.paymentModal = true;
+      if (this.selectedPaymentInvoice === null) {
+        // this.errors.push(this.$i18n.t("emptyInvoiceInvalidFeed"));
+        // this.modalTitle = this.$i18n.t("modalTitleKo");
+        // this.modalContent = this.$i18n.t("modalAddContentKo", {
+        //   err: this.$i18n.t("emptyInvoiceInvalidFeed"),
+        // });
+        // this.paymentModal = true;
+        this.factureId = null;
       } else {
-        this.orderId = this.selectedPaymentOrder.value;
+        this.factureId = this.selectedPaymentInvoice.value;
       }
     },
     async forceTableRerender() {
@@ -693,17 +675,16 @@ export default defineComponent({
     "emptyValueInvalidFeed": "La valeur du paiement doit être renseignée!",
     "errorValueInvalidFeed": {
       "start": "Valeur incorrecte",
-      "price": ", le prix ne doit pas dépasser {price}",
+      "price": ", le prix ne doit pas dépasser {price} et doit être supérieur à 0",
       "end": "!",
       "linked": "@:errorValueInvalidFeed.start @:errorValueInvalidFeed.price @:errorValueInvalidFeed.end"
     },
     "typePlaceholder": "Type",
     "emptyTypeInvalidFeed": "Le type du paiement doit être renseigné!",
     "errorTypeInvalidFeed": "Type incorrect!",
-    "orderPlaceholder": "Commande",
-    "emptyOrderInvalidFeed": "La commande doit être renseignée!",
-    "errorOrderInvalidFeed": "Commande incorrecte!",
     "invoicePlaceholder": "Facture",
+    "emptyInvoiceInvalidFeed": "La facture doit être renseignée!",
+    "errorInvoiceInvalidFeed": "Facture incorrecte!",
     "validFeed": "Validé!",
 
     "modalCloseBtnText": "Fermer",
@@ -749,17 +730,16 @@ export default defineComponent({
     "emptyValueInvalidFeed": "Value can't be empty!",
     "errorValueInvalidFeed": {
       "start": "Bad price supplied",
-      "price": ", the price value must be lower than {price}",
+      "price": ", the price value must be lower than {price} and greater than 0",
       "end": "!",
       "linked": "@:errorValueInvalidFeed.start @:errorValueInvalidFeed.price @:errorValueInvalidFeed.end"
     },
     "typePlaceholder": "Type",
     "emptyTypeInvalidFeed": "Type can't be empty!",
     "errorTypeInvalidFeed": "Bad type supplied!",
-    "orderPlaceholder": "Order",
-    "emptyOrderInvalidFeed": "Order can't be empty!",
-    "errorOrderInvalidFeed": "Bad order supplied!",
     "invoicePlaceholder": "Invoice",
+    "emptyInvoiceInvalidFeed": "Invoice can't be empty!",
+    "errorInvoiceInvalidFeed": "Bad invoice supplied!",
     "validFeed": "Ok!",
 
     "modalCloseBtnText": "Close",
@@ -914,38 +894,6 @@ export default defineComponent({
               :selectable="
                 (option) => option.value !== 0 || option.value !== 'default'
               "
-            >
-              <template #search="{ attributes, events }">
-                <input
-                  class="vs__search"
-                  :required="!selectedPaymentType"
-                  v-bind="attributes"
-                  v-on="events"
-                />
-              </template>
-            </vSelect>
-          </MDBCol>
-        </MDBRow>
-      </template>
-      <template #addFormOrderSelect="{ size, ariaLabel, required }">
-        <MDBRow class="g-3 d-flex justify-content-center">
-          <MDBCol :md="size" class="input-group">
-            <!-- <div class="input-group-prepend">
-              <label class="input-group-text" for="services">
-                {{ label }}
-              </label>
-            </div> -->
-            <vSelect
-              :required="required"
-              :aria-label="ariaLabel"
-              label="text"
-              v-model="selectedPaymentOrder"
-              :multiple="false"
-              :options="paymentOrdersOption"
-              inputId="types"
-              class="custom-select w-100"
-              :selectable="(option) => option.value !== 0"
-              @option:selected="inputOrderChanges($event)"
             >
               <template #search="{ attributes, events }">
                 <input

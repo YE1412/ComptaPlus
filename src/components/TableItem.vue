@@ -6,6 +6,7 @@ import { useServiceStore } from "@/stores/service";
 import { useActorStore } from "@/stores/actor";
 import { useOrderStore } from "@/stores/order";
 import { usePaymentStore } from "@/stores/payment";
+import { useInvoiceStore } from "@/stores/invoice";
 
 export default defineComponent({
   name: "TableItem",
@@ -80,11 +81,13 @@ export default defineComponent({
     const actStore = useActorStore();
     const ordStore = useOrderStore();
     const payStore = usePaymentStore();
+    const invStore = useInvoiceStore();
     return {
       serviceStore: servStore,
       actorStore: actStore,
       orderStore: ordStore,
       paymentStore: payStore,
+      invoiceStore: invStore
     };
   },
   data() {
@@ -113,10 +116,24 @@ export default defineComponent({
             ret[key][key2] = this.tableOrdersServicesLibelle;
           } else if (key2 === "payment_type") {
             ret[key][key2] = this.tablePaymentsTypeLibelle;
-          } else if (key2 === "commande") {
-            ret[key][key2] = this.tablePaymentsOrderLibelle;
+          } else if (key2 === "facture") {
+            ret[key][key2] = this.tablePaymentsInvoiceLibelle;
           } else if (key2 === "etat") {
             ret[key][key2] = this.tablePaymentsStateLibelle;
+          } else if (key2 === "buyer") {
+            ret[key][key2] = this.tableInvoicesBuyerLibelle;
+          } else if (key2 === "seller") {
+            ret[key][key2] = this.tableInvoicesSellerLibelle;
+          } else if (key2 === "commandes") {
+            ret[key][key2] = this.tableInvoicesOrdersLibelle;
+          } else if (key2 === "devise") {
+            ret[key][key2] = this.tableInvoicesDeviseLibelle;
+          } else if (key2 === "langue") {
+            ret[key][key2] = this.tableInvoicesLangueLibelle;
+          } else if (key2 === "payments") {
+            ret[key][key2] = this.tableInvoicesPaymentsLibelle;
+          } else if(key2 === "tvaValue") {
+            ret[key][key2] = this.tableInvoicesVATLibelle;
           } else {
             ret[key][key2] = this.contents[key][key2];
           }
@@ -235,13 +252,118 @@ export default defineComponent({
       }
       return ret;
     },
-    tablePaymentsOrderLibelle() {
+    tablePaymentsInvoiceLibelle() {
       let ret = "";
       if (this.src === "payments") {
         for (const k in this.contents) {
           for (const l in this.contents[k]) {
-            if (l === "commande") {
-              let libelle = `${this.contents[k][l].orderId} - ${this.contents[k][l].priceHt}`;
+            if (l === "facture") {
+              let libelle = `${this.contents[k][l].factureId} - ${this.contents[k][l].invoiceTTPrice}`;
+              ret = libelle;
+            }
+          }
+        }
+      }
+      return ret;
+    },
+    tableInvoicesBuyerLibelle() {
+      let ret = "";
+      if (this.src === "invoices") {
+        for (const k in this.contents) {
+          for (const l in this.contents[k]) {
+            if (l === "buyer") {
+              let libelle = `${this.contents[k][l].actorId} - ${this.contents[k][l].prenom} ${this.contents[k][l].nom}`;
+              ret = libelle;
+            }
+          }
+        }
+      }
+      return ret;
+    },
+    tableInvoicesSellerLibelle() {
+      let ret = "";
+      if (this.src === "invoices") {
+        for (const k in this.contents) {
+          for (const l in this.contents[k]) {
+            if (l === "seller") {
+              let libelle = `${this.contents[k][l].actorId} - ${this.contents[k][l].prenom} ${this.contents[k][l].nom}`;
+              ret = libelle;
+            }
+          }
+        }
+      }
+      return ret;
+    },
+    tableInvoicesOrdersLibelle() {
+      let ret = "";
+      if (this.src === "invoices") {
+        for (const k in this.contents) {
+          for (const l in this.contents[k]) {
+            if (l === "commandes") {
+              for(const m in this.contents[k][l]){
+                let libelle = "";
+                libelle = `${this.contents[k][l][m].orderId} - ${this.contents[k][l][m].priceHt}`;
+                ret += m != (this.contents[k][l].length - 1) ? `${libelle}, ` : libelle ;
+              }
+            }
+          }
+        }
+      }
+      return ret;
+    },
+    tableInvoicesDeviseLibelle() {
+      let ret = "";
+      if (this.src === "invoices") {
+        for (const k in this.contents) {
+          for (const l in this.contents[k]) {
+            if (l === "devise") {
+              let libelle = `${this.contents[k][l].symbole}`;
+              ret = libelle;
+            }
+          }
+        }
+      }
+      return ret;
+    },
+    tableInvoicesLangueLibelle() {
+      let ret = "";
+      if (this.src === "invoices") {
+        for (const k in this.contents) {
+          for (const l in this.contents[k]) {
+            if (l === "langue") {
+              let libelle = `${this.contents[k][l].libelle}`;
+              ret = libelle;
+            }
+          }
+        }
+      }
+      return ret;
+    },
+    tableInvoicesPaymentsLibelle() {
+      let ret = "";
+      if (this.src === "invoices") {
+        for (const k in this.contents) {
+          for (const l in this.contents[k]) {
+            if (l === "payments") {
+              for(const m in this.contents[k][l]){
+                let libelle = "";
+                libelle = `${this.contents[k][l][m].paymentId} - ${this.contents[k][l][m].etat} - ${this.contents[k][l][m].paymentValue}`;
+                ret += m != (this.contents[k][l].length - 1) ? `${libelle}, ` : libelle ;
+              }
+            }
+          }
+        }
+      }
+      return ret;
+    },
+    tableInvoicesVATLibelle() {
+      let ret = "";
+      if (this.src === "invoices") {
+        for (const k in this.contents) {
+          for (const l in this.contents[k]) {
+            if (l === "tvaValue") {              
+              let libelle = "";
+              libelle = `${this.contents[k][l] * 100} %`;
               ret = libelle;
             }
           }
@@ -321,6 +443,20 @@ export default defineComponent({
       } else if (this.src === "payments") {
         return (contentTab = await this.paymentStore
           .getAllPayments()
+          .then(
+            (res) => {
+              return res;
+            },
+            (rej) => {
+              return [];
+            }
+          )
+          .catch((err) => {
+            return [];
+          }));
+      } else if (this.src === "invoices") {
+        return (contentTab = await this.invoiceStore
+          .getAllInvoices()
           .then(
             (res) => {
               return res;

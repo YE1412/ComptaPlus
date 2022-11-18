@@ -25,7 +25,7 @@ const create = async (req, res) => {
   };
 
   // 1. INSERT a new order
-  const orderStatement = await order
+  await order
     .create(orderObj, {
       include: [
         {
@@ -64,11 +64,10 @@ const create = async (req, res) => {
             message:
               err.message ||
               "Some error occured while inserting in associated table contains with order id=" +
-                orderStatement.orderId,
+                data.orderId,
             error: err,
           });
         });
-      return data;
     })
     .catch((err) => {
       res.status(500).send({
@@ -148,7 +147,7 @@ const update = async (req, res) => {
   const orderModel = await order.findByPk(params.id, {
     include: [order.services, order.invoice],
   });
-  const orderStatement = await order
+  await order
     .update(
       orderObj,
       {
@@ -197,7 +196,7 @@ const update = async (req, res) => {
             message:
               err.message ||
               "Some error occured while inserting in associated table contains with order id=" +
-                orderStatement.orderId,
+                data.orderId,
             error: err,
           });
         });

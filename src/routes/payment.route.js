@@ -13,10 +13,7 @@ export default () => {
   router.get("/find", payments.findOne);
 
   // Retrieve all Orders
-  // router.get("/invoices", payments.findAllInvoices);
-
-  // Retrieve all Orders
-  router.get("/orders", payments.findAllOrders);
+  router.get("/invoices", payments.findAllInvoices);
 
   // Retrieve all Payments type
   router.get("/types", payments.findAllTypes);

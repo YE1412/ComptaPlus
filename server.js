@@ -66,7 +66,8 @@ async function createViteServer() {
     sessionsRouter,
     actorRouter,
     orderRouter,
-    paymentRouter;
+    paymentRouter,
+    invoiceRouter;
   let prefix = "./";
   // console.log(import("./src/routes/user.route.js")(app));
   if (env === "development") {
@@ -85,6 +86,7 @@ async function createViteServer() {
   actorRouter = await import(`${prefix}src/routes/actor.route.js`);
   orderRouter = await import(`${prefix}src/routes/order.route.js`);
   paymentRouter = await import(`${prefix}src/routes/payment.route.js`);
+  invoiceRouter = await import(`${prefix}src/routes/invoice.route.js`);
   //  Populate req.cookies
   app.use(cookieParser());
   //  Session setup
@@ -117,6 +119,7 @@ async function createViteServer() {
   app.use("/api/actors", actorRouter.default());
   app.use("/api/orders", orderRouter.default());
   app.use("/api/payments", paymentRouter.default());
+  app.use("/api/invoices", invoiceRouter.default());
   app.get("/api/session", (request, response) => {
     request.session.appSession = uuidv4();
     // console.log(`GET - Session`);
