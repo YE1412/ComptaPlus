@@ -4,16 +4,23 @@ import { defineComponent } from "vue";
 import logoURL from "@/assets/logo.svg";
 import "@/assets/mdb/css/style.css";
 import { useSessionStore } from "@/stores/session";
+import { useCounterStore } from "@/stores/counter";
 
 export default defineComponent({
   name: "App",
   setup() {
     const sessionStore = useSessionStore();
+    const counterStore = useCounterStore();
     return {
       sessionStore,
+      counterStore
     };
   },
   data() {
+    this.$i18n.locale =
+      this.counterStore.getLanguages[
+        this.counterStore.getLangDisplayedIndex
+      ].lang;
     return {
       logoURL,
     };
