@@ -99,26 +99,24 @@ actorModelObj.invoicesReceived = actorModelObj.hasMany(invoiceModelObj, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
   foreignKey: "buyerId",
-  as: "buyer"
 });
 invoiceModelObj.buyer = invoiceModelObj.belongsTo(actorModelObj, {
   foreignKey: "buyerId",
-  as: "buyer"
+  as: "buyer",
 });
 
 actorModelObj.invoicesSent = actorModelObj.hasMany(invoiceModelObj, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
   foreignKey: "sellerId",
-  as: "seller"
 });
 invoiceModelObj.seller = invoiceModelObj.belongsTo(actorModelObj, {
   foreignKey: "sellerId",
-  as: "seller"
+  as: "seller",
 });
 
 invoiceModelObj.orders = invoiceModelObj.hasMany(orderModelObj, {
-  onDelete: "CASCADE",
+  onDelete: "SET NULL",
   onUpdate: "CASCADE",
   foreignKey: "factureId",
 });

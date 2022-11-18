@@ -19,12 +19,12 @@ async function transformObject(obj: any) {
   const ret: any = [];
   for (const k in obj) {
     // console.log(k);
-    if (typeof obj[k] === "string") {
+    if (typeof obj[k] === "string" && k !== "date") {
       ret[k] = __DECRYPTAPI__.decrypt(obj[k]);
     } else if (typeof obj[k] === "object" && !Array.isArray(obj[k])) {
       ret[k] = {};
       for (const l in obj[k]) {
-        if (typeof obj[k][l] === "string")
+        if (typeof obj[k][l] === "string" && l !== "date")
           ret[k][l] = __DECRYPTAPI__.decrypt(obj[k][l]);
         else if (Array.isArray(obj[k][l])) {
           // console.log(l);
@@ -41,6 +41,17 @@ async function transformObject(obj: any) {
                 else ret[k][l][m][n] = obj[k][l][m][n];
               }
             } else ret[k][l][m] = obj[k][l][m];
+          }
+        } else if (
+          typeof obj[k][l] === "object" &&
+          l !== "langue" &&
+          l !== "devise"
+        ) {
+          ret[k][l] = {};
+          for (const m in obj[k][l]) {
+            if (typeof obj[k][l][m] === "string")
+              ret[k][l][m] = __DECRYPTAPI__.decrypt(obj[k][l][m]);
+            else ret[k][l][m] = obj[k][l][m];
           }
         } else ret[k][l] = obj[k][l];
       }
@@ -76,7 +87,7 @@ const useInvoiceStore = defineStore("invoice", {
     sellers: [],
     buyers: [],
     payments: [],
-    orders: []
+    orders: [],
   }),
   getters: {
     getInvoices(state) {

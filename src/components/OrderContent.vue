@@ -468,7 +468,9 @@ export default defineComponent({
           // MESSAGES
           this.messageStore.messages.push({
             severity: true,
-            content: this.$i18n.t("modalUpdateContentKo"),
+            content: this.$i18n.t("modalUpdateContentKo", {
+              err: err.response.data.message || err.message,
+            }),
           });
           this.messageVisibility = true;
           this.messageStore.messagesVisibility = true;
@@ -502,7 +504,9 @@ export default defineComponent({
           // MESSAGES
           this.messageStore.messages.push({
             severity: true,
-            content: this.$i18n.t("modalDeleteContentKo"),
+            content: this.$i18n.t("modalDeleteContentKo", {
+              err: err.response.data.message || err.message,
+            }),
           });
           this.messageVisibility = true;
           this.messageStore.messagesVisibility = true;

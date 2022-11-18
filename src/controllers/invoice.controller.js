@@ -14,7 +14,7 @@ const create = async (req, res) => {
     paymentsRow = [],
     ordersTab = [],
     ordersRow = [];
-  for (const key in body.payments){
+  for (const key in body.payments) {
     paymentsTab.push({
       paymentId: body.payments[key].value,
       etat: body.payments[key].etat,
@@ -22,7 +22,7 @@ const create = async (req, res) => {
       paymentType: body.payments[key].paymentType,
     });
   }
-  for (const key in body.orders){
+  for (const key in body.orders) {
     ordersTab.push({
       orderId: body.orders[key].value,
       contenuAdditionnel: body.orders[key].contenuAdditionnel,
@@ -39,16 +39,13 @@ const create = async (req, res) => {
     buyerId: body.buyerId,
     sellerId: body.sellerId,
     commande: ordersTab,
-    payment: paymentsTab 
+    payment: paymentsTab,
   };
 
   // 1. INSERT a new invoice
   await invoice
     .create(invoiceObj, {
-      include: [
-        invoice.payments,
-        invoice.orders,
-      ],
+      include: [invoice.payments, invoice.orders],
     })
     .then(async (data) => {
       // 2.1 Find the payments rows
@@ -86,9 +83,9 @@ const create = async (req, res) => {
           });
       }
       // 3. INSERT the association in tables
-      await data.addPayments(paymentsRow)
-        .then((data2) => {
-        })
+      await data
+        .addPayments(paymentsRow)
+        .then(() => {})
         .catch((err) => {
           res.status(500).send({
             message:
@@ -98,7 +95,8 @@ const create = async (req, res) => {
             error: err,
           });
         });
-        data.addCommandes(ordersRow)
+      data
+        .addCommandes(ordersRow)
         .then((data2) => {
           res.send(data2);
         })
@@ -134,16 +132,16 @@ const findAll = (req, res) => {
         "buyer.actorId",
         "seller.actorId",
         "commandes.orderId",
-        "payments.paymentId"
+        "payments.paymentId",
       ],
       where: {},
       include: [
         invoice.langue,
         invoice.devise,
-        {model: actor, as: "buyer"}, 
-        {model: actor, as: "seller"}, 
+        { model: actor, as: "buyer" },
+        { model: actor, as: "seller" },
         invoice.orders,
-        invoice.payments
+        invoice.payments,
       ],
     })
     .then((data) => {
@@ -152,7 +150,7 @@ const findAll = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message: err.message || "Some error occured while retieving invoices.",
-        error: err
+        error: err,
       });
     });
 };
@@ -180,15 +178,15 @@ const findOne = (req, res) => {
         "buyer.actorId",
         "seller.actorId",
         "commandes.orderId",
-        "payments.paymentId"
+        "payments.paymentId",
       ],
       include: [
         invoice.langue,
         invoice.devise,
-        {model: actor, as: "buyer"}, 
-        {model: actor, as: "seller"}, 
+        { model: actor, as: "buyer" },
+        { model: actor, as: "seller" },
         invoice.orders,
-        invoice.payments
+        invoice.payments,
       ],
     })
     .then((data) => {
@@ -210,7 +208,7 @@ const update = async (req, res) => {
     paymentsRow = [],
     ordersTab = [],
     ordersRow = [];
-  for (const key in body.payments){
+  for (const key in body.payments) {
     paymentsTab.push({
       paymentId: body.payments[key].value,
       etat: body.payments[key].etat,
@@ -219,7 +217,7 @@ const update = async (req, res) => {
       factureId: params.id,
     });
   }
-  for (const key in body.orders){
+  for (const key in body.orders) {
     ordersTab.push({
       orderId: body.orders[key].value,
       contenuAdditionnel: body.orders[key].contenuAdditionnel,
@@ -237,7 +235,7 @@ const update = async (req, res) => {
     buyerId: body.buyerId,
     sellerId: body.sellerId,
     commande: ordersTab,
-    payment: paymentsTab 
+    payment: paymentsTab,
   };
 
   // 1. UPDATE an invoice
@@ -249,10 +247,7 @@ const update = async (req, res) => {
       where: {
         factureId: params.id,
       },
-      include: [
-        invoice.payments,
-        invoice.orders,
-      ],
+      include: [invoice.payments, invoice.orders],
     })
     .then(async (data) => {
       // 2.1 Find the payments rows
@@ -293,9 +288,9 @@ const update = async (req, res) => {
       await invoiceModel.removePayments(invoiceModel.payment);
       await invoiceModel.removeCommandes(invoiceModel.commande);
       // 4. INSERT the old association in tables
-      await invoiceModel.addPayments(paymentsRow)
-        .then((data2) => {
-        })
+      await invoiceModel
+        .addPayments(paymentsRow)
+        .then(() => {})
         .catch((err) => {
           res.status(500).send({
             message:
@@ -305,7 +300,8 @@ const update = async (req, res) => {
             error: err,
           });
         });
-        invoiceModel.addCommandes(ordersRow)
+      invoiceModel
+        .addCommandes(ordersRow)
         .then((data2) => {
           res.send(data2);
         })
@@ -385,8 +381,7 @@ const findAllLanguages = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message || "Some error occured while retieving languages.",
+        message: err.message || "Some error occured while retieving languages.",
       });
     });
 };
@@ -409,7 +404,7 @@ const findAllOrders = (req, res) => {
 const findAllDevises = (req, res) => {
   devise
     .findAll({
-      where: {}
+      where: {},
     })
     .then((data) => {
       res.send(data);
@@ -441,8 +436,8 @@ const findAllSellers = (req, res) => {
     .findAll({
       where: {
         actorTypeId: {
-          [Op.or]: [1, 2]
-        }
+          [Op.or]: [1, 2],
+        },
       },
     })
     .then((data) => {
@@ -460,8 +455,8 @@ const findAllBuyers = (req, res) => {
     .findAll({
       where: {
         actorTypeId: {
-          [Op.or]: [1, 3]
-        }
+          [Op.or]: [1, 3],
+        },
       },
     })
     .then((data) => {

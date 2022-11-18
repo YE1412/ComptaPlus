@@ -68,9 +68,11 @@ export default defineComponent({
 <template>
   <main>
     <TheToolbarIn @language-changed-re-render="forceInvoiceRerender" />
-    <Sidenav :invoicesState="true"
+    <Sidenav
+      :invoicesState="true"
       @show-admin="handleAdmin"
-      @show-display="handleDisplay"/>
+      @show-display="handleDisplay"
+    />
     <div class="content">
       <Suspense>
         <InvoiceContent

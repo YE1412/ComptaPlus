@@ -67,60 +67,69 @@ export default defineComponent({
       });
     const sellersObj = await invoiceStore
       .getAllSellers()
-      .then((res) => {
-        return res;
-      },
-      () => {
-        return [];
-      })
+      .then(
+        (res) => {
+          return res;
+        },
+        () => {
+          return [];
+        }
+      )
       .catch((err) => {
         console.log(err);
         return [];
       });
     const buyersObj = await invoiceStore
       .getAllBuyers()
-      .then((res) => {
-        return res;
-      },
-      () => {
-        return [];
-      })
+      .then(
+        (res) => {
+          return res;
+        },
+        () => {
+          return [];
+        }
+      )
       .catch((err) => {
         console.log(err);
         return [];
       });
     const paymentsObj = await invoiceStore
       .getAllPayments()
-      .then((res) => {
-        return res;
-      },
-      () => {
-        return [];
-      })
+      .then(
+        (res) => {
+          return res;
+        },
+        () => {
+          return [];
+        }
+      )
       .catch((err) => {
         console.log(err);
         return [];
       });
     const ordersObj = await invoiceStore
       .getAllOrders()
-      .then((res) => {
-        return res;
-      },
-      () => {
-        return [];
-      })
+      .then(
+        (res) => {
+          return res;
+        },
+        () => {
+          return [];
+        }
+      )
       .catch((err) => {
         console.log(err);
         return [];
       });
-    return { invoiceStore, 
+    return {
+      invoiceStore,
       messageStore,
       languagesObj,
       devisesObj,
       sellersObj,
       buyersObj,
       paymentsObj,
-      ordersObj
+      ordersObj,
     };
   },
   beforeCreate() {
@@ -156,9 +165,9 @@ export default defineComponent({
       text: this.$i18n.t("languageInputLabel"),
       value: 0,
       libelle: "default",
-      nom: "default"
+      nom: "default",
     });
-    for (const key in this.languagesObj){
+    for (const key in this.languagesObj) {
       let langue = {};
       langue.text = this.languagesObj[key].libelle;
       langue.value = this.languagesObj[key].langueId;
@@ -170,9 +179,9 @@ export default defineComponent({
     invoiceDevisesOpt.push({
       text: this.$i18n.t("deviseInputLabel"),
       value: 0,
-      symbole: "default"
+      symbole: "default",
     });
-    for (const key in this.devisesObj){
+    for (const key in this.devisesObj) {
       let devise = {};
       devise.text = this.devisesObj[key].symbole;
       devise.value = this.devisesObj[key].deviseId;
@@ -185,9 +194,9 @@ export default defineComponent({
       value: 0,
       email: "default",
       nom: "default",
-      prenom: "default"
+      prenom: "default",
     });
-    for (const key in this.buyersObj){
+    for (const key in this.buyersObj) {
       let buyer = {};
       buyer.text = `${this.buyersObj[key].actorId} - ${this.buyersObj[key].nom}`;
       buyer.value = this.buyersObj[key].actorId;
@@ -202,9 +211,9 @@ export default defineComponent({
       value: 0,
       email: "default",
       nom: "default",
-      prenom: "default"
+      prenom: "default",
     });
-    for (const key in this.sellersObj){
+    for (const key in this.sellersObj) {
       let seller = {};
       seller.text = `${this.sellersObj[key].actorId} - ${this.sellersObj[key].nom}`;
       seller.value = this.sellersObj[key].actorId;
@@ -220,7 +229,7 @@ export default defineComponent({
       contenuAdditionnel: null,
       priceHt: 0,
     });
-    for (const key in this.ordersObj){
+    for (const key in this.ordersObj) {
       let order = {};
       order.text = `${this.ordersObj[key].orderId} - ${this.ordersObj[key].priceHt}`;
       order.value = this.ordersObj[key].orderId;
@@ -234,9 +243,9 @@ export default defineComponent({
       value: 0,
       etat: 0,
       paymentValue: 0,
-      paymentType: 0
+      paymentType: 0,
     });
-    for (const key in this.paymentsObj){
+    for (const key in this.paymentsObj) {
       let payment = {};
       payment.text = `${this.paymentsObj[key].paymentId} - ${this.paymentsObj[key].paymentValue}`;
       payment.value = this.paymentsObj[key].paymentId;
@@ -489,7 +498,7 @@ export default defineComponent({
         this.form = true;
         this.update = true;
         this.add = false;
-        this.paymentId = id;
+        this.factureId = id;
         this.tableHeading = [
           this.$i18n.t("dateTableHeadText"),
           this.$i18n.t("vatTableHeadText"),
@@ -503,7 +512,7 @@ export default defineComponent({
           this.$i18n.t("paymentTableHeadText"),
           this.$i18n.t("actionTableHeadText"),
         ];
-        console.log(obj);
+        // console.log(obj);
         const updateInputObj = {
           date: {
             value: obj["date"],
@@ -702,10 +711,10 @@ export default defineComponent({
       return true;
     },
     validInvoiceHTPrice: function () {
-      return parsefloat(this.invoiceHTPrice) > 0.0;
+      return parseFloat(this.invoiceHTPrice) > 0.0;
     },
     validInvoiceTTPrice: function () {
-      return parsefloat(this.invoiceTTPrice) > 0.0;
+      return parseFloat(this.invoiceTTPrice) > 0.0;
     },
     validLanguageId: function () {
       return true;
@@ -816,7 +825,9 @@ export default defineComponent({
           // MESSAGES
           this.messageStore.messages.push({
             severity: true,
-            content: this.$i18n.t("modalUpdateContentKo"),
+            content: this.$i18n.t("modalUpdateContentKo", {
+              err: err.response.data.message || err.message,
+            }),
           });
           this.messageVisibility = true;
           this.messageStore.messagesVisibility = true;
@@ -840,7 +851,9 @@ export default defineComponent({
           // MESSAGES
           this.messageStore.messages.push({
             severity: true,
-            content: this.$i18n.t("modalDeleteContentKo"),
+            content: this.$i18n.t("modalDeleteContentKo", {
+              err: err.response.data.message || err.message,
+            }),
           });
           this.messageVisibility = true;
           this.messageStore.messagesVisibility = true;
@@ -849,18 +862,14 @@ export default defineComponent({
     },
     inputsCheck(obj: any) {
       // DATE
-      if (!this.date){
+      if (!this.date) {
         this.errors.push(this.$i18n.t("emptyDateInvalidFeed"));
         obj["date"].isValid = false;
-        obj["date"].invalidFeed = this.$i18n.t(
-          "emptyDateInvalidFeed"
-        );
-      } else if(!this.validDate()) {
+        obj["date"].invalidFeed = this.$i18n.t("emptyDateInvalidFeed");
+      } else if (!this.validDate()) {
         this.errors.push(this.$i18n.t("errorDateInvalidFeed"));
         obj["date"].isValid = false;
-        obj["date"].invalidFeed = this.$i18n.t(
-          "errorDateInvalidFeed"
-        );
+        obj["date"].invalidFeed = this.$i18n.t("errorDateInvalidFeed");
       } else {
         this.date = new Date(this.date);
         obj["date"].isValid = true;
@@ -868,7 +877,7 @@ export default defineComponent({
         obj["date"].invalidFeed = "";
       }
       // LANGUAGE
-      if (this.selectedInvoiceLanguage === null){
+      if (this.selectedInvoiceLanguage === null) {
         this.errors.push(this.$i18n.t("emptyLanguageInvalidFeed"));
         this.modalTitle = this.$i18n.t("modalTitleKo");
         this.modalContent = this.$i18n.t("modalAddContentKo", {
@@ -879,7 +888,7 @@ export default defineComponent({
         this.languageId = this.selectedInvoiceLanguage.value;
       }
       // DEVISE
-      if (this.selectedInvoiceDevise === null){
+      if (this.selectedInvoiceDevise === null) {
         this.errors.push(this.$i18n.t("emptyDeviseInvalidFeed"));
         this.modalTitle = this.$i18n.t("modalTitleKo");
         this.modalContent = this.$i18n.t("modalAddContentKo", {
@@ -890,25 +899,21 @@ export default defineComponent({
         this.deviseId = this.selectedInvoiceDevise.value;
       }
       // TVA
-      if (!this.tvaValue){
+      if (!this.tvaValue) {
         this.errors.push(this.$i18n.t("emptyVatInvalidFeed"));
         obj["tvaValue"].isValid = false;
-        obj["tvaValue"].invalidFeed = this.$i18n.t(
-          "emptyVatInvalidFeed"
-        );
-      } else if(!this.validTvaValue()) {
+        obj["tvaValue"].invalidFeed = this.$i18n.t("emptyVatInvalidFeed");
+      } else if (!this.validTvaValue()) {
         this.errors.push(this.$i18n.t("errorVatInvalidFeed"));
         obj["tvaValue"].isValid = false;
-        obj["tvaValue"].invalidFeed = this.$i18n.t(
-          "errorVatInvalidFeed"
-        );
+        obj["tvaValue"].invalidFeed = this.$i18n.t("errorVatInvalidFeed");
       } else {
         obj["tvaValue"].isValid = true;
         obj["tvaValue"].validFeed = this.$i18n.t("validFeed");
         obj["tvaValue"].invalidFeed = "";
       }
       // BUYER
-      if (this.selectedInvoiceBuyer === null){
+      if (this.selectedInvoiceBuyer === null) {
         this.errors.push(this.$i18n.t("emptyBuyerInvalidFeed"));
         this.modalTitle = this.$i18n.t("modalTitleKo");
         this.modalContent = this.$i18n.t("modalAddContentKo", {
@@ -919,7 +924,7 @@ export default defineComponent({
         this.buyerId = this.selectedInvoiceBuyer.value;
       }
       // SELLER
-      if (this.selectedInvoiceSeller === null){
+      if (this.selectedInvoiceSeller === null) {
         this.errors.push(this.$i18n.t("emptySellerInvalidFeed"));
         this.modalTitle = this.$i18n.t("modalTitleKo");
         this.modalContent = this.$i18n.t("modalAddContentKo", {
@@ -930,7 +935,7 @@ export default defineComponent({
         this.sellerId = this.selectedInvoiceSeller.value;
       }
       // ORDERS
-      if (this.selectedInvoiceOrder === null){
+      if (this.selectedInvoiceOrder === null) {
         this.errors.push(this.$i18n.t("emptyOrderInvalidFeed"));
         this.modalTitle = this.$i18n.t("modalTitleKo");
         this.modalContent = this.$i18n.t("modalAddContentKo", {
@@ -939,7 +944,9 @@ export default defineComponent({
         this.invoiceModal = true;
       } else {
         if (this.tvaValue)
-          this.invoiceTTPrice = parseFloat(this.invoiceHTPrice) + (parseFloat(this.invoiceHTPrice) * parseFloat(this.tvaValue));
+          this.invoiceTTPrice =
+            parseFloat(this.invoiceHTPrice) +
+            parseFloat(this.invoiceHTPrice) * parseFloat(this.tvaValue);
       }
       // PAYMENTS
       // if (this.selectedInvoicePayment === null){
@@ -998,7 +1005,7 @@ export default defineComponent({
     "errorDeviseInvalidFeed": "Devise incorrecte!",
     "vatPlaceholder": "TVA",
     "emptyVatInvalidFeed": "La TVA doit être renseignée!",
-    "errorVatInvalidFeed": "TVA incorrecte!",
+    "errorVatInvalidFeed": "TVA incorrecte, la valeur de TVA doit être comprise entre 0 et 1!",
     "buyerPlaceholder": "Acheteur",
     "emptyBuyerInvalidFeed": "L'acheteur doit être renseigné!",
     "errorBuyerInvalidFeed": "Acheteur incorrect!",
@@ -1019,9 +1026,9 @@ export default defineComponent({
     "modalUpdateContentOk": "Facture mis à jour avec succès !",
     "modalDeleteContentOk": "Facture supprimé avec succès !",
     "modalTitleKo": "Oups !",
-    "modalAddContentKo": "Une erreur est survenue lors de l'ajout du facture : {err}",
-    "modalUpdateContentKo": "Une erreur est survenue lors de la modification du facture : {err}!",
-    "modalDeleteContentKo": "Une erreur est survenue lors de la suppression du facture : {err}!",
+    "modalAddContentKo": "Une erreur est survenue lors de l'ajout de la facture : {err}",
+    "modalUpdateContentKo": "Une erreur est survenue lors de la modification de la facture : {err}!",
+    "modalDeleteContentKo": "Une erreur est survenue lors de la suppression de la facture : {err}!",
 
     "dateInputLabel": "Date",
     "languageInputLabel": "Langues",
@@ -1062,7 +1069,7 @@ export default defineComponent({
     "errorDeviseInvalidFeed": "Bad devise supplied!",
     "vatPlaceholder": "VAT",
     "emptyVatInvalidFeed": "VAT can't be empty!",
-    "errorVatInvalidFeed": "Bad VAT supplied!",
+    "errorVatInvalidFeed": "Bad VAT supplied, the VAT value must be greater than 0 and lower than 1!",
     "buyerPlaceholder": "Buyer",
     "emptyBuyerInvalidFeed": "Buyer can't be empty!",
     "errorBuyerInvalidFeed": "Bad buyer supplied!",

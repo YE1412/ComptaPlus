@@ -87,7 +87,7 @@ export default defineComponent({
     let paymentTypesOpt = [],
       paymentStatesOpt = [],
       paymentInvoicesOpt = [];
-      // paymentOrdersOpt = [];
+    // paymentOrdersOpt = [];
     paymentStatesOpt.push({
       text: this.$i18n.t("stateInputLabel"),
       value: "default",
@@ -434,7 +434,11 @@ export default defineComponent({
       return true;
     },
     validPaymentValue: function () {
-      let ttPriceBoolean = this.selectedPaymentInvoice !== null ? parseFloat(this.paymentValue) <= this.selectedPaymentInvoice.invoiceTTPrice : true;
+      let ttPriceBoolean =
+        this.selectedPaymentInvoice !== null
+          ? parseFloat(this.paymentValue) <=
+            this.selectedPaymentInvoice.invoiceTTPrice
+          : true;
       return parseFloat(this.paymentValue) > 0.0 && ttPriceBoolean;
     },
     validPaymentType: function () {
@@ -533,7 +537,9 @@ export default defineComponent({
           // MESSAGES
           this.messageStore.messages.push({
             severity: true,
-            content: this.$i18n.t("modalUpdateContentKo"),
+            content: this.$i18n.t("modalUpdateContentKo", {
+              err: err.response.data.message || err.message,
+            }),
           });
           this.messageVisibility = true;
           this.messageStore.messagesVisibility = true;
@@ -567,7 +573,9 @@ export default defineComponent({
           // MESSAGES
           this.messageStore.messages.push({
             severity: true,
-            content: this.$i18n.t("modalDeleteContentKo"),
+            content: this.$i18n.t("modalDeleteContentKo", {
+              err: err.response.data.message || err.message,
+            }),
           });
           this.messageVisibility = true;
           this.messageStore.messagesVisibility = true;
@@ -598,15 +606,22 @@ export default defineComponent({
       } else if (!this.validPaymentValue()) {
         this.errors.push(
           this.$i18n.t("errorValueInvalidFeed.linked", {
-            price: this.selectedPaymentInvoice !== null ?
-              this.selectedPaymentInvoice.invoiceTTPrice : "'inf'",
+            price:
+              this.selectedPaymentInvoice !== null
+                ? this.selectedPaymentInvoice.invoiceTTPrice
+                : "'inf'",
           })
         );
         obj["paymentValue"].isValid = false;
-        obj["paymentValue"].invalidFeed = this.$i18n.t("errorValueInvalidFeed.linked", {
-            price: this.selectedPaymentInvoice !== null ?
-              this.selectedPaymentInvoice.invoiceTTPrice : "'inf'",
-        });
+        obj["paymentValue"].invalidFeed = this.$i18n.t(
+          "errorValueInvalidFeed.linked",
+          {
+            price:
+              this.selectedPaymentInvoice !== null
+                ? this.selectedPaymentInvoice.invoiceTTPrice
+                : "'inf'",
+          }
+        );
       } else {
         this.paymentValue = parseFloat(this.paymentValue);
         obj["paymentValue"].isValid = true;

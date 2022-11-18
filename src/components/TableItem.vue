@@ -87,7 +87,7 @@ export default defineComponent({
       actorStore: actStore,
       orderStore: ordStore,
       paymentStore: payStore,
-      invoiceStore: invStore
+      invoiceStore: invStore,
     };
   },
   data() {
@@ -116,8 +116,6 @@ export default defineComponent({
             ret[key][key2] = this.tableOrdersServicesLibelle;
           } else if (key2 === "payment_type") {
             ret[key][key2] = this.tablePaymentsTypeLibelle;
-          } else if (key2 === "facture") {
-            ret[key][key2] = this.tablePaymentsInvoiceLibelle;
           } else if (key2 === "etat") {
             ret[key][key2] = this.tablePaymentsStateLibelle;
           } else if (key2 === "buyer") {
@@ -132,7 +130,7 @@ export default defineComponent({
             ret[key][key2] = this.tableInvoicesLangueLibelle;
           } else if (key2 === "payments") {
             ret[key][key2] = this.tableInvoicesPaymentsLibelle;
-          } else if(key2 === "tvaValue") {
+          } else if (key2 === "tvaValue") {
             ret[key][key2] = this.tableInvoicesVATLibelle;
           } else {
             ret[key][key2] = this.contents[key][key2];
@@ -195,13 +193,13 @@ export default defineComponent({
     },
     tableOrdersInvoiceLibelle() {
       let ret = "";
-      if (this.src === "orders") {
+      if (this.src === "orders" || this.src === "payments") {
         for (const k in this.contents) {
           for (const l in this.contents[k]) {
             if (l === "facture") {
               let libelle = this.$i18n.t("emptyOrdersInvoiceLibelle");
               if (this.contents[k][l] !== null)
-                libelle = `${this.contents[k][l].factureId} - `;
+                libelle = `${this.contents[k][l].factureId} - ${this.contents[k][l].invoiceTTPrice}`;
               ret = libelle;
             }
           }
@@ -252,20 +250,20 @@ export default defineComponent({
       }
       return ret;
     },
-    tablePaymentsInvoiceLibelle() {
-      let ret = "";
-      if (this.src === "payments") {
-        for (const k in this.contents) {
-          for (const l in this.contents[k]) {
-            if (l === "facture") {
-              let libelle = `${this.contents[k][l].factureId} - ${this.contents[k][l].invoiceTTPrice}`;
-              ret = libelle;
-            }
-          }
-        }
-      }
-      return ret;
-    },
+    // tablePaymentsInvoiceLibelle() {
+    //   let ret = "";
+    //   if (this.src === "payments") {
+    //     for (const k in this.contents) {
+    //       for (const l in this.contents[k]) {
+    //         if (l === "facture") {
+    //           let libelle = `${this.contents[k][l].factureId} - ${this.contents[k][l].invoiceTTPrice}`;
+    //           ret = libelle;
+    //         }
+    //       }
+    //     }
+    //   }
+    //   return ret;
+    // },
     tableInvoicesBuyerLibelle() {
       let ret = "";
       if (this.src === "invoices") {
@@ -300,10 +298,13 @@ export default defineComponent({
         for (const k in this.contents) {
           for (const l in this.contents[k]) {
             if (l === "commandes") {
-              for(const m in this.contents[k][l]){
+              for (const m in this.contents[k][l]) {
                 let libelle = "";
                 libelle = `${this.contents[k][l][m].orderId} - ${this.contents[k][l][m].priceHt}`;
-                ret += m != (this.contents[k][l].length - 1) ? `${libelle}, ` : libelle ;
+                ret +=
+                  m != this.contents[k][l].length - 1
+                    ? `${libelle}, `
+                    : libelle;
               }
             }
           }
@@ -345,10 +346,22 @@ export default defineComponent({
         for (const k in this.contents) {
           for (const l in this.contents[k]) {
             if (l === "payments") {
-              for(const m in this.contents[k][l]){
+              for (const m in this.contents[k][l]) {
                 let libelle = "";
-                libelle = `${this.contents[k][l][m].paymentId} - ${this.contents[k][l][m].etat} - ${this.contents[k][l][m].paymentValue}`;
-                ret += m != (this.contents[k][l].length - 1) ? `${libelle}, ` : libelle ;
+                let state = "";
+                state =
+                  this.contents[k][l][m].etat === 0
+                    ? this.$i18n.t("paymentStateKoLibelle")
+                    : "";
+                state =
+                  this.contents[k][l][m].etat === 1
+                    ? this.$i18n.t("paymentStateOkLibelle")
+                    : "";
+                libelle = `${this.contents[k][l][m].paymentId} - ${state} - ${this.contents[k][l][m].paymentValue}`;
+                ret +=
+                  m != this.contents[k][l].length - 1
+                    ? `${libelle}, `
+                    : libelle;
               }
             }
           }
@@ -361,7 +374,7 @@ export default defineComponent({
       if (this.src === "invoices") {
         for (const k in this.contents) {
           for (const l in this.contents[k]) {
-            if (l === "tvaValue") {              
+            if (l === "tvaValue") {
               let libelle = "";
               libelle = `${this.contents[k][l] * 100} %`;
               ret = libelle;
