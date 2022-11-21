@@ -65,19 +65,21 @@ export default defineComponent({
 				ret[key] = {};
 				for (const key2 in this.invoices[key]) {
 					if (key2 === "buyer") {
-						ret[key][key2] = this.tableInvoicesBuyerLibelle;
+						ret[key][key2] = this.tableInvoicesBuyerLibelle(key);
 					} else if (key2 === "seller") {
-						ret[key][key2] = this.tableInvoicesSellerLibelle;
+						ret[key][key2] = this.tableInvoicesSellerLibelle(key);
 					} else if (key2 === "commandes") {
-						ret[key][key2] = this.tableInvoicesOrdersLibelle;
+						ret[key][key2] = this.tableInvoicesOrdersLibelle(key);
 					} else if (key2 === "devise") {
-						ret[key][key2] = this.tableInvoicesDeviseLibelle;
+						ret[key][key2] = this.tableInvoicesDeviseLibelle(key);
 					} else if (key2 === "langue") {
-						ret[key][key2] = this.tableInvoicesLangueLibelle;
+						ret[key][key2] = this.tableInvoicesLangueLibelle(key);
 					} else if (key2 === "payments") {
-						ret[key][key2] = this.tableInvoicesPaymentsLibelle;
+						ret[key][key2] = this.tableInvoicesPaymentsLibelle(key);
 					} else if (key2 === "tvaValue") {
-						ret[key][key2] = this.tableInvoicesVATLibelle;
+						ret[key][key2] = this.tableInvoicesVATLibelle(key);
+					} else if (key2 === "date") {
+						ret[key][key2] = this.tableInvoicesDateLibelle(key);
 					} else {
 						ret[key][key2] = this.invoices[key][key2];
 					}
@@ -85,128 +87,199 @@ export default defineComponent({
 			}
 			return ret;
 		},
-		tableInvoicesBuyerLibelle() {
+		// tableInvoicesBuyerLibelle() {
+	    //   let ret = "";
+	    //   // if (this.src === "invoices") {
+	    //     for (const k in this.invoices) {
+	    //       for (const l in this.invoices[k]) {
+	    //         if (l === "buyer") {
+	    //           let libelle = `${this.invoices[k][l].actorId} - ${this.invoices[k][l].prenom} ${this.invoices[k][l].nom}`;
+	    //           ret = libelle;
+	    //         }
+	    //       }
+	    //     }
+	    //   // }
+	    //   return ret;
+	    // },
+	    // tableInvoicesSellerLibelle() {
+	    //   let ret = "";
+	    //   // if (this.src === "invoices") {
+	    //     for (const k in this.invoices) {
+	    //       for (const l in this.invoices[k]) {
+	    //         if (l === "seller") {
+	    //           let libelle = `${this.invoices[k][l].actorId} - ${this.invoices[k][l].prenom} ${this.invoices[k][l].nom}`;
+	    //           ret = libelle;
+	    //         }
+	    //       }
+	    //     }
+	    //   // }
+	    //   return ret;
+	    // },
+	    // tableInvoicesOrdersLibelle() {
+	    //   let ret = "";
+	    //   // if (this.src === "invoices") {
+	    //     for (const k in this.invoices) {
+	    //       for (const l in this.invoices[k]) {
+	    //         if (l === "commandes") {
+	    //           for (const m in this.invoices[k][l]) {
+	    //             let libelle = "";
+	    //             libelle = `${this.invoices[k][l][m].orderId} - ${this.invoices[k][l][m].priceHt}`;
+	    //             ret +=
+	    //               m != this.invoices[k][l].length - 1
+	    //                 ? `${libelle}, `
+	    //                 : libelle;
+	    //           }
+	    //         }
+	    //       }
+	    //     }
+	    //   // }
+	    //   return ret;
+	    // },
+	    // tableInvoicesDeviseLibelle() {
+	    //   let ret = "";
+	    //   // if (this.src === "invoices") {
+	    //     for (const k in this.invoices) {
+	    //       for (const l in this.invoices[k]) {
+	    //         if (l === "devise") {
+	    //           let libelle = `${this.invoices[k][l].symbole}`;
+	    //           ret = libelle;
+	    //         }
+	    //       }
+	    //     }
+	    //   // }
+	    //   return ret;
+	    // },
+	    // tableInvoicesLangueLibelle() {
+	    //   let ret = "";
+	    //   // if (this.src === "invoices") {
+	    //     for (const k in this.invoices) {
+	    //       for (const l in this.invoices[k]) {
+	    //         if (l === "langue") {
+	    //           let libelle = `${this.invoices[k][l].libelle}`;
+	    //           ret = libelle;
+	    //         }
+	    //       }
+	    //     }
+	    //   // }
+	    //   return ret;
+	    // },
+	    // tableInvoicesPaymentsLibelle() {
+	    //   let ret = "";
+	    //   // if (this.src === "invoices") {
+	    //     for (const k in this.invoices) {
+	    //       for (const l in this.invoices[k]) {
+	    //         if (l === "payments") {
+	    //           for (const m in this.invoices[k][l]) {
+	    //             let libelle = "";
+	    //             let state = "";
+	    //             state =
+	    //               this.invoices[k][l][m].etat === 0
+	    //                 ? this.$i18n.t("paymentStateKoLibelle")
+	    //                 : "";
+	    //             state =
+	    //               this.invoices[k][l][m].etat === 1
+	    //                 ? this.$i18n.t("paymentStateOkLibelle")
+	    //                 : "";
+	    //             libelle = `${this.invoices[k][l][m].paymentId} - ${state} - ${this.invoices[k][l][m].paymentValue}`;
+	    //             ret +=
+	    //               m != this.invoices[k][l].length - 1
+	    //                 ? `${libelle}, `
+	    //                 : libelle;
+	    //           }
+	    //         }
+	    //       }
+	    //     // }
+	    //   }
+	    //   return ret;
+	    // },
+	    // tableInvoicesVATLibelle() {
+	    //   let ret = "";
+	    //   // if (this.src === "invoices") {
+	    //     for (const k in this.invoices) {
+	    //       for (const l in this.invoices[k]) {
+	    //         if (l === "tvaValue") {
+	    //           let libelle = "";
+	    //           libelle = `${this.invoices[k][l] * 100} %`;
+	    //           ret = libelle;
+	    //         }
+	    //       }
+	    //     }
+	    //   // }
+	    //   return ret;
+	    // },
+  	},
+  	methods: {
+  		tableInvoicesBuyerLibelle(ind: number) {
 	      let ret = "";
-	      // if (this.src === "invoices") {
-	        for (const k in this.invoices) {
-	          for (const l in this.invoices[k]) {
-	            if (l === "buyer") {
-	              let libelle = `${this.invoices[k][l].actorId} - ${this.invoices[k][l].prenom} ${this.invoices[k][l].nom}`;
-	              ret = libelle;
-	            }
-	          }
-	        }
-	      // }
+	      let libelle = `${this.invoices[ind]['buyer'].actorId} - ${this.invoices[ind]['buyer'].prenom} ${this.invoices[ind]['buyer'].nom}`;
+	      ret = libelle;
 	      return ret;
 	    },
-	    tableInvoicesSellerLibelle() {
+	    tableInvoicesSellerLibelle(ind: number) {
 	      let ret = "";
-	      // if (this.src === "invoices") {
-	        for (const k in this.invoices) {
-	          for (const l in this.invoices[k]) {
-	            if (l === "seller") {
-	              let libelle = `${this.invoices[k][l].actorId} - ${this.invoices[k][l].prenom} ${this.invoices[k][l].nom}`;
-	              ret = libelle;
-	            }
-	          }
-	        }
-	      // }
+	      let libelle = `${this.invoices[ind]['seller'].actorId} - ${this.invoices[ind]['seller'].prenom} ${this.invoices[ind]['seller'].nom}`;
+	      ret = libelle;
 	      return ret;
 	    },
-	    tableInvoicesOrdersLibelle() {
+	    tableInvoicesOrdersLibelle(ind: number) {
 	      let ret = "";
-	      // if (this.src === "invoices") {
-	        for (const k in this.invoices) {
-	          for (const l in this.invoices[k]) {
-	            if (l === "commandes") {
-	              for (const m in this.invoices[k][l]) {
-	                let libelle = "";
-	                libelle = `${this.invoices[k][l][m].orderId} - ${this.invoices[k][l][m].priceHt}`;
-	                ret +=
-	                  m != this.invoices[k][l].length - 1
-	                    ? `${libelle}, `
-	                    : libelle;
-	              }
-	            }
-	          }
-	        }
-	      // }
-	      return ret;
-	    },
-	    tableInvoicesDeviseLibelle() {
-	      let ret = "";
-	      // if (this.src === "invoices") {
-	        for (const k in this.invoices) {
-	          for (const l in this.invoices[k]) {
-	            if (l === "devise") {
-	              let libelle = `${this.invoices[k][l].symbole}`;
-	              ret = libelle;
-	            }
-	          }
-	        }
-	      // }
-	      return ret;
-	    },
-	    tableInvoicesLangueLibelle() {
-	      let ret = "";
-	      // if (this.src === "invoices") {
-	        for (const k in this.invoices) {
-	          for (const l in this.invoices[k]) {
-	            if (l === "langue") {
-	              let libelle = `${this.invoices[k][l].libelle}`;
-	              ret = libelle;
-	            }
-	          }
-	        }
-	      // }
-	      return ret;
-	    },
-	    tableInvoicesPaymentsLibelle() {
-	      let ret = "";
-	      // if (this.src === "invoices") {
-	        for (const k in this.invoices) {
-	          for (const l in this.invoices[k]) {
-	            if (l === "payments") {
-	              for (const m in this.invoices[k][l]) {
-	                let libelle = "";
-	                let state = "";
-	                state =
-	                  this.invoices[k][l][m].etat === 0
-	                    ? this.$i18n.t("paymentStateKoLibelle")
-	                    : "";
-	                state =
-	                  this.invoices[k][l][m].etat === 1
-	                    ? this.$i18n.t("paymentStateOkLibelle")
-	                    : "";
-	                libelle = `${this.invoices[k][l][m].paymentId} - ${state} - ${this.invoices[k][l][m].paymentValue}`;
-	                ret +=
-	                  m != this.invoices[k][l].length - 1
-	                    ? `${libelle}, `
-	                    : libelle;
-	              }
-	            }
-	          }
-	        // }
+	      for (const m in this.invoices[ind]['commandes']) {
+	        let libelle = "";
+	        libelle = `${this.invoices[ind]['commandes'][m].orderId} - ${this.invoices[ind]['commandes'][m].priceHt}`;
+	        ret +=
+	          m != this.invoices[ind]['commandes'].length - 1
+	            ? `${libelle}, `
+	            : libelle;
 	      }
 	      return ret;
 	    },
-	    tableInvoicesVATLibelle() {
+	    tableInvoicesDeviseLibelle(ind: number) {
 	      let ret = "";
-	      // if (this.src === "invoices") {
-	        for (const k in this.invoices) {
-	          for (const l in this.invoices[k]) {
-	            if (l === "tvaValue") {
-	              let libelle = "";
-	              libelle = `${this.invoices[k][l] * 100} %`;
-	              ret = libelle;
-	            }
-	          }
-	        }
-	      // }
+	      let libelle = `${this.invoices[ind]['devise'].symbole}`;
+	      ret = libelle;
 	      return ret;
 	    },
-  	},
-  	methods: {
+	    tableInvoicesLangueLibelle(ind: number) {
+	      let ret = "";
+	      let libelle = `${this.invoices[ind]['langue'].libelle}`;
+	      ret = libelle;
+	      return ret;
+	    },
+	    tableInvoicesPaymentsLibelle(ind: number) {
+	      let ret = "";
+	      for (const m in this.invoices[ind]['payments']) {
+	        let libelle = "";
+	        let state = "";
+	        state =
+	          this.invoices[ind]['payments'][m].etat === 0
+	            ? this.$i18n.t("paymentStateKoLibelle")
+	            : "";
+	        state =
+	          this.invoices[ind]['payments'][m].etat === 1
+	            ? this.$i18n.t("paymentStateOkLibelle")
+	            : "";
+	        libelle = `${this.invoices[ind]['payments'][m].paymentId} - ${state} - ${this.invoices[ind]['payments'][m].paymentValue}`;
+	        ret +=
+	          m != this.invoices[ind]['payments'].length - 1
+	            ? `${libelle}, `
+	            : libelle;
+	      }
+	      return ret;
+	    },
+	    tableInvoicesVATLibelle(ind: number) {
+	      let ret = "";
+	      let libelle = "";
+	      libelle = `${this.invoices[ind]['tvaValue'] * 100} %`;
+	      ret = libelle;
+	      return ret;
+	    },
+	    tableInvoicesDateLibelle(ind: number){
+	      let ret = "";
+	      let libelle = "";
+	      libelle = `${this.invoices[ind]['date']}`;
+	      ret = libelle;
+	      return ret;
+	    },
   		setCheckBoxModels(){
   			let ret = {};
   			for (const key in this.invoices){

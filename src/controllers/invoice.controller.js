@@ -215,22 +215,22 @@ const findMore = (req, res) => {
   invoice
     .findAll({
       attributes: [
-        // "factureId",
-        // "date",
-        // "invoiceHTPrice",
-        // "invoiceTTPrice",
-        // "tvaValue",
-        // "langue.langueId",
-        // "devise.deviseId",
-        // "buyer.actorId",
-        // "seller.actorId",
-        // "commandes.orderId",
-        // "payments.paymentId",
-        // "Services.serviceId"
+        "factureId",
+        "date",
+        "invoiceHTPrice",
+        "invoiceTTPrice",
+        "tvaValue",
+        "langue.langueId",
+        "devise.deviseId",
+        "buyer.actorId",
+        "seller.actorId",
+        "commandes.orderId",
+        "payments.paymentId",
+        "commandes.Services.serviceId"
       ],
       where: {
         factureId: {
-          [Op.or]: [params.ids]
+          [Op.or]: params.ids.split(',')
         }
       },
       include: [
@@ -242,8 +242,6 @@ const findMore = (req, res) => {
           association: invoice.orders,
           include: order.services 
         },
-        // invoice.orders,
-        // order.services,
         invoice.payments,
       ]
     })

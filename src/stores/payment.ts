@@ -14,68 +14,31 @@ async function define() {
   return;
 }
 
-async function transformObject(obj: any) {
+async function transformObject(obj: any){
   await define();
-  const ret: any = [];
-  for (const k in obj) {
-    // console.log(k);
-    if (typeof obj[k] === "string" && k !== "date") {
-      ret[k] = __DECRYPTAPI__.decrypt(obj[k]);
-    } else if (typeof obj[k] === "object" && !Array.isArray(obj[k])) {
-      ret[k] = {};
-      for (const l in obj[k]) {
-        if (typeof obj[k][l] === "string" && l !== "date")
-          ret[k][l] = __DECRYPTAPI__.decrypt(obj[k][l]);
-        else if (Array.isArray(obj[k][l])) {
-          // console.log(l);
-          ret[k][l] = [];
-          for (const m in obj[k][l]) {
-            if (
-              typeof obj[k][l][m] === "object" &&
-              !Array.isArray(obj[k][l][m])
-            ) {
-              ret[k][l][m] = {};
-              for (const n in obj[k][l][m]) {
-                if (typeof obj[k][l][m][n] === "string")
-                  ret[k][l][m][n] = __DECRYPTAPI__.decrypt(obj[k][l][m][n]);
-                else ret[k][l][m][n] = obj[k][l][m][n];
-              }
-            } else ret[k][l][m] = obj[k][l][m];
-          }
-        } else if (
-          typeof obj[k][l] === "object" &&
-          l !== "langue" &&
-          l !== "devise"
-        ) {
-          ret[k][l] = {};
-          for (const m in obj[k][l]) {
-            if (typeof obj[k][l][m] === "string" && m !== "date")
-              ret[k][l][m] = __DECRYPTAPI__.decrypt(obj[k][l][m]);
-            else ret[k][l][m] = obj[k][l][m];
-          }
-        } else ret[k][l] = obj[k][l];
-      }
-    } else if (Array.isArray(obj[k])) {
-      // console.log(k);
-      ret[k] = [];
-      for (const l in obj[k]) {
-        if (typeof obj[k][l] === "object" && !Array.isArray(obj[k][l])) {
-          ret[k][l] = {};
-          for (const m in obj[k][l]) {
-            if (typeof obj[k][l][m] === "string")
-              ret[k][l][m] = __DECRYPTAPI__.decrypt(obj[k][l][m]);
-          }
-        } else ret[k][l] = obj[k][l];
-      }
-    } else {
-      ret[k] = obj[k];
-    }
+  let ret: any;
+  if (typeof obj === "string"){
+    ret = "";
+  } else if (typeof obj === "object" && !Array.isArray(obj)){
+    ret = {};
+  } else {
+    ret = [];
   }
-  return ret;
-}
-
-function transformValue(val: string) {
-  const ret = __DECRYPTAPI__.decrypt(val);
+  for (const k in obj){
+    if (typeof obj[k] === "string" && k !== "date" && k !== "langue" &&
+      k !== "devise"){
+      ret[k] = __DECRYPTAPI__.decrypt(obj[k]);
+    } else if(typeof obj[k] === "object" && !Array.isArray(obj[k]) && k !== "langue" &&
+      k !== "devise"){
+      if(obj[k] === null)
+        ret[k] = null;
+      else
+        ret[k] = await transformObject(obj[k]);
+    } else if (Array.isArray(obj[k])) {
+      ret[k] = await transformObject(obj[k]);
+    } else ret[k] = obj[k];
+  }
+  // console.log(ret);
   return ret;
 }
 

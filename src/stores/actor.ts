@@ -14,28 +14,31 @@ async function define() {
   return;
 }
 
-async function transformObject(obj: any) {
+async function transformObject(obj: any){
   await define();
-  const ret: any = [];
-  for (const k in obj) {
-    if (typeof obj[k] === "string") {
-      ret[k] = __DECRYPTAPI__.decrypt(obj[k]);
-    } else if (typeof obj[k] === "object" && !Array.isArray(obj[k])) {
-      ret[k] = {};
-      for (const l in obj[k]) {
-        if (typeof obj[k][l] === "string")
-          ret[k][l] = __DECRYPTAPI__.decrypt(obj[k][l]);
-        else ret[k][l] = obj[k][l];
-      }
-    } else {
-      ret[k] = obj[k];
-    }
+  let ret: any;
+  if (typeof obj === "string"){
+    ret = "";
+  } else if (typeof obj === "object" && !Array.isArray(obj)){
+    ret = {};
+  } else {
+    ret = [];
   }
-  return ret;
-}
-
-function transformValue(val: string) {
-  const ret = __DECRYPTAPI__.decrypt(val);
+  for (const k in obj){
+    if (typeof obj[k] === "string" && k !== "date" && k !== "langue" &&
+      k !== "devise"){
+      ret[k] = __DECRYPTAPI__.decrypt(obj[k]);
+    } else if(typeof obj[k] === "object" && !Array.isArray(obj[k]) && k !== "langue" &&
+      k !== "devise"){
+      if(obj[k] === null)
+        ret[k] = null;
+      else
+        ret[k] = await transformObject(obj[k]);
+    } else if (Array.isArray(obj[k])) {
+      ret[k] = await transformObject(obj[k]);
+    } else ret[k] = obj[k];
+  }
+  // console.log(ret);
   return ret;
 }
 
