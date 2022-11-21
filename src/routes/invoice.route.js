@@ -12,6 +12,9 @@ export default () => {
   // Retrieve a single Invoice with id
   router.get("/find", invoices.findOne);
 
+  // Retrieve more Invoices with ids
+  router.get("/find/:ids", invoices.findMore);
+
   // Retrieve all Orders
   router.get("/orders", invoices.findAllOrders);
 

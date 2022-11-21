@@ -135,14 +135,14 @@ invoiceModelObj.devise = invoiceModelObj.belongsTo(deviseModelObj, {
 
 orderModelObj.services = orderModelObj.belongsToMany(serviceModelObj, {
   through: "contains",
-  foreignKey: "serviceId",
+  foreignKey: "orderId",
   onUpdate: "CASCADE",
   onDelete: "CASCADE",
   as: "Services",
 });
 serviceModelObj.orders = serviceModelObj.belongsToMany(orderModelObj, {
   through: "contains",
-  foreignKey: "orderId",
+  foreignKey: "serviceId",
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
   as: "Orders",

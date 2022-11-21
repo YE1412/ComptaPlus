@@ -4,6 +4,7 @@ import {
   createMemoryHistory,
 } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import PdfView from "../views/PdfView.vue";
 import i18n from "../plugins/i18n";
 import { useUserStore } from "@/stores/user";
 import { useSessionStore } from "@/stores/session";
@@ -22,61 +23,84 @@ const pathsObj = [
     component: "StartView",
     name: t("startLinkName", "en"),
     auth: false,
+    children: [],
   },
   {
     path: t("registerLinkTarget", "en"),
     component: "RegisterView",
     name: t("registerLinkName", "en"),
     auth: false,
+    children: [],
   },
   {
     path: t("homeLinkTarget", "en"),
     component: "HomeView",
     name: t("homeLinkName", "en"),
     auth: true,
+    children: [],
   },
   {
     path: t("aboutLinkTarget", "en"),
     component: "AboutView",
     name: t("aboutLinkName", "en"),
     auth: true,
+    children: [],
   },
   {
     path: t("actorsLinkTarget", "en"),
     component: "ActorsView",
     name: t("actorsLinkName", "en"),
     auth: true,
+    children: [],
   },
   {
     path: t("ordersLinkTarget", "en"),
     component: "OrdersView",
     name: t("ordersLinkName", "en"),
     auth: true,
+    children: [],
   },
   {
     path: t("paymentsLinkTarget", "en"),
     component: "PaymentsView",
     name: t("paymentsLinkName", "en"),
     auth: true,
+    children: [],
   },
   {
     path: t("invoicesLinkTarget", "en"),
     component: "InvoicesView",
     name: t("invoicesLinkName", "en"),
     auth: true,
+    children: [],
   },
   {
     path: t("exportLinkTarget", "en"),
     component: "ExportView",
     name: t("exportLinkName", "en"),
     auth: true,
+    children: [
+      {
+        path: t("pdfViewLinkTarget", "en"),
+        component: PdfView,
+        name: t("pdfViewLinkName", "en"),
+        auth: true,
+      },
+    ],
   },
   {
     path: t("profileLinkTarget", "en"),
     component: "ProfileView",
     name: t("profileLinkName", "en"),
     auth: true,
+    children: [],
   },
+  // {
+  //   path: t("pdfViewLinkTarget", "en"),
+  //   component: "PdfView",
+  //   name: t("pdfViewLinkName", "en"),
+  //   auth: true,
+  // },
 ];
 
 router = createRouter({
@@ -194,6 +218,18 @@ router = createRouter({
         icon: icon,
         requiresAuth: true,
       },
+      children: [
+        {
+          path: t("pdfViewLinkTarget"),
+          name: t("pdfViewLinkName"),
+          component: () => import("../views/PdfView.vue"),
+          meta: {
+            title: t("pdfViewLinkName"),
+            icon: icon,
+            requiresAuth: true,
+          },
+        },
+      ],
     },
     {
       path: t("profileLinkTarget"),
@@ -205,6 +241,16 @@ router = createRouter({
         requiresAuth: true,
       },
     },
+    // {
+    //   path: t("pdfViewLinkTarget"),
+    //   name: t("pdfViewLinkName"),
+    //   component: () => import("../views/PdfView.vue"),
+    //   meta: {
+    //     title: t("pdfViewLinkName"),
+    //     icon: icon,
+    //     requiresAuth: true,
+    //   },
+    // },
   ],
 });
 
@@ -288,6 +334,7 @@ function generateRoute(to: any, pathObj: any): void {
       icon: icon,
       requiresAuth: pathObj.auth,
     },
+    children: pathObj.children,
   });
 }
 

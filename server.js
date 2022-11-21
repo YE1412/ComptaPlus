@@ -160,13 +160,13 @@ async function createViteServer() {
       // 3. Load the server entry. vite.ssrLoadModule automatically transforms
       //    your ESM source code to be usable in Node.js! There is no bundling
       //    required, and provides efficient invalidation similar to HMR.
-      var render = {};
+      var render = "";
       if (env === "development") {
         // 3.1. Apply Vite HTML transforms. This injects the Vite HMR client, and
         //    also applies HTML transforms from Vite plugins, e.g. global preambles
         //    from @vitejs/plugin-react
         template = await vite.transformIndexHtml(url, template);
-        render = await vite.ssrLoadModule("/src/server.js");
+        // render = await vite.ssrLoadModule("/src/server.js");
       } else if (env === "production") {
         render = import("./dist/prod/server/server.js");
       }

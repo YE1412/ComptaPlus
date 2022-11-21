@@ -37,6 +37,10 @@ class InvoiceDataService {
     });
   }
 
+  getMore(ids: number[]) {
+    return http.get(`/invoices/find/${ids}`);
+  }
+
   create(data: any) {
     return http.post(`/invoices`, data);
   }

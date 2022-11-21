@@ -1,5 +1,5 @@
 <script lang="ts">
-import { RouterLink, RouterView } from "vue-router";
+import { RouterView } from "vue-router";
 import { defineComponent } from "vue";
 import logoURL from "@/assets/logo.svg";
 import "@/assets/mdb/css/style.css";

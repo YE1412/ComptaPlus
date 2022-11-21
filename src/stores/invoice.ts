@@ -62,7 +62,7 @@ async function transformObject(obj: any) {
         if (typeof obj[k][l] === "object" && !Array.isArray(obj[k][l])) {
           ret[k][l] = {};
           for (const m in obj[k][l]) {
-            if (typeof obj[k][l][m] === "string")
+            if (typeof obj[k][l][m] === "string" && m !== "date")
               ret[k][l][m] = __DECRYPTAPI__.decrypt(obj[k][l][m]);
           }
         } else ret[k][l] = obj[k][l];
@@ -118,6 +118,47 @@ const useInvoiceStore = defineStore("invoice", {
       return new Promise((resolve, reject) => {
         invoiceAxiosService
           .getAll()
+          .then(async (res) => {
+            // console.log(res);
+            if (res.data.length) {
+              const dataClear = await transformObject(res.data);
+              this.invoices = dataClear;
+              // console.log(dataClear);
+              resolve(dataClear);
+            } else {
+              reject(false);
+            }
+          })
+          .catch((err) => {
+            // La requête a été faite et le code de
+            //   réponse du serveur n'est pas dans la plage 2xx
+            if (err.response) {
+              console.log(err.response.data);
+              console.log(err.response.status);
+              console.log(err.response.headers);
+            }
+            // La requête a été  faite mais aucune réponse
+            //  n'a été ruçue `error.request` est une instance de
+            //  XMLHttpRequest dans le navigateur et une instance
+            //  de http.ClientRequest avec node.js
+            else if (err.request) {
+              console.log(err.request);
+            }
+            // Quelque chose s'est passé lors de la construction de
+            //  la requête et cela a provoqué une erreur
+            else {
+              console.log("Error", err.message);
+            }
+            console.log(err.config);
+            reject(new Error(err));
+          });
+      });
+    },
+    getMoreInvoices(ids: number[]) {
+      // console.log("Login...");
+      return new Promise((resolve, reject) => {
+        invoiceAxiosService
+          .getMore(ids)
           .then(async (res) => {
             // console.log(res);
             if (res.data.length) {

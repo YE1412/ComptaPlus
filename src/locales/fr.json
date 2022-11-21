@@ -25,6 +25,8 @@
   "exportLinkTarget": "/exportation",
   "profileLinkName": "Profil",
   "profileLinkTarget": "/profil",
+  "pdfViewLinkName": "PdfVue",
+  "pdfViewLinkTarget": "/pdf/:invoiceIds(\\d+)*",
   "flagsDropdownHead1": "Défaut",
   "flagsDropdownHead2": "Pays et langues",
   "countryLabel1": "France (Français)",

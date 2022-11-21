@@ -1,5 +1,6 @@
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, Suspense } from "vue";
+import { RouterView } from "vue-router";
 import TheToolbarIn from "../components/TheToolbarIn.vue";
 import Sidenav from "../components/Sidenav.vue";
 import { useUserStore } from "@/stores/user";
@@ -15,7 +16,9 @@ export default defineComponent({
   components: {
     TheToolbarIn,
     Sidenav,
-    ExportContent
+    ExportContent,
+    RouterView,
+    Suspense
   },
 });
 </script>
@@ -24,7 +27,12 @@ export default defineComponent({
     <TheToolbarIn />
     <Sidenav />
     <div class="content">
-      <ExportContent />
+      <Suspense>
+        <ExportContent />
+      </Suspense>
+      <Suspense>
+        <RouterView />
+      </Suspense>
     </div>
   </main>
 </template>
