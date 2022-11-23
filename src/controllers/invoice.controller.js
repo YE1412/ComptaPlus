@@ -6,7 +6,7 @@ const devise = db.devise;
 const order = db.order;
 const actor = db.actor;
 const payment = db.payment;
-const service = db.service;
+// const service = db.service;
 const Op = db.Sequelize.Op;
 
 const create = async (req, res) => {
@@ -226,34 +226,32 @@ const findMore = (req, res) => {
         "seller.actorId",
         "commandes.orderId",
         "payments.paymentId",
-        "commandes.Services.serviceId"
+        "commandes.Services.serviceId",
       ],
       where: {
         factureId: {
-          [Op.or]: params.ids.split(',')
-        }
+          [Op.or]: params.ids.split(","),
+        },
       },
       include: [
         invoice.langue,
         invoice.devise,
         { model: actor, as: "buyer" },
         { model: actor, as: "seller" },
-        { 
+        {
           association: invoice.orders,
-          include: order.services 
+          include: order.services,
         },
         invoice.payments,
-      ]
+      ],
     })
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message ||
-          `Some error occured while retieving invoices.`,
-        error: err
+        message: err.message || `Some error occured while retieving invoices.`,
+        error: err,
       });
     });
 };

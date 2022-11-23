@@ -18,7 +18,7 @@ export default defineComponent({
     Sidenav,
     ExportContent,
     RouterView,
-    Suspense
+    Suspense,
   },
 });
 </script>

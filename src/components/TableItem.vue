@@ -201,17 +201,17 @@ export default defineComponent({
     tableOrdersInvoiceLibelle(ind: number) {
       let ret = "";
       let libelle = this.$i18n.t("emptyOrdersInvoiceLibelle");
-      if (this.contents[ind]['facture'] !== null)
-        libelle = `${this.contents[ind]['facture'].factureId} - ${this.contents[ind]['facture'].invoiceTTPrice}`;
+      if (this.contents[ind]["facture"] !== null)
+        libelle = `${this.contents[ind]["facture"].factureId} - ${this.contents[ind]["facture"].invoiceTTPrice}`;
       ret = libelle;
       return ret;
     },
     tableOrdersServicesLibelle(ind: number) {
       let ret = "";
-      for (const m in this.contents[ind]['Services']) {
-        let libelle = `${this.contents[ind]['Services'][m].serviceId} - ${this.contents[ind]['Services'][m].nom}`;
+      for (const m in this.contents[ind]["Services"]) {
+        let libelle = `${this.contents[ind]["Services"][m].serviceId} - ${this.contents[ind]["Services"][m].nom}`;
         ret +=
-          m != this.contents[ind]['Services'].length - 1
+          m != this.contents[ind]["Services"].length - 1
             ? `${libelle}, `
             : libelle;
       }
@@ -219,13 +219,13 @@ export default defineComponent({
     },
     tablePaymentsTypeLibelle(ind: number) {
       let ret = "";
-      let libelle = this.contents[ind]['payment_type'].cb
+      let libelle = this.contents[ind]["payment_type"].cb
         ? this.$i18n.t("paymentTypeCBLibelle")
         : "";
-      libelle = this.contents[ind]['payment_type'].esp
+      libelle = this.contents[ind]["payment_type"].esp
         ? this.$i18n.t("paymentTypeESPLibelle")
         : libelle;
-      libelle = this.contents[ind]['payment_type'].chq
+      libelle = this.contents[ind]["payment_type"].chq
         ? this.$i18n.t("paymentTypeCHQLibelle")
         : libelle;
       ret = libelle;
@@ -234,11 +234,11 @@ export default defineComponent({
     tablePaymentsStateLibelle(ind: number) {
       let ret = "";
       let libelle =
-        this.contents[ind]['etat'] === 1
+        this.contents[ind]["etat"] === 1
           ? this.$i18n.t("paymentStateOkLibelle")
           : "";
       libelle =
-        this.contents[ind]['etat'] === 0
+        this.contents[ind]["etat"] === 0
           ? this.$i18n.t("paymentStateKoLibelle")
           : libelle;
       ret = libelle;
@@ -246,23 +246,23 @@ export default defineComponent({
     },
     tableInvoicesBuyerLibelle(ind: number) {
       let ret = "";
-      let libelle = `${this.contents[ind]['buyer'].actorId} - ${this.contents[ind]['buyer'].prenom} ${this.contents[ind]['buyer'].nom}`;
+      let libelle = `${this.contents[ind]["buyer"].actorId} - ${this.contents[ind]["buyer"].prenom} ${this.contents[ind]["buyer"].nom}`;
       ret = libelle;
       return ret;
     },
     tableInvoicesSellerLibelle(ind: number) {
       let ret = "";
-      let libelle = `${this.contents[ind]['seller'].actorId} - ${this.contents[ind]['seller'].prenom} ${this.contents[ind]['seller'].nom}`;
+      let libelle = `${this.contents[ind]["seller"].actorId} - ${this.contents[ind]["seller"].prenom} ${this.contents[ind]["seller"].nom}`;
       ret = libelle;
       return ret;
     },
     tableInvoicesOrdersLibelle(ind: number) {
       let ret = "";
-      for (const m in this.contents[ind]['commandes']) {
+      for (const m in this.contents[ind]["commandes"]) {
         let libelle = "";
-        libelle = `${this.contents[ind]['commandes'][m].orderId} - ${this.contents[ind]['commandes'][m].priceHt}`;
+        libelle = `${this.contents[ind]["commandes"][m].orderId} - ${this.contents[ind]["commandes"][m].priceHt}`;
         ret +=
-          m != this.contents[ind]['commandes'].length - 1
+          m != this.contents[ind]["commandes"].length - 1
             ? `${libelle}, `
             : libelle;
       }
@@ -270,32 +270,32 @@ export default defineComponent({
     },
     tableInvoicesDeviseLibelle(ind: number) {
       let ret = "";
-      let libelle = `${this.contents[ind]['devise'].symbole}`;
+      let libelle = `${this.contents[ind]["devise"].symbole}`;
       ret = libelle;
       return ret;
     },
     tableInvoicesLangueLibelle(ind: number) {
       let ret = "";
-      let libelle = `${this.contents[ind]['langue'].libelle}`;
+      let libelle = `${this.contents[ind]["langue"].libelle}`;
       ret = libelle;
       return ret;
     },
     tableInvoicesPaymentsLibelle(ind: number) {
       let ret = "";
-      for (const m in this.contents[ind]['payments']) {
+      for (const m in this.contents[ind]["payments"]) {
         let libelle = "";
         let state = "";
         state =
-          this.contents[ind]['payments'][m].etat === 0
+          this.contents[ind]["payments"][m].etat === 0
             ? this.$i18n.t("paymentStateKoLibelle")
             : "";
         state =
-          this.contents[ind]['payments'][m].etat === 1
+          this.contents[ind]["payments"][m].etat === 1
             ? this.$i18n.t("paymentStateOkLibelle")
             : "";
-        libelle = `${this.contents[ind]['payments'][m].paymentId} - ${state} - ${this.contents[ind]['payments'][m].paymentValue}`;
+        libelle = `${this.contents[ind]["payments"][m].paymentId} - ${state} - ${this.contents[ind]["payments"][m].paymentValue}`;
         ret +=
-          m != this.contents[ind]['payments'].length - 1
+          m != this.contents[ind]["payments"].length - 1
             ? `${libelle}, `
             : libelle;
       }
@@ -304,14 +304,14 @@ export default defineComponent({
     tableInvoicesVATLibelle(ind: number) {
       let ret = "";
       let libelle = "";
-      libelle = `${this.contents[ind]['tvaValue'] * 100} %`;
+      libelle = `${this.contents[ind]["tvaValue"] * 100} %`;
       ret = libelle;
       return ret;
     },
-    tableInvoicesDateLibelle(ind: number){
+    tableInvoicesDateLibelle(ind: number) {
       let ret = "";
       let libelle = "";
-      libelle = `${this.contents[ind]['date']}`;
+      libelle = `${this.contents[ind]["date"]}`;
       ret = libelle;
       return ret;
     },

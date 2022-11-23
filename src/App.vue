@@ -13,7 +13,7 @@ export default defineComponent({
     const counterStore = useCounterStore();
     return {
       sessionStore,
-      counterStore
+      counterStore,
     };
   },
   data() {

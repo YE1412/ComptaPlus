@@ -14,26 +14,32 @@ async function define() {
   return;
 }
 
-async function transformObjectWithRecall(obj: any){
+async function transformObjectWithRecall(obj: any) {
   await define();
   let ret: any;
-  if (typeof obj === "string"){
+  if (typeof obj === "string") {
     ret = "";
-  } else if (typeof obj === "object" && !Array.isArray(obj)){
+  } else if (typeof obj === "object" && !Array.isArray(obj)) {
     ret = {};
   } else {
     ret = [];
   }
-  for (const k in obj){
-    if (typeof obj[k] === "string" && k !== "date" && k !== "langue" &&
-      k !== "devise"){
+  for (const k in obj) {
+    if (
+      typeof obj[k] === "string" &&
+      k !== "date" &&
+      k !== "langue" &&
+      k !== "devise"
+    ) {
       ret[k] = __DECRYPTAPI__.decrypt(obj[k]);
-    } else if(typeof obj[k] === "object" && !Array.isArray(obj[k]) && k !== "langue" &&
-      k !== "devise"){
-      if(obj[k] === null)
-        ret[k] = null;
-      else
-        ret[k] = await transformObjectWithRecall(obj[k]);
+    } else if (
+      typeof obj[k] === "object" &&
+      !Array.isArray(obj[k]) &&
+      k !== "langue" &&
+      k !== "devise"
+    ) {
+      if (obj[k] === null) ret[k] = null;
+      else ret[k] = await transformObjectWithRecall(obj[k]);
     } else if (Array.isArray(obj[k])) {
       ret[k] = await transformObjectWithRecall(obj[k]);
     } else ret[k] = obj[k];
@@ -124,7 +130,7 @@ const useInvoiceStore = defineStore("invoice", {
           .then(async (res) => {
             // console.log(res);
             if (res.data.length) {
-              const dataClear = await transformObjectWithRecall(res.data)
+              const dataClear = await transformObjectWithRecall(res.data);
               // console.log(dataClear);
               this.invoices = dataClear;
               resolve(dataClear);

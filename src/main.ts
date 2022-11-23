@@ -4,7 +4,7 @@ import App from "./App.vue";
 import router from "./router";
 import i18n from "@/plugins/i18n";
 // Vuetify
-import { createVuetify } from 'vuetify'
+import { createVuetify } from "vuetify";
 // import * as components from 'vuetify/components'
 // import * as directives from 'vuetify/directives'
 // Styles
@@ -16,7 +16,7 @@ const isSSR = typeof window === "undefined";
 const vuetify = createVuetify({
   // components,
   // directives,
-})
+});
 
 // app.mount("#app");
 export default function buildApp() {
