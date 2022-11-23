@@ -13,12 +13,27 @@ export default defineComponent({
   async setup() {
     const usrStore = useUserStore();
     const invStore = useInvoiceStore();
+    const tabXPos = 26.3,
+      headYPos = 41.3,
+      headTableWidth = 393.9,
+      headTableHeight = 95,
+      ordHeadTableHeight = 30,
+      servHeadTableHeight = 20;
 
     return {
       userStore: usrStore,
       invoiceStore: invStore,
       languageVal: "",
       doc: null,
+      tableXPos: tabXPos,
+      contentXPos: tabXPos + 1.7,
+      headerYPos: headYPos,
+      headerTableWidth: headTableWidth,
+      headerTableHeight: headTableHeight,
+      orderHeaderTableHeight: ordHeadTableHeight,
+      serviceHeaderTableHeight: servHeadTableHeight,
+      contentCellTableWidth: parseFloat((headTableWidth / 7).toFixed(1)),
+      footerCellTableWidth: parseFloat((headTableWidth / 5).toFixed(1)),
     };
   },
   data() {
@@ -251,21 +266,11 @@ export default defineComponent({
         unit: "px",
         format: "a4",
       });
-      this.insertHead(inv);
-      let yPos = 185;
+      let yPos = this.insertHead(inv);
       for (const k in inv.commandes) {
         yPos = this.insertOrder(inv, yPos, k);
       }
       yPos = this.insertInvoiceFoot(inv, yPos);
-      // this.insertOrders(inv);
-      // doc.setFontStyle("bold");
-      // Red Color
-      // doc.setTextColor(127, 21, 25);
-      // doc.setFontSize(18);
-      // text is placed using x, y coordinates
-      // doc.cell(35, 120, 525.28, 50, "Adresse de facturation:", 5, "left");
-      // // create a line under heading
-      // doc.setLineWidth(0.01).line(0.5, 1.1, 8.0, 1.1);
       //  // Creating footer and saving file
       // doc
       //     .setFont("times")
@@ -296,121 +301,233 @@ export default defineComponent({
         .replaceAll("/", "_")
         .replaceAll(" ", "_")
         .replaceAll(":", "_")
-    	.replaceAll("", ",")}`;
+        .replaceAll(",", "")}`;
       // console.log(dateLibelle);
       // console.log(fileName);
       this.doc.save(`${fileName}.pdf`);
       // // doc.addPage(format, orientation);
     },
-    insertHead(inv: any) {
+    insertHead(inv: any): number {
+      let ret = this.headerYPos;
       const heading = "INFOSERVICES";
       this.doc.setLanguage(this.languageVal);
       // // doc.addSvg(SVG-Data, x, y, width, height);
       this.doc.setFont("helvetica", "bold");
-      this.doc.setFontSize(14).text(heading, 26.3, 41.3);
+      this.doc.setFontSize(14).text(heading, this.tableXPos, ret);
       this.doc.setFont("helvetica", "bold");
       // doc.setFontType("italic");
+      ret += 18.7;
       this.doc
         .setFontSize(18)
         .text(
           this.$i18n.t("invoiceLibelle", this.languageVal).toUpperCase(),
-          63.8,
-          60
+          this.contentXPos + 35.8,
+          ret
         );
+      ret += 30;
       this.doc.setLineWidth(1);
-      this.doc.rect(26.3, 90, 393.9, 95);
+      this.doc.rect(
+        this.tableXPos,
+        ret,
+        this.headerTableWidth,
+        this.headerTableHeight
+      );
       this.doc
         .setFontSize(14)
-        .text(this.$i18n.t("billingAddressLibelle", this.languageVal), 28, 107);
+        .text(
+          this.$i18n.t("billingAddressLibelle", this.languageVal),
+          this.contentXPos,
+          107
+        );
       this.doc.setFont("helvetica", "normal");
-      this.doc.setFontSize(10).text(inv.billingAddress.firstLine, 28, 119);
-      this.doc.setFontSize(10).text(inv.billingAddress.secondLine, 28, 131);
-      this.doc.setFontSize(10).text(inv.billingAddress.thirdLine, 28, 143);
+      this.doc
+        .setFontSize(10)
+        .text(
+          inv.billingAddress.firstLine,
+          this.contentXPos,
+          this.headerYPos + 77.7
+        );
+      this.doc
+        .setFontSize(10)
+        .text(
+          inv.billingAddress.secondLine,
+          this.contentXPos,
+          this.headerYPos + 89.7
+        );
+      this.doc
+        .setFontSize(10)
+        .text(
+          inv.billingAddress.thirdLine,
+          this.contentXPos,
+          this.headerYPos + 101.7
+        );
+      ret += this.headerTableHeight;
+      return ret;
     },
     insertOrder(inv: any, yPos: number, ind: number): number {
       let ret = yPos;
       // Additional content
       this.doc.setFont("helvetica", "bold");
-      this.doc.rect(26.3, yPos, 112.6, 30);
+      this.doc.rect(
+        this.tableXPos,
+        yPos,
+        this.contentCellTableWidth * 2,
+        this.orderHeaderTableHeight
+      );
       const addContentTextCell = [
         this.$i18n.t("addContentLibelle", this.languageVal),
         inv["commandes"][ind].contenuAdditionnel,
       ];
+      // this.contentXPos + 54.6
       this.doc
         .setFontSize(9)
-        .text(addContentTextCell[0], 82.6, ret + 10, { align: "center" });
+        .text(
+          addContentTextCell[0],
+          this.tableXPos + this.contentCellTableWidth,
+          ret + 10,
+          { align: "center" }
+        );
       this.doc.setFont("helvetica", "normal");
       this.doc
         .setFontSize(10)
         .text(
           addContentTextCell[1] !== null ? addContentTextCell[1] : "",
-          33,
+          this.contentXPos + 5,
           ret + 20,
-          { align: "left", maxWidth: "105.9" }
+          {
+            align: "left",
+            maxWidth: (this.contentCellTableWidth * 2 - 3.4).toString(),
+          }
         );
       // Buyer
       this.doc.setFont("helvetica", "bold");
-      this.doc.rect(138.9, yPos, 56.3, 30);
+      this.doc.rect(
+        this.tableXPos + this.contentCellTableWidth * 2,
+        yPos,
+        this.contentCellTableWidth,
+        this.orderHeaderTableHeight
+      );
       const buyerTextCell = [
         this.$i18n.t("buyerLibelle", this.languageVal),
         inv["buyer"],
       ];
       this.doc
         .setFontSize(9)
-        .text(buyerTextCell[0], 167, ret + 10, { align: "center" });
+        .text(
+          buyerTextCell[0],
+          this.tableXPos + this.contentCellTableWidth * (1 + 1 + 1 / 2),
+          ret + 10,
+          { align: "center" }
+        );
       this.doc.setFont("helvetica", "normal");
-      this.doc.setFontSize(10).text(buyerTextCell[1], 145.6, ret + 30 - 10, {
-        align: "left",
-        maxWidth: "49.6",
-      });
+      this.doc
+        .setFontSize(10)
+        .text(
+          buyerTextCell[1],
+          this.tableXPos + this.contentCellTableWidth * 2 + 6.7,
+          ret + this.orderHeaderTableHeight - 10,
+          {
+            align: "left",
+            maxWidth: (this.contentCellTableWidth - 8.4).toString(),
+          }
+        );
       // Seller
       this.doc.setFont("helvetica", "bold");
-      this.doc.rect(195.2, yPos, 56.3, 30);
+      this.doc.rect(
+        this.tableXPos + this.contentCellTableWidth * 3,
+        yPos,
+        this.contentCellTableWidth,
+        this.orderHeaderTableHeight
+      );
       const sellerTextCell = [
         this.$i18n.t("sellerLibelle", this.languageVal),
         inv["seller"],
       ];
       this.doc
         .setFontSize(9)
-        .text(sellerTextCell[0], 223.4, ret + 10, { align: "center" });
+        .text(
+          sellerTextCell[0],
+          this.tableXPos + this.contentCellTableWidth * (1 + 1 + 1 + 1 / 2),
+          ret + 10,
+          { align: "center" }
+        );
       this.doc.setFont("helvetica", "normal");
-      this.doc.setFontSize(10).text(sellerTextCell[1], 201.9, ret + 30 - 10, {
-        align: "left",
-        maxWidth: "49.6",
-      });
+      this.doc
+        .setFontSize(10)
+        .text(
+          sellerTextCell[1],
+          this.tableXPos + this.contentCellTableWidth * 3 + 6.7,
+          ret + this.orderHeaderTableHeight - 10,
+          {
+            align: "left",
+            maxWidth: (this.contentCellTableWidth - 8.4).toString(),
+          }
+        );
       // Date
       this.doc.setFont("helvetica", "bold");
-      this.doc.rect(251.5, yPos, 56.3, 30);
+      this.doc.rect(
+        this.tableXPos + this.contentCellTableWidth * 4,
+        yPos,
+        this.contentCellTableWidth,
+        this.orderHeaderTableHeight
+      );
       const dateTextCell = [
         this.$i18n.t("dateLibelle", this.languageVal),
         inv["date"],
       ];
       this.doc
         .setFontSize(9)
-        .text(dateTextCell[0], 279.7, ret + 10, { align: "center" });
+        .text(
+          dateTextCell[0],
+          this.tableXPos + this.contentCellTableWidth * (1 + 1 + 1 + 1 + 1 / 2),
+          ret + 10,
+          { align: "center" }
+        );
       this.doc.setFont("helvetica", "normal");
-      this.doc.setFontSize(10).text(dateTextCell[1], 258.2, ret + 30 - 2, {
-        align: "left",
-        maxWidth: "49.6",
-      });
+      this.doc
+        .setFontSize(10)
+        .text(
+          dateTextCell[1],
+          this.tableXPos + this.contentCellTableWidth * 4 + 6.7,
+          ret + this.orderHeaderTableHeight - 2,
+          {
+            align: "left",
+            maxWidth: (this.contentCellTableWidth - 8.4).toString(),
+          }
+        );
       // Order
       this.doc.setFont("helvetica", "bold");
-      this.doc.rect(307.8, yPos, 112.4, 30);
+      this.doc.rect(
+        this.tableXPos + this.contentCellTableWidth * 5,
+        yPos,
+        112.4,
+        this.orderHeaderTableHeight
+      );
       const orderNumberTextCell = this.$i18n.t(
         "orderNumberLibelle",
         this.languageVal
       );
       this.doc
         .setFontSize(9)
-        .text(orderNumberTextCell, 309.5, ret + 10, { align: "left" });
+        .text(
+          orderNumberTextCell,
+          this.tableXPos + this.contentCellTableWidth * 5 + 1.7,
+          ret + 10,
+          { align: "left" }
+        );
       this.doc.setFont("helvetica", "bold");
       this.doc
         .setFontSize(18)
-        .text(inv["commandes"][ind].orderId.toString(), 364, ret + 20, {
-          align: "center",
-          maxWidth: "56.2",
-        });
-      ret += 30;
+        .text(
+          inv["commandes"][ind].orderId.toString(),
+          this.tableXPos + this.contentCellTableWidth * 6,
+          ret + this.orderHeaderTableHeight - 10,
+          {
+            align: "center",
+            maxWidth: (this.contentCellTableWidth - 1.7).toString(),
+          }
+        );
+      ret += this.orderHeaderTableHeight;
       // INSERT SERVICES
       ret = this.insertServiceHead(ret);
       for (const k in inv["commandes"][ind]["Services"]) {
@@ -424,14 +541,14 @@ export default defineComponent({
       let ret = yPos;
       // Description
       this.doc.setFont("helvetica", "bold");
-      this.doc.rect(26.3, yPos, 112.6, 33);
+      this.doc.rect(this.tableXPos, yPos, 112.6, 33);
       const descriptionTextCell = this.$i18n.t(
         "descriptionLibelle",
         this.languageVal
       );
       this.doc
         .setFontSize(10)
-        .text(descriptionTextCell.toUpperCase(), 28, ret + 10, {
+        .text(descriptionTextCell.toUpperCase(), this.contentXPos, ret + 10, {
           align: "left",
         });
       // Service ID
@@ -494,53 +611,91 @@ export default defineComponent({
       // Description
       this.doc.setFont("helvetica", "bold");
       this.doc.setFillColor("#BBBBBB");
-      this.doc.rect(26.3, yPos, 112.6, 20, "F");
+      this.doc.rect(
+        this.tableXPos,
+        yPos,
+        112.6,
+        this.serviceHeaderTableHeight,
+        "F"
+      );
       const descriptionTextCell = ord["Services"][ind].nom;
-      this.doc.setFontSize(9).text(descriptionTextCell, 28, ret + 20 - 2, {
-        align: "left",
-        maxWidth: "109.2",
-      });
+      this.doc
+        .setFontSize(9)
+        .text(
+          descriptionTextCell,
+          28,
+          ret + this.serviceHeaderTableHeight - 2,
+          {
+            align: "left",
+            maxWidth: "109.2",
+          }
+        );
       // Service ID
       this.doc.setFillColor("#FFFFFF");
-      this.doc.rect(138.9, yPos, 56.3, 20, "F");
+      this.doc.rect(138.9, yPos, 56.3, this.serviceHeaderTableHeight, "F");
       const serviceNumberTextCell = ord["Services"][ind].serviceId.toString();
-      this.doc.text(serviceNumberTextCell.toUpperCase(), 140.6, ret + 20 - 2, {
-        align: "left",
-        maxWidth: "52.9",
-      });
+      this.doc.text(
+        serviceNumberTextCell.toUpperCase(),
+        140.6,
+        ret + this.serviceHeaderTableHeight - 2,
+        {
+          align: "left",
+          maxWidth: "52.9",
+        }
+      );
       // Unit Price IT
       this.doc.setFillColor("#BBBBBB");
-      this.doc.rect(195.2, yPos, 56.3, 20, "F");
+      this.doc.rect(195.2, yPos, 56.3, this.serviceHeaderTableHeight, "F");
       const unitPriceTextCell = ord["Services"][ind].priceUnitTTLibelle;
-      this.doc.text(unitPriceTextCell, 196.9, ret + 20 - 2, {
-        align: "left",
-        maxWidth: "52.9",
-      });
+      this.doc.text(
+        unitPriceTextCell,
+        196.9,
+        ret + this.serviceHeaderTableHeight - 2,
+        {
+          align: "left",
+          maxWidth: "52.9",
+        }
+      );
       // Quantity
       this.doc.setFillColor("#FFFFFF");
-      this.doc.rect(251.5, yPos, 56.3, 20, "F");
+      this.doc.rect(251.5, yPos, 56.3, this.serviceHeaderTableHeight, "F");
       const quantityTextCell = ord["Services"][ind].quantite.toString();
-      this.doc.text(quantityTextCell, 253.2, ret + 20 - 2, {
-        align: "left",
-        maxWidth: "52.9",
-      });
+      this.doc.text(
+        quantityTextCell,
+        253.2,
+        ret + this.serviceHeaderTableHeight - 2,
+        {
+          align: "left",
+          maxWidth: "52.9",
+        }
+      );
       // Net price IT
       this.doc.setFillColor("#BBBBBB");
-      this.doc.rect(307.8, yPos, 56.3, 20, "F");
+      this.doc.rect(307.8, yPos, 56.3, this.serviceHeaderTableHeight, "F");
       const netPriceTextCell = ord["Services"][ind].montantNetTTLibelle;
-      this.doc.text(netPriceTextCell, 309.5, ret + 20 - 2, {
-        align: "left",
-        maxWidth: "52.9",
-      });
+      this.doc.text(
+        netPriceTextCell,
+        309.5,
+        ret + this.serviceHeaderTableHeight - 2,
+        {
+          align: "left",
+          maxWidth: "52.9",
+        }
+      );
       // Overall amount IT
       this.doc.setFillColor("#FFFFFF");
-      this.doc.rect(364.1, yPos, 56.1, 20, "F");
+      this.doc.rect(364.1, yPos, 56.1, this.serviceHeaderTableHeight, "F");
       const amountTextCell = ord["Services"][ind].montantNetTTLibelle;
-      this.doc.text(amountTextCell, 365.8, ret + 20 - 2, {
-        align: "left",
-        maxWidth: "52.9",
-      });
-      ret += 20;
+      this.doc.text(
+        amountTextCell,
+        365.8,
+        ret + this.serviceHeaderTableHeight - 2,
+        {
+          align: "left",
+          maxWidth: "52.9",
+        }
+      );
+      ret += this.serviceHeaderTableHeight;
       if (ind == ord["Services"].length - 1) {
         this.doc.setLineWidth(1).line(307.8, ret + 0.5, 420.2, ret + 0.5);
         ret += 0.5;
@@ -553,10 +708,16 @@ export default defineComponent({
       // Footer
       this.doc.setFont("helvetica", "bold");
       this.doc.setFillColor("#FFFFFF");
-      this.doc.rect(26.3, yPos, 393.9, 20, "F");
+      this.doc.rect(
+        this.tableXPos,
+        yPos,
+        this.headerTableWidth,
+        this.serviceHeaderTableHeight,
+        "F"
+      );
       const totalTextCell = this.$i18n.t("totalLibelle", this.languageVal);
       const totalValueTextCell = ord.totalTTLibelle;
-      this.doc.setFontSize(10).text(totalTextCell, 28, ret + 10, {
+      this.doc.setFontSize(10).text(totalTextCell, this.contentXPos, ret + 10, {
         align: "left",
         maxWidth: "292.2",
       });
@@ -564,7 +725,7 @@ export default defineComponent({
         align: "right",
         maxWidth: "100",
       });
-      ret += 20;
+      ret += this.serviceHeaderTableHeight;
       return ret;
     },
     insertInvoiceFoot(inv: any, yPos: number): number {
@@ -572,55 +733,102 @@ export default defineComponent({
       let ret = yPos;
       // Footer
       this.doc.setLineWidth(0.5);
-      this.doc.rect(26.3, yPos, 393.9, 30);
+      this.doc.rect(
+        this.tableXPos,
+        yPos,
+        this.headerTableWidth,
+        this.orderHeaderTableHeight
+      );
       // VAT value
       this.doc.setFont("helvetica", "bold");
       const vatTextCell = this.$i18n.t("vatLibelle", this.languageVal);
+      this.tableXPos +
+        this.footerCellTableWidth +
+        this.footerCellTableWidth / 2;
       this.doc
         .setFontSize(10)
-        .text(vatTextCell, 144.5, ret + 15, { align: "center" });
+        .text(
+          vatTextCell,
+          this.tableXPos + this.footerCellTableWidth * (1 + 1 / 2),
+          ret + 15,
+          { align: "center" }
+        );
       this.doc.setFont("helvetica", "normal");
       const vatValueTextCell = inv.tvaValue.tvaValueLibelle;
-      this.doc.text(vatValueTextCell, 106.8, ret + 30 - 3, {
-        align: "left",
-        maxWidth: "75.4",
-      });
+      this.doc.text(
+        vatValueTextCell,
+        106.8,
+        ret + this.orderHeaderTableHeight - 3,
+        {
+          align: "left",
+          maxWidth: "75.4",
+        }
+      );
       // VAT base
       this.doc.setFont("helvetica", "bold");
       const vatBaseTextCell = this.$i18n.t("vatBaseLibelle", this.languageVal);
-      this.doc.text(vatBaseTextCell, 223.3, ret + 15, { align: "center" });
+      this.doc.text(
+        vatBaseTextCell,
+        this.tableXPos + this.footerCellTableWidth * (1 + 1 + 1 / 2),
+        ret + 15,
+        { align: "center" }
+      );
       this.doc.setFont("helvetica", "normal");
       const vatBaseValueTextCell = `${inv.tvaValue.tvaBaseLibelle} ${inv.devise}`;
-      this.doc.text(vatBaseValueTextCell, 185.6, ret + 30 - 3, {
-        align: "left",
-        maxWidth: "75.4",
-      });
+      this.doc.text(
+        vatBaseValueTextCell,
+        185.6,
+        ret + this.orderHeaderTableHeight - 3,
+        {
+          align: "left",
+          maxWidth: "75.4",
+        }
+      );
       // VAT amount
       this.doc.setFont("helvetica", "bold");
       const vatAmountTextCell = this.$i18n.t(
         "vatAmountLibelle",
         this.languageVal
       );
-      this.doc.text(vatAmountTextCell, 302.1, ret + 15, { align: "center" });
+      this.doc.text(
+        vatAmountTextCell,
+        this.tableXPos + this.footerCellTableWidth * (1 + 1 + 1 + 1 / 2),
+        ret + 15,
+        { align: "center" }
+      );
       this.doc.setFont("helvetica", "normal");
       const vatAmountValueTextCell = `${inv.tvaValue.tvaMontantLibelle} ${inv.devise}`;
-      this.doc.text(vatAmountValueTextCell, 264.4, ret + 30 - 3, {
-        align: "left",
-        maxWidth: "75.4",
-      });
+      this.doc.text(
+        vatAmountValueTextCell,
+        264.4,
+        ret + this.orderHeaderTableHeight - 3,
+        {
+          align: "left",
+          maxWidth: "75.4",
+        }
+      );
       // Total amount IT
       this.doc.setFont("helvetica", "bold");
       const ttTotalTextCell = this.$i18n.t("ttTotalLibelle", this.languageVal);
-      this.doc.text(ttTotalTextCell, 380.9, ret + 15, { align: "center" });
+      this.doc.text(
+        ttTotalTextCell,
+        this.tableXPos + this.footerCellTableWidth * (1 + 1 + 1 + 1 + 1 / 2),
+        ret + 15,
+        { align: "center" }
+      );
       this.doc.setFont("helvetica", "normal");
       const ttTotalValueTextCell = `${inv.invoiceTTPrice} ${inv.devise}`;
-      this.doc.text(ttTotalValueTextCell, 343.2, ret + 30 - 3, {
-        align: "left",
-        maxWidth: "75.4",
-      });
-      // this.doc.text(totalValueTextCell, 420.2, ret + 10, {align: "right", maxWidth: "100"});
+      this.doc.text(
+        ttTotalValueTextCell,
+        343.2,
+        ret + this.orderHeaderTableHeight - 3,
+        {
+          align: "left",
+          maxWidth: "75.4",
+        }
+      );
 
-      ret += 30;
+      ret += this.orderHeaderTableHeight;
       return ret;
     },
   },
@@ -733,6 +941,9 @@ export default defineComponent({
 }
 </i18n>
 
+<template>
+  <div></div>
+</template>
 <!--  
 var width = doc.internal.pageSize.getWidth();
 var height = doc.internal.pageSize.getHeight();

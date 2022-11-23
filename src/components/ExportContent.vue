@@ -4,11 +4,13 @@ import { MDBTable, MDBCheckbox } from "mdb-vue-ui-kit";
 import router from "@/router/index";
 import { RouterLink } from "vue-router";
 import { useInvoiceStore } from "@/stores/invoice";
+import { useCounterStore } from "@/stores/counter";
 
 export default defineComponent({
   name: "ExportContent",
   async setup() {
     const invStore = useInvoiceStore();
+    const cntStore = useCounterStore();
     const invoicesObj = await invStore
       .getAllInvoices()
       .then(
@@ -25,6 +27,7 @@ export default defineComponent({
       });
     return {
       invoiceStore: invStore,
+      counterStore: cntStore,
       invoices: invoicesObj,
     };
   },
@@ -158,7 +161,19 @@ export default defineComponent({
     tableInvoicesDateLibelle(ind: number) {
       let ret = "";
       let libelle = "";
-      libelle = `${this.invoices[ind]["date"]}`;
+      let date = new Date(this.invoices[ind]["date"]);
+      let locale =
+        this.counterStore.getLanguages[this.counterStore.getLangDisplayedIndex]
+          .class === "fr"
+          ? "fr-FR"
+          : "";
+      locale =
+        this.counterStore.getLanguages[this.counterStore.getLangDisplayedIndex]
+          .class === "us"
+          ? "en-US"
+          : locale;
+      const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+      libelle = `${date.toLocaleDateString(locale, options)}`;
       ret = libelle;
       return ret;
     },

@@ -7,6 +7,7 @@ import { useActorStore } from "@/stores/actor";
 import { useOrderStore } from "@/stores/order";
 import { usePaymentStore } from "@/stores/payment";
 import { useInvoiceStore } from "@/stores/invoice";
+import { useCounterStore } from "@/stores/counter";
 
 export default defineComponent({
   name: "TableItem",
@@ -82,12 +83,14 @@ export default defineComponent({
     const ordStore = useOrderStore();
     const payStore = usePaymentStore();
     const invStore = useInvoiceStore();
+    const cntStore = useCounterStore();
     return {
       serviceStore: servStore,
       actorStore: actStore,
       orderStore: ordStore,
       paymentStore: payStore,
       invoiceStore: invStore,
+      counterStore: cntStore,
     };
   },
   data() {
@@ -311,7 +314,19 @@ export default defineComponent({
     tableInvoicesDateLibelle(ind: number) {
       let ret = "";
       let libelle = "";
-      libelle = `${this.contents[ind]["date"]}`;
+      let date = new Date(this.contents[ind]["date"]);
+      let locale =
+        this.counterStore.getLanguages[this.counterStore.getLangDisplayedIndex]
+          .class === "fr"
+          ? "fr-FR"
+          : "";
+      locale =
+        this.counterStore.getLanguages[this.counterStore.getLangDisplayedIndex]
+          .class === "us"
+          ? "en-US"
+          : locale;
+      const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+      libelle = `${date.toLocaleDateString(locale, options)}`;
       ret = libelle;
       return ret;
     },
