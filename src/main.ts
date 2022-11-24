@@ -5,8 +5,6 @@ import router from "./router";
 import i18n from "@/plugins/i18n";
 // Vuetify
 import { createVuetify } from "vuetify";
-// import * as components from 'vuetify/components'
-// import * as directives from 'vuetify/directives'
 // Styles
 import "./assets/styles.css";
 import "./assets/main.css";

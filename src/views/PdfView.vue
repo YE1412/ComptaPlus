@@ -18,7 +18,8 @@ export default defineComponent({
       headTableWidth = 393.9,
       headTableHeight = 95,
       ordHeadTableHeight = 30,
-      servHeadTableHeight = 20;
+      servHeadTableHeight = 33,
+      servContentTableHeight = 20;
 
     return {
       userStore: usrStore,
@@ -32,6 +33,7 @@ export default defineComponent({
       headerTableHeight: headTableHeight,
       orderHeaderTableHeight: ordHeadTableHeight,
       serviceHeaderTableHeight: servHeadTableHeight,
+      serviceContentTableHeight: servContentTableHeight,
       contentCellTableWidth: parseFloat((headTableWidth / 7).toFixed(1)),
       footerCellTableWidth: parseFloat((headTableWidth / 5).toFixed(1)),
     };
@@ -500,7 +502,7 @@ export default defineComponent({
       this.doc.rect(
         this.tableXPos + this.contentCellTableWidth * 5,
         yPos,
-        112.4,
+        this.contentCellTableWidth * 2 - 0.2,
         this.orderHeaderTableHeight
       );
       const orderNumberTextCell = this.$i18n.t(
@@ -541,7 +543,12 @@ export default defineComponent({
       let ret = yPos;
       // Description
       this.doc.setFont("helvetica", "bold");
-      this.doc.rect(this.tableXPos, yPos, 112.6, 33);
+      this.doc.rect(
+        this.tableXPos,
+        yPos,
+        this.contentCellTableWidth * 2,
+        this.serviceHeaderTableHeight
+      );
       const descriptionTextCell = this.$i18n.t(
         "descriptionLibelle",
         this.languageVal
@@ -552,56 +559,106 @@ export default defineComponent({
           align: "left",
         });
       // Service ID
-      this.doc.rect(138.9, yPos, 56.3, 33);
+      this.doc.rect(
+        this.tableXPos + this.contentCellTableWidth * 2,
+        yPos,
+        this.contentCellTableWidth,
+        this.serviceHeaderTableHeight
+      );
       const serviceNumberTextCell = this.$i18n.t(
         "serviceNumberLibelle",
         this.languageVal
       );
-      this.doc.text(serviceNumberTextCell.toUpperCase(), 140.6, ret + 10, {
-        align: "left",
-        maxWidth: "52.9",
-      });
+      this.doc.text(
+        serviceNumberTextCell.toUpperCase(),
+        this.tableXPos + this.contentCellTableWidth * 2 + 1.7,
+        ret + 10,
+        {
+          align: "left",
+          maxWidth: (this.contentCellTableWidth - 3.4).toString(),
+        }
+      );
       // Unit Price IT
-      this.doc.rect(195.2, yPos, 56.3, 33);
+      this.doc.rect(
+        this.tableXPos + this.contentCellTableWidth * 3,
+        yPos,
+        this.contentCellTableWidth,
+        this.serviceHeaderTableHeight
+      );
       const unitPriceTextCell = this.$i18n.t(
         "ttUnitPriceLibelle",
         this.languageVal
       );
-      this.doc.text(unitPriceTextCell.toUpperCase(), 196.9, ret + 10, {
-        align: "left",
-        maxWidth: "52.9",
-      });
+      this.doc.text(
+        unitPriceTextCell.toUpperCase(),
+        this.tableXPos + this.contentCellTableWidth * 3 + 1.7,
+        ret + 10,
+        {
+          align: "left",
+          maxWidth: (this.contentCellTableWidth - 3.4).toString(),
+        }
+      );
       // Quantity
-      this.doc.rect(251.5, yPos, 56.3, 33);
+      this.doc.rect(
+        this.tableXPos + this.contentCellTableWidth * 4,
+        yPos,
+        this.contentCellTableWidth,
+        this.serviceHeaderTableHeight
+      );
       const quantityTextCell = this.$i18n.t(
         "quantityLibelle",
         this.languageVal
       );
-      this.doc.text(quantityTextCell.toUpperCase(), 253.2, ret + 10, {
-        align: "left",
-        maxWidth: "52.9",
-      });
+      this.doc.text(
+        quantityTextCell.toUpperCase(),
+        this.tableXPos + this.contentCellTableWidth * 4 + 1.7,
+        ret + 10,
+        {
+          align: "left",
+          maxWidth: (this.contentCellTableWidth - 3.4).toString(),
+        }
+      );
       // Net price IT
-      this.doc.rect(307.8, yPos, 56.3, 33);
+      this.doc.rect(
+        this.tableXPos + this.contentCellTableWidth * 5,
+        yPos,
+        this.contentCellTableWidth,
+        this.serviceHeaderTableHeight
+      );
       const netPriceTextCell = this.$i18n.t(
         "ttNetPriceLibelle",
         this.languageVal
       );
-      this.doc.text(netPriceTextCell.toUpperCase(), 309.5, ret + 10, {
-        align: "left",
-        maxWidth: "52.9",
-      });
+      this.doc.text(
+        netPriceTextCell.toUpperCase(),
+        this.tableXPos + this.contentCellTableWidth * 5 + 1.7,
+        ret + 10,
+        {
+          align: "left",
+          maxWidth: (this.contentCellTableWidth - 3.4).toString(),
+        }
+      );
       // Overall amount IT
-      this.doc.rect(364.1, yPos, 56.1, 33);
+      this.doc.rect(
+        this.tableXPos + this.contentCellTableWidth * 6,
+        yPos,
+        this.contentCellTableWidth - 0.2,
+        this.serviceHeaderTableHeight
+      );
       const amountTextCell = this.$i18n.t(
         "ttOverallAmountLibelle",
         this.languageVal
       );
-      this.doc.text(amountTextCell.toUpperCase(), 365.8, ret + 10, {
-        align: "left",
-        maxWidth: "52.9",
-      });
-      ret += 33;
+      this.doc.text(
+        amountTextCell.toUpperCase(),
+        this.tableXPos + this.contentCellTableWidth * 6 + 1.7,
+        ret + 10,
+        {
+          align: "left",
+          maxWidth: (this.contentCellTableWidth - 3.4).toString(),
+        }
+      );
+      ret += this.serviceHeaderTableHeight;
       return ret;
     },
     insertServiceContent(ord: any, yPos: number, ind: number): number {
@@ -614,8 +671,8 @@ export default defineComponent({
       this.doc.rect(
         this.tableXPos,
         yPos,
-        112.6,
-        this.serviceHeaderTableHeight,
+        this.contentCellTableWidth * 2,
+        this.serviceContentTableHeight,
         "F"
       );
       const descriptionTextCell = ord["Services"][ind].nom;
@@ -623,81 +680,118 @@ export default defineComponent({
         .setFontSize(9)
         .text(
           descriptionTextCell,
-          28,
-          ret + this.serviceHeaderTableHeight - 2,
+          this.tableXPos + 1.7,
+          ret + this.serviceContentTableHeight - 2,
           {
             align: "left",
-            maxWidth: "109.2",
+            maxWidth: (this.contentCellTableWidth * 2 - 3.4).toString(),
           }
         );
       // Service ID
       this.doc.setFillColor("#FFFFFF");
-      this.doc.rect(138.9, yPos, 56.3, this.serviceHeaderTableHeight, "F");
+      this.doc.rect(
+        this.tableXPos + this.contentCellTableWidth * 2,
+        yPos,
+        this.contentCellTableWidth,
+        this.serviceContentTableHeight,
+        "F"
+      );
       const serviceNumberTextCell = ord["Services"][ind].serviceId.toString();
       this.doc.text(
         serviceNumberTextCell.toUpperCase(),
-        140.6,
-        ret + this.serviceHeaderTableHeight - 2,
+        this.tableXPos + this.contentCellTableWidth * 2 + 1.7,
+        ret + this.serviceContentTableHeight - 2,
         {
           align: "left",
-          maxWidth: "52.9",
+          maxWidth: (this.contentCellTableWidth - 3.4).toString(),
         }
       );
       // Unit Price IT
       this.doc.setFillColor("#BBBBBB");
-      this.doc.rect(195.2, yPos, 56.3, this.serviceHeaderTableHeight, "F");
+      this.doc.rect(
+        this.tableXPos + this.contentCellTableWidth * 3,
+        yPos,
+        this.contentCellTableWidth,
+        this.serviceContentTableHeight,
+        "F"
+      );
       const unitPriceTextCell = ord["Services"][ind].priceUnitTTLibelle;
       this.doc.text(
         unitPriceTextCell,
-        196.9,
-        ret + this.serviceHeaderTableHeight - 2,
+        this.tableXPos + this.contentCellTableWidth * 3 + 1.7,
+        ret + this.serviceContentTableHeight - 2,
         {
           align: "left",
-          maxWidth: "52.9",
+          maxWidth: (this.contentCellTableWidth - 3.4).toString(),
         }
       );
       // Quantity
       this.doc.setFillColor("#FFFFFF");
-      this.doc.rect(251.5, yPos, 56.3, this.serviceHeaderTableHeight, "F");
+      this.doc.rect(
+        this.tableXPos + this.contentCellTableWidth * 4,
+        yPos,
+        this.contentCellTableWidth,
+        this.serviceContentTableHeight,
+        "F"
+      );
       const quantityTextCell = ord["Services"][ind].quantite.toString();
       this.doc.text(
         quantityTextCell,
-        253.2,
-        ret + this.serviceHeaderTableHeight - 2,
+        this.tableXPos + this.contentCellTableWidth * 4 + 1.7,
+        ret + this.serviceContentTableHeight - 2,
         {
           align: "left",
-          maxWidth: "52.9",
+          maxWidth: (this.contentCellTableWidth - 3.4).toString(),
         }
       );
       // Net price IT
       this.doc.setFillColor("#BBBBBB");
-      this.doc.rect(307.8, yPos, 56.3, this.serviceHeaderTableHeight, "F");
+      this.doc.rect(
+        this.tableXPos + this.contentCellTableWidth * 5,
+        yPos,
+        this.contentCellTableWidth,
+        this.serviceContentTableHeight,
+        "F"
+      );
       const netPriceTextCell = ord["Services"][ind].montantNetTTLibelle;
       this.doc.text(
         netPriceTextCell,
-        309.5,
-        ret + this.serviceHeaderTableHeight - 2,
+        this.tableXPos + this.contentCellTableWidth * 5 + 1.7,
+        ret + this.serviceContentTableHeight - 2,
         {
           align: "left",
-          maxWidth: "52.9",
+          maxWidth: (this.contentCellTableWidth - 3.4).toString(),
         }
       );
       // Overall amount IT
       this.doc.setFillColor("#FFFFFF");
-      this.doc.rect(364.1, yPos, 56.1, this.serviceHeaderTableHeight, "F");
+      this.doc.rect(
+        this.tableXPos + this.contentCellTableWidth * 6,
+        yPos,
+        this.contentCellTableWidth - 0.2,
+        this.serviceContentTableHeight,
+        "F"
+      );
       const amountTextCell = ord["Services"][ind].montantNetTTLibelle;
       this.doc.text(
         amountTextCell,
-        365.8,
-        ret + this.serviceHeaderTableHeight - 2,
+        this.tableXPos + this.contentCellTableWidth * 6 + 1.7,
+        ret + this.serviceContentTableHeight - 2,
         {
           align: "left",
-          maxWidth: "52.9",
+          maxWidth: (this.contentCellTableWidth - 3.4).toString(),
         }
       );
-      ret += this.serviceHeaderTableHeight;
+      ret += this.serviceContentTableHeight;
       if (ind == ord["Services"].length - 1) {
-        this.doc.setLineWidth(1).line(307.8, ret + 0.5, 420.2, ret + 0.5);
+        this.doc
+          .setLineWidth(1)
+          .line(
+            this.tableXPos + this.contentCellTableWidth * 5,
+            ret + 0.5,
+            this.tableXPos + this.contentCellTableWidth * 7,
+            ret + 0.5
+          );
         ret += 0.5;
       }
       return ret;
@@ -719,12 +813,17 @@ export default defineComponent({
       const totalValueTextCell = ord.totalTTLibelle;
       this.doc.setFontSize(10).text(totalTextCell, this.contentXPos, ret + 10, {
         align: "left",
-        maxWidth: "292.2",
+        maxWidth: (this.headerTableWidth - 98.3).toString(),
       });
-      this.doc.text(totalValueTextCell, 420.2, ret + 10, {
-        align: "right",
-        maxWidth: "100",
-      });
+      this.doc.text(
+        totalValueTextCell,
+        this.tableXPos + this.headerTableWidth,
+        ret + 10,
+        {
+          align: "right",
+          maxWidth: "100",
+        }
+      );
       ret += this.serviceHeaderTableHeight;
       return ret;
     },
@@ -757,11 +856,11 @@ export default defineComponent({
       const vatValueTextCell = inv.tvaValue.tvaValueLibelle;
       this.doc.text(
         vatValueTextCell,
-        106.8,
+        this.tableXPos + this.footerCellTableWidth + 1.7,
         ret + this.orderHeaderTableHeight - 3,
         {
           align: "left",
-          maxWidth: "75.4",
+          maxWidth: (this.footerCellTableWidth - 3.4).toString(),
         }
       );
       // VAT base
@@ -777,11 +876,11 @@ export default defineComponent({
       const vatBaseValueTextCell = `${inv.tvaValue.tvaBaseLibelle} ${inv.devise}`;
       this.doc.text(
         vatBaseValueTextCell,
-        185.6,
+        this.tableXPos + this.footerCellTableWidth * 2 + 1.7,
         ret + this.orderHeaderTableHeight - 3,
         {
           align: "left",
-          maxWidth: "75.4",
+          maxWidth: (this.footerCellTableWidth - 3.4).toString(),
         }
       );
       // VAT amount
@@ -800,11 +899,11 @@ export default defineComponent({
       const vatAmountValueTextCell = `${inv.tvaValue.tvaMontantLibelle} ${inv.devise}`;
       this.doc.text(
         vatAmountValueTextCell,
-        264.4,
+        this.tableXPos + this.footerCellTableWidth * 3 + 1.7,
         ret + this.orderHeaderTableHeight - 3,
         {
           align: "left",
-          maxWidth: "75.4",
+          maxWidth: (this.footerCellTableWidth - 3.4).toString(),
         }
       );
       // Total amount IT
@@ -820,11 +919,11 @@ export default defineComponent({
       const ttTotalValueTextCell = `${inv.invoiceTTPrice} ${inv.devise}`;
       this.doc.text(
         ttTotalValueTextCell,
-        343.2,
+        this.tableXPos + this.footerCellTableWidth * 4 + 1.7,
         ret + this.orderHeaderTableHeight - 3,
         {
           align: "left",
-          maxWidth: "75.4",
+          maxWidth: (this.footerCellTableWidth - 3.4).toString(),
         }
       );
 
