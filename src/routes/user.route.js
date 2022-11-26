@@ -6,8 +6,17 @@ export default () => {
   // Create a new User
   router.post("/", users.create);
 
+  // Upload an image
+  router.post("/upload", users.uploadImg);
+
   // Retrieve all Users
   router.get("/", users.findAll);
+
+  // Retrieve all Devises
+  router.get("/devises", users.findAllDevises);
+
+  // Retrieve all Prices
+  router.get("/prices", users.findAllPrices);
 
   // Retrieve all Users by type
   router.get("/type/:type", users.findAllOfType);

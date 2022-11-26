@@ -60,13 +60,13 @@
 }
 
 h1 {
-    color: #FFF;
+    color: #000;
     font-family: SenExtrabold, sans-serif;
     font-size: 435%;
     letter-spacing: -4.5px;
 }
 h2, h3 {
-    color: #FFF;
+    color: #000;
     font-weight: lighter;
     font-family: SenBold, sans-serif;
 }
@@ -447,6 +447,12 @@ main.mt-3{
     display: flex;
     margin-top: 135px;
     padding-left: 265px;
+    flex-direction: column;
+}
+
+.fullContent {
+    display: flex;
+    margin-top: 135px;
     flex-direction: column;
 }
 

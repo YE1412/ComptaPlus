@@ -20,6 +20,7 @@ export default defineComponent({
       renderComponent: true,
       adminOrder: true,
       displayOrder: false,
+      orderForm: false,
     };
   },
   methods: {
@@ -38,6 +39,7 @@ export default defineComponent({
         case "orders":
           this.adminOrder = true;
           this.displayOrder = false;
+          this.orderForm = false;
           break;
         default:
           break;
@@ -50,6 +52,7 @@ export default defineComponent({
         case "orders":
           this.displayOrder = true;
           this.adminOrder = false;
+          this.orderForm = false;
           break;
         default:
           break;
@@ -62,6 +65,18 @@ export default defineComponent({
     Sidenav,
     OrderContent,
     Suspense,
+  },
+  watch: {
+    $route: {
+      async handler(newR, old) {
+        // console.log(newR.query);
+        if (newR.query.admin !== undefined) {
+          this.adminOrder = newR.query.admin === "true" ? true : false;
+          this.orderForm = this.adminOrder;
+        }
+      },
+      immediate: true,
+    },
   },
 });
 </script>
@@ -77,6 +92,7 @@ export default defineComponent({
       <Suspense>
         <OrderContent
           v-if="renderComponent"
+          :orderForm="orderForm"
           :admin="adminOrder"
           :display="displayOrder"
         />

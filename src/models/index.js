@@ -1,7 +1,6 @@
 import dbConfig from "../config/db.config.js";
 import { Sequelize } from "sequelize";
 import actor from "./actor.model.js";
-// import actorActivity from "./actorActivity.model.js";
 import actorType from "./actorType.model.js";
 import contains from "./contains.model.js";
 import devise from "./devise.model.js";
@@ -10,6 +9,7 @@ import langue from "./langue.model.js";
 import order from "./order.model.js";
 import payment from "./payment.model.js";
 import paymentType from "./paymentType.model.js";
+import price from "./price.model.js";
 import service from "./service.model.js";
 import user from "./user.model.js";
 import userType from "./userType.model.js";
@@ -39,7 +39,7 @@ const orderModelObj = order(sequelize);
 const containsModelObj = contains(sequelize);
 const paymentModelObj = payment(sequelize);
 const paymentTypeModelObj = paymentType(sequelize);
-// const actorActivityModelObj = actorActivity(sequelize);
+const priceModelObj = price(sequelize);
 const actorTypeModelObj = actorType(sequelize);
 const userTypeModelObj = userType(sequelize);
 
@@ -165,6 +165,15 @@ langueModelObj.invoices = langueModelObj.hasMany(invoiceModelObj, {
 invoiceModelObj.langue = invoiceModelObj.belongsTo(langueModelObj, {
   foreignKey: "languageId",
 });
+
+deviseModelObj.users = deviseModelObj.hasMany(userModelObj, {
+  onDelete: "RESTRICT",
+  onUpdate: "CASCADE",
+  foreignKey: "deviseId",
+});
+userModelObj.devise = userModelObj.belongsTo(deviseModelObj, {
+  foreignKey: "deviseId",
+});
 // -------------
 
 db.Sequelize = Sequelize;
@@ -181,6 +190,6 @@ db.paymentType = paymentTypeModelObj;
 db.payment = paymentModelObj;
 db.userType = userTypeModelObj;
 db.actorType = actorTypeModelObj;
-// db.actorActivity = actorActivityModelObj;
+db.price = priceModelObj;
 
 export default db;

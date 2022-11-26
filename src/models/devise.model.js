@@ -13,6 +13,10 @@ const model = (sequelize) => {
       symbole: {
         type: DataTypes.CHAR(1),
       },
+      libelle: {
+        type: DataTypes.CHAR(255),
+        allowNull: false,
+      },
     },
     {
       freezeTableName: true,

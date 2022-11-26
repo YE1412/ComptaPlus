@@ -42,10 +42,10 @@ async function transformObject(obj: any) {
     } else if (Array.isArray(obj[k])) {
       ret[k] = await transformObject(obj[k]);
     } else if (obj[k] === null) {
-      console.log(k);
+      // console.log(k);
     } else ret[k] = obj[k];
   }
-  console.log(ret);
+  // console.log(ret);
   return ret;
 }
 

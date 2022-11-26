@@ -30,6 +30,22 @@ const model = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      companyName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      companyLogo: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      deviseId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: "devise",
+          key: "deviseId",
+        },
+        allowNull: false,
+      },
       userTypeId: {
         type: DataTypes.INTEGER,
         references: {

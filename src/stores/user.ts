@@ -1,11 +1,60 @@
 // import { ref, computed } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
 import userAxiosService from "../services/user.service";
+import { decryptMod } from "../WasmModules";
+import { useStorage } from "@vueuse/core";
+
+let __DECRYPTAPI__: any;
+
+async function define() {
+  if (__DECRYPTAPI__ === undefined) {
+    return (__DECRYPTAPI__ = await decryptMod.then((e: any) => {
+      return e;
+    }));
+  }
+  return;
+}
+
+async function transformObject(obj: any) {
+  await define();
+  let ret: any;
+  if (typeof obj === "string") {
+    ret = "";
+  } else if (typeof obj === "object" && !Array.isArray(obj)) {
+    ret = {};
+  } else {
+    ret = [];
+  }
+  for (const k in obj) {
+    if (
+      typeof obj[k] === "string" &&
+      k !== "date" &&
+      k !== "langue" &&
+      k !== "devise"
+    ) {
+      ret[k] = __DECRYPTAPI__.decrypt(obj[k]);
+    } else if (
+      typeof obj[k] === "object" &&
+      !Array.isArray(obj[k]) &&
+      k !== "langue" &&
+      k !== "devise"
+    ) {
+      if (obj[k] === null) ret[k] = null;
+      else ret[k] = await transformObject(obj[k]);
+    } else if (Array.isArray(obj[k])) {
+      ret[k] = await transformObject(obj[k]);
+    } else if (obj[k] === null) {
+      // console.log(k);
+    } else ret[k] = obj[k];
+  }
+  // console.log(ret);
+  return ret;
+}
 
 const useUserStore = defineStore("user", {
   state: () => ({
-    connected: false,
-    user: {},
+    connected: useStorage("connected", false),
+    user: useStorage("user", {}),
   }),
   getters: {
     getConnected(state) {
@@ -21,10 +70,13 @@ const useUserStore = defineStore("user", {
       return new Promise((resolve, reject) => {
         userAxiosService
           .get(login, password)
-          .then((res) => {
+          .then(async (res) => {
             // console.log(res);
             if (res.data.length) {
-              resolve(res.data[0]);
+              // console.log(res.data);
+              const dataClear = await transformObject(res.data);
+              this.user = dataClear[0];
+              resolve(dataClear[0]);
             } else {
               reject(false);
             }
@@ -53,6 +105,10 @@ const useUserStore = defineStore("user", {
             reject(new Error(err));
           });
       });
+    },
+    resetUser() {
+      this.user = {};
+      this.connected = false;
     },
   },
 });

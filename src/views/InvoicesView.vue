@@ -20,6 +20,7 @@ export default defineComponent({
       renderComponent: true,
       adminInvoice: true,
       displayInvoice: false,
+      invoiceForm: false,
     };
   },
   methods: {
@@ -38,6 +39,7 @@ export default defineComponent({
         case "invoices":
           this.adminInvoice = true;
           this.displayInvoice = false;
+          this.invoiceForm = false;
           break;
         default:
           break;
@@ -50,6 +52,7 @@ export default defineComponent({
         case "invoices":
           this.displayInvoice = true;
           this.adminInvoice = false;
+          this.invoiceForm = false;
           break;
         default:
           break;
@@ -62,6 +65,18 @@ export default defineComponent({
     Sidenav,
     InvoiceContent,
     Suspense,
+  },
+  watch: {
+    $route: {
+      async handler(newR, old) {
+        // console.log(newR.query);
+        if (newR.query.admin !== undefined) {
+          this.adminInvoice = newR.query.admin === "true" ? true : false;
+          this.invoiceForm = this.adminInvoice;
+        }
+      },
+      immediate: true,
+    },
   },
 });
 </script>
@@ -77,6 +92,7 @@ export default defineComponent({
       <Suspense>
         <InvoiceContent
           v-if="renderComponent"
+          :invoiceForm="invoiceForm"
           :admin="adminInvoice"
           :display="displayInvoice"
         />

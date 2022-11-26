@@ -41,6 +41,7 @@ export default defineComponent({
       renderComponent: true,
       adminService: true,
       displayService: false,
+      serviceForm: false,
     };
   },
   methods: {
@@ -62,6 +63,7 @@ export default defineComponent({
         case "services":
           this.adminService = true;
           this.displayService = false;
+          this.serviceForm = false;
           break;
         default:
           break;
@@ -74,11 +76,24 @@ export default defineComponent({
         case "services":
           this.displayService = true;
           this.adminService = false;
+          this.serviceForm = false;
           break;
         default:
           break;
       }
       this.forceServiceRerender();
+    },
+  },
+  watch: {
+    $route: {
+      async handler(newR, old) {
+        // console.log(newR.query);
+        if (newR.query.admin !== undefined) {
+          this.adminService = newR.query.admin === "true" ? true : false;
+          this.serviceForm = this.adminService;
+        }
+      },
+      immediate: true,
     },
   },
 });
@@ -95,6 +110,7 @@ export default defineComponent({
       <Suspense>
         <ServiceContent
           v-if="renderComponent"
+          :serviceForm="serviceForm"
           :admin="adminService"
           :display="displayService"
         />

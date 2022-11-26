@@ -5,6 +5,14 @@ class UserDataService {
     return http.get("/users");
   }
 
+  getAllDevises() {
+    return http.get("/users/devises");
+  }
+
+  getAllPrices() {
+    return http.get("/users/prices");
+  }
+
   get(login: string, password: string) {
     return http.get(`/users/login`, {
       params: {

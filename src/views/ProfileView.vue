@@ -1,8 +1,8 @@
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, Suspense } from "vue";
 import TheToolbarIn from "../components/TheToolbarIn.vue";
 import { useUserStore } from "@/stores/user";
-
+import ProfileContent from "../components/ProfileContent.vue";
 export default defineComponent({
   name: "ProfileView",
   setup() {
@@ -11,11 +11,17 @@ export default defineComponent({
   },
   components: {
     TheToolbarIn,
+    ProfileContent,
   },
 });
 </script>
 <template>
   <main>
     <TheToolbarIn />
+    <div class="fullContent">
+      <Suspense>
+        <ProfileContent />
+      </Suspense>
+    </div>
   </main>
 </template>

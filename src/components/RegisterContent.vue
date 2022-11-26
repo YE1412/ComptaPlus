@@ -7,26 +7,49 @@ import {
   MDBBtn,
   MDBListGroup,
   MDBListGroupItem,
+  MDBFile,
 } from "mdb-vue-ui-kit";
 import RegisterContentItem from "./RegisterContentItem.vue";
 import userAxiosService from "../services/user.service";
+import uploadImageAxiosService from "../services/upload_image.service";
 import ModalItem from "./ModalItem.vue";
 import router from "@/router/index";
 import { useMessageStore } from "@/stores/message";
 import MessagesItem from "../components/MessagesItem.vue";
-// import { genMod, cryptMod } from "../WasmModules";
+// import { MAX_SIZE } from "../../upload.js";
 import "../globals";
+import vSelect from "vue-select";
 
 export default defineComponent({
   name: "RegisterContent",
-  setup() {
+  async setup() {
     const messageStore = useMessageStore();
-
+    const devises = await userAxiosService
+      .getAllDevises()
+      .then((res) => {
+        return res.data;
+      })
+      .catch((err) => {
+        console.log(err);
+        return [];
+      });
     return {
       messageStore,
+      devisesObj: devises,
     };
   },
   data() {
+    let mainDeviseCurrencyOpt = [];
+    mainDeviseCurrencyOpt.push({
+      text: this.$i18n.t("devisePlaceholder"),
+      value: 0,
+    });
+    for (const k in this.devisesObj) {
+      let devise = {};
+      devise.text = `${this.devisesObj[k].symbole} - ${this.devisesObj[k].libelle}`;
+      devise.value = this.devisesObj[k].deviseId;
+      mainDeviseCurrencyOpt.push(devise);
+    }
     return {
       errors: [],
       lastname: "",
@@ -57,10 +80,62 @@ export default defineComponent({
       passwordConfirm_valid: false,
       passwordConfirm_validMsg: "",
       passwordConfirm_valid_errorMsg: "",
+      companyName: "",
+      companyName_valid: false,
+      companyName_validMsg: "",
+      companyName_valid_errorMsg: "",
+      companyLogo: [],
+      companyLogo_valid: false,
+      companyLogo_validMsg: "",
+      companyLogo_valid_errorMsg: "",
+      currentImage: undefined,
+      previewImage: undefined,
+      progress: 0,
+      message: "",
+      deviseId: 0,
+      selectedMainDeviseCurrency: null,
+      mainDeviseCurrencyOption: mainDeviseCurrencyOpt,
       registerModal: false,
       modalTitle: "",
       modalContent: "",
     };
+  },
+  computed: {
+    selectImage() {
+      let ret = false;
+      if (this.companyLogo.length && this.validCompanyLogo()) {
+        // this.currentImage = this.companyLogo.item(0);
+        // this.previewImage = URL.createObjectURL(this.currentImage);
+        // this.progress = 0;
+        // this.message = "";
+        ret = true;
+      } else {
+        // this.currentImage = undefined;
+        // this.previewImage = undefined;
+        // this.progress = 0;
+        // this.message = "";
+        ret = false;
+      }
+      return ret;
+    },
+  },
+  watch: {
+    selectImage: {
+      handler(newValue, oldValue) {
+        if (newValue) {
+          this.currentImage = this.companyLogo.item(0);
+          this.previewImage = URL.createObjectURL(this.currentImage);
+          this.progress = 0;
+          this.message = "";
+        } else {
+          this.currentImage = undefined;
+          this.previewImage = undefined;
+          this.progress = 0;
+          this.message = "";
+        }
+      },
+      immediate: true,
+    },
   },
   components: {
     RegisterContentItem,
@@ -71,28 +146,51 @@ export default defineComponent({
     MDBListGroup,
     ModalItem,
     MessagesItem,
+    vSelect,
+    MDBFile,
   },
   methods: {
-    lastnameChanges(text: String) {
+    upload() {
+      this.progress = 0;
+
+      return uploadImageAxiosService.upload(this.currentImage, (event) => {
+        this.progress = Math.round((100 * event.loaded) / event.total);
+      });
+      // .then((response) => {
+      //   console.log(response);
+      //   this.message = response.data.message;
+      //   return response.data;
+      // })
+      // .catch((err) => {
+      //   console.log(err);
+      //   this.progress = 0;
+      //   this.message = "Could not upload the image ! " + err.response.data.message || err.message;
+      //   this.currentImage = undefined;
+      // });
+    },
+    lastnameChanges(text: string) {
       this.lastname = text;
     },
-    firstnameChanges(text: String) {
+    firstnameChanges(text: string) {
       this.firstname = text;
     },
-    loginChanges(text: String) {
+    loginChanges(text: string) {
       this.login = text;
     },
-    emailChanges(text: String) {
+    emailChanges(text: string) {
       this.email = text;
     },
-    emailConfirmChanges(text: String) {
+    emailConfirmChanges(text: string) {
       this.email_confirm = text;
     },
-    passwordChanges(text: String) {
+    passwordChanges(text: string) {
       this.password = text;
     },
-    passwordConfirmChanges(text: String) {
+    passwordConfirmChanges(text: string) {
       this.password_confirm = text;
+    },
+    companyNameChanges(text: string) {
+      this.companyName = text;
     },
     userForm: async function (e) {
       e.preventDefault();
@@ -209,10 +307,90 @@ export default defineComponent({
         this.passwordConfirm_valid = true;
         this.passwordConfirm_validMsg = this.$i18n.t("validMsg");
       }
+      // Company Name ckecks
+      if (!this.companyName) {
+        this.errors.push(this.$i18n.t("emptyCompanyNameErrorMsg"));
+        this.companyName_valid = false;
+        this.companyName_valid_errorMsg = this.$i18n.t(
+          "emptyCompanyNameErrorMsg"
+        );
+      } else {
+        if (!this.validCompanyName()) {
+          this.errors.push(this.$i18n.t("errorCompanyNameMsg"));
+          this.companyName_valid = false;
+          this.companyName_valid_errorMsg = this.$i18n.t("errorCompanyNameMsg");
+        } else {
+          this.companyName_valid = true;
+          this.companyName_validMsg = this.$i18n.t("validMsg");
+        }
+      }
+      // Devise checks
+      if (this.selectedMainDeviseCurrency === null) {
+        this.errors.push(this.$i18n.t("emptyDeviseErrorMsg"));
+        this.modalTitle = this.$i18n.t("modalTitleKo");
+        this.modalContent = this.$i18n.t("modalContentKo", {
+          err: this.$i18n.t("emptyDeviseErrorMsg"),
+        });
+        this.registerModal = true;
+      } else {
+        this.deviseId = this.selectedMainDeviseCurrency.value;
+      }
+      // Company Logo checks
+      // console.log(this.companyLogo);
+      // console.log(this.companyLogo.length);
+      if (this.companyLogo.length) {
+        if (!this.validCompanyLogo()) {
+          this.errors.push(this.$i18n.t("errorCompanyLogoMsg"));
+          this.companyLogo_valid = false;
+          this.companyLogo_valid_errorMsg = this.$i18n.t("errorCompanyLogoMsg");
+        } else {
+          await this.upload()
+            .then((response) => {
+              // console.log(response);
+              this.message = response.data.message;
+              this.companyLogo_valid = true;
+              this.companyLogo_validMsg = this.$i18n.t("validMsg");
+            })
+            .catch((err) => {
+              // console.log(err);
+              this.progress = 0;
+              this.message =
+                "Could not upload the image, " + err.response.data.message ||
+                err.message;
+              this.currentImage = undefined;
+              if (
+                err.response.data.errFileSize !== undefined &&
+                err.response.data.errFileSize
+              ) {
+                this.errors.push(
+                  this.$i18n.t("errorCompanyLogoMaxSizeFileUploadMsg", {
+                    size: err.response.data.errMaxFileSize,
+                  })
+                );
+                this.companyLogo_valid = false;
+                this.companyLogo_valid_errorMsg = this.$i18n.t(
+                  "errorCompanyLogoMaxSizeFileUploadMsg",
+                  { size: err.response.data.errMaxFileSize }
+                );
+              } else {
+                this.errors.push(
+                  this.$i18n.t("errorCompanyLogoFileUploadMsg", {
+                    err: this.message,
+                  })
+                );
+                this.companyLogo_valid = false;
+                this.companyLogo_valid_errorMsg = this.$i18n.t(
+                  "errorCompanyLogoFileUploadMsg",
+                  { err: this.message }
+                );
+              }
+            });
+        }
+      }
 
       if (!this.errors.length) {
         const ret = await this.registerNewUser();
-        // console.log(ret);
+        console.log(ret);
         if (ret) {
           router.push("/");
         }
@@ -265,6 +443,14 @@ export default defineComponent({
           return true;
         });
     },
+    validCompanyName: function () {
+      var re = /^([a-zA-Z])*$/;
+      return re.test(this.companyName);
+    },
+    validCompanyLogo: function () {
+      var re = /(?:\.(jpg|jpeg|svg|png|ico))$/i;
+      return re.test(this.companyLogo[0].name);
+    },
     registerNewUser() {
       const obj = {
         lastname: this.lastname,
@@ -272,7 +458,10 @@ export default defineComponent({
         login: this.login,
         email: this.email,
         password: this.password,
-        type: 2,
+        companyName: this.companyName,
+        companyLogo: this.companyLogo[0].name,
+        deviseId: this.deviseId,
+        type: 1,
       };
       this.transformObject(obj);
       return userAxiosService
@@ -363,13 +552,28 @@ export default defineComponent({
 		"passwordConfirmPlaceholder": "Mot de passe (bis)",
 		"emptyPasswordConfirmErrorMsg": "Confirmation de mot de passe requise !",
 		"errorPasswordConfirmMsg": "Les mots de passe ne sont pas identiques !",
+    "deviseLabelText": "Devise de référence*",
+    "devisePlaceholder": "Devises",
+    "emptyDeviseErrorMsg": "Devise requise ",
+    "errorDeviseMsg": "Devise incorrecte ",
+    "companyNameLabelText": "Nom de la société*",
+    "companyNamePlaceholder": "Société",
+    "emptyCompanyNameErrorMsg": "Nom de société requis !",
+    "errorCompanyNameMsg": "Nom de société incorrect !",
+    "companyLogoLabelText": "Logo de la société (.png/.jpg/.ico/.svg) < {size}MB",
+    "companyLogoPlaceholder": "Logo (.png/.jpg/.ico/.svg)",
+    "emptyCompanyLogoErrorMsg": "Logo de la société requis !",
+    "errorCompanyLogoMsg": "Fichier de logo incorrect !",
+    "errorCompanyLogoFileUploadMsg": "Erreur lors de l'upload du fichier : {err}",
+    "errorCompanyLogoMaxSizeFileUploadMsg": "Erreur lors de l'upload du fichier : Taille de fichier supérieure à {size}MB !",
+
 		"submit_buttonText": "S'enregistrer",
 		"errorListTitle": "Veuillez corriger l'/les erreur(s) suivante(s) :",
 		"modalTitleOk": "Cool !",
-	    "modalContentOk": "Inscription résussie !",
-	    "modalTitleKo": "Oups !",
-	    "modalContentKo": "Une erreur est survenue lors de l'inscription : {err} !",
-	    "modalCloseBtnText": "Fermer"
+    "modalContentOk": "Inscription résussie !",
+    "modalTitleKo": "Oups !",
+    "modalContentKo": "Une erreur est survenue lors de l'inscription : {err} !",
+    "modalCloseBtnText": "Fermer"
 	},
 	"en": {
 		"form_title": "Sign up form",
@@ -404,13 +608,28 @@ export default defineComponent({
 		"passwordConfirmPlaceholder": "Password (bis)",
 		"emptyPasswordConfirmErrorMsg": "Password confirmation required !",
 		"errorPasswordConfirmMsg": "Password confirmation mismatch !",
-		"submit_buttonText": "Sign up",
+		"deviseLabelText": "Reference devise*",
+    "devisePlaceholder": "Devises",
+    "emptyDeviseErrorMsg": "Devises required !",
+    "errorDeviseMsg": "Bad devise supplied !",
+    "companyNameLabelText": "Company name*",
+    "companyNamePlaceholder": "Company",
+    "emptyCompanyNameErrorMsg": "Company name required !",
+    "errorCompanyNameMsg": "Bad company name supplied !",
+    "companyLogoLabelText": "Company icon (.png/.jpg/.ico/.svg) < {size}MB",
+    "companyLogoPlaceholder": "Icon (.png/.jpg/.ico/.svg)",
+    "emptyCompanyLogoErrorMsg": "Company icon required !",
+    "errorCompanyLogoMsg": "Bad company icon file supplied !",
+    "errorCompanyLogoFileUploadMsg": "Error while uploading file : {err}",
+    "errorCompanyLogoMaxSizeFileUploadMsg": "Error while uploading file : Size of file greater than {size}MB !",
+
+    "submit_buttonText": "Sign up",
 		"errorListTitle": "Please correct the following error(s) : ",
 		"modalTitleOk": "Great !",
-	    "modalContentOk": "Signing up completed !",
-	    "modalTitleKo": "Error !",
-	    "modalContentKo": "An error occured while singing up : {err} !",
-	    "modalCloseBtnText": "Close"
+    "modalContentOk": "Signing up completed !",
+    "modalTitleKo": "Error !",
+    "modalContentKo": "An error occured while singing up : {err} !",
+    "modalCloseBtnText": "Close"
 	}
 }
 </i18n>
@@ -553,12 +772,97 @@ export default defineComponent({
           />
         </MDBRow>
         <MDBRow class="mb-4 d-flex justify-content-center">
+          <RegisterContentItem
+            :label="$t('companyNameLabelText')"
+            @company_name="companyNameChanges"
+            input="company_name"
+            :placeholder="$t('companyNamePlaceholder')"
+            :invalidFeedback="companyName_valid_errorMsg"
+            :validFeedback="companyName_validMsg"
+            :isValid="companyName_valid"
+            :isValidated="true"
+            :required="true"
+            ariaLabel="company_name"
+            type="text"
+            size="6"
+          />
+        </MDBRow>
+        <MDBRow class="mb-4 d-flex justify-content-center">
+          <MDBCol md="6">
+            <MDBFile
+              v-model="companyLogo"
+              :label="$t('companyLogoLabelText', { size: 2 })"
+              :isValid="companyLogo_valid"
+              :isValidated="true"
+              :invalidFeedback="companyLogo_valid_errorMsg"
+              :validFeedback="companyLogo_validMsg"
+              size="lg"
+            >
+            </MDBFile>
+            <div
+              v-if="currentImage"
+              class="progress"
+              style="height: 10px; margin-top: 30px"
+            >
+              <div
+                class="progress-bar progress-bar-info"
+                role="progressbar"
+                :aria-valuenow="progress"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                :style="{ width: progress + '%' }"
+              >
+                {{ progress }}%
+              </div>
+            </div>
+            <div v-if="previewImage" style="width: 50px">
+              <div>
+                <img
+                  class="preview my-3"
+                  :src="previewImage"
+                  alt=""
+                  width="50"
+                />
+              </div>
+            </div>
+          </MDBCol>
+        </MDBRow>
+        <MDBRow class="mb-4 d-flex justify-content-center">
+          <MDBCol md="6">
+            <label for="devises">{{ $t("deviseLabelText") }}</label>
+            <vSelect
+              :inputGroup="true"
+              :required="true"
+              aria-label="deviseId"
+              label="text"
+              v-model="selectedMainDeviseCurrency"
+              :multiple="false"
+              :options="mainDeviseCurrencyOption"
+              inputId="devises"
+              class="custom-select w-100"
+              :selectable="(option) => option.value !== 0"
+            >
+              <template #search="{ attributes, events }">
+                <input
+                  class="vs__search"
+                  :required="!selectedMainDeviseCurrency"
+                  v-bind="attributes"
+                  v-on="events"
+                />
+              </template>
+              <template v-slot:prepend>
+                <span class="input-group-text" id="basic">@</span>
+              </template>
+            </vSelect>
+          </MDBCol>
+        </MDBRow>
+        <MDBRow class="mb-4 d-flex justify-content-center">
           <MDBCol
             col="6"
             class="justify-content-center mb-4 text-center"
             style="text-align: center"
           >
-            <MDBBtn color="primary" type="submit">
+            <MDBBtn color="primary" type="submit" style="color: #fff">
               {{ $t("submit_buttonText") }}
             </MDBBtn>
           </MDBCol>

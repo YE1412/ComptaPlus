@@ -65,13 +65,19 @@ export default defineComponent({
   mounted() {},
   data() {
     // console.log(this.services);
-    const headTable = [
-      this.$i18n.t("additionalContentTableHeadText"),
-      this.$i18n.t("priceHtHeadText"),
-      this.$i18n.t("servicesTableHeadText"),
-      this.$i18n.t("invoiceHeadText"),
-      this.$i18n.t("actionTableHeadText"),
-    ];
+    const headTable = this.orderForm
+      ? [
+          this.$i18n.t("additionalContentTableHeadText"),
+          this.$i18n.t("servicesTableHeadText"),
+          this.$i18n.t("actionTableHeadText"),
+        ]
+      : [
+          this.$i18n.t("additionalContentTableHeadText"),
+          this.$i18n.t("priceHtHeadText"),
+          this.$i18n.t("servicesTableHeadText"),
+          this.$i18n.t("invoiceHeadText"),
+          this.$i18n.t("actionTableHeadText"),
+        ];
     let servicesOpt = [];
     servicesOpt.push({
       text: this.$i18n.t("servicesPlaceholder"),
@@ -120,7 +126,7 @@ export default defineComponent({
     return {
       tableHeading: headTable,
       messageVisibility: false,
-      form: this.actorForm,
+      form: this.orderForm,
       // For adding
       update: false,
       add: true,
@@ -359,7 +365,8 @@ export default defineComponent({
       // console.log(this.seller);
       // console.log(this.both);
       // console.log(e.target.getAttribute("id"));
-      // console.log(e.target.getAttribute("id").value);
+      // console.log(e.target.getAttribute("aria-label"));
+      // console.log(e.target.value);
       switch (e.target.getAttribute("aria-label")) {
         case "contenuAdditionnel":
           this.contenuAdditionnel = e.target.value;
@@ -514,12 +521,19 @@ export default defineComponent({
         });
     },
     inputsCheck(obj: any) {
-      if (this.contenuAdditionnel && !this.validContenuAdditionnel()) {
-        this.errors.push(this.$i18n.t("errorAdditionalContentInvalidFeed"));
-        obj["contenuAdditionnel"].isValid = false;
-        obj["contenuAdditionnel"].invalidFeed = this.$i18n.t(
-          "errorAdditionalContentInvalidFeed"
-        );
+      // console.log(this.contenuAdditionnel);
+      if (this.contenuAdditionnel) {
+        if (!this.validContenuAdditionnel()) {
+          this.errors.push(this.$i18n.t("errorAdditionalContentInvalidFeed"));
+          obj["contenuAdditionnel"].isValid = false;
+          obj["contenuAdditionnel"].invalidFeed = this.$i18n.t(
+            "errorAdditionalContentInvalidFeed"
+          );
+        } else {
+          obj["contenuAdditionnel"].isValid = true;
+          obj["contenuAdditionnel"].validFeed = this.$i18n.t("validFeed");
+          obj["contenuAdditionnel"].invalidFeed = "";
+        }
       } else {
         this.contenuAdditionnel = null;
         obj["contenuAdditionnel"].isValid = true;

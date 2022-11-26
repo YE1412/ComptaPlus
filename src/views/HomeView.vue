@@ -36,7 +36,8 @@ export default defineComponent({
   <main>
     <TheToolbarIn />
     <Sidenav />
-    <TheWelcome />
-    <RouterLink to="/a-propos"> A-propos </RouterLink>
+    <div class="content">
+      <TheWelcome />
+    </div>
   </main>
 </template>

@@ -141,19 +141,31 @@ export default defineComponent({
   mounted() {},
   data() {
     // console.log(this.services);
-    const headTable = [
-      this.$i18n.t("dateTableHeadText"),
-      this.$i18n.t("htPriceTableHeadText"),
-      this.$i18n.t("ttPriceTableHeadText"),
-      this.$i18n.t("vatTableHeadText"),
-      this.$i18n.t("languageTableHeadText"),
-      this.$i18n.t("deviseTableHeadText"),
-      this.$i18n.t("buyerTableHeadText"),
-      this.$i18n.t("sellerTableHeadText"),
-      this.$i18n.t("orderTableHeadText"),
-      this.$i18n.t("paymentTableHeadText"),
-      this.$i18n.t("actionTableHeadText"),
-    ];
+    const headTable = this.invoiceForm
+      ? [
+          this.$i18n.t("dateTableHeadText"),
+          this.$i18n.t("vatTableHeadText"),
+          this.$i18n.t("languageTableHeadText"),
+          this.$i18n.t("deviseTableHeadText"),
+          this.$i18n.t("buyerTableHeadText"),
+          this.$i18n.t("sellerTableHeadText"),
+          this.$i18n.t("orderTableHeadText"),
+          this.$i18n.t("paymentTableHeadText"),
+          this.$i18n.t("actionTableHeadText"),
+        ]
+      : [
+          this.$i18n.t("dateTableHeadText"),
+          this.$i18n.t("htPriceTableHeadText"),
+          this.$i18n.t("ttPriceTableHeadText"),
+          this.$i18n.t("vatTableHeadText"),
+          this.$i18n.t("languageTableHeadText"),
+          this.$i18n.t("deviseTableHeadText"),
+          this.$i18n.t("buyerTableHeadText"),
+          this.$i18n.t("sellerTableHeadText"),
+          this.$i18n.t("orderTableHeadText"),
+          this.$i18n.t("paymentTableHeadText"),
+          this.$i18n.t("actionTableHeadText"),
+        ];
     let invoiceLanguagesOpt = [],
       invoiceDevisesOpt = [],
       invoiceBuyersOpt = [],
@@ -363,7 +375,7 @@ export default defineComponent({
     return {
       tableHeading: headTable,
       messageVisibility: false,
-      form: this.actorForm,
+      form: this.invoiceForm,
       // For adding
       update: false,
       add: true,

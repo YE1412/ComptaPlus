@@ -26,6 +26,7 @@ export default defineComponent({
       renderComponent: true,
       adminActor: true,
       displayActor: false,
+      actorForm: false,
     };
   },
   methods: {
@@ -44,6 +45,7 @@ export default defineComponent({
         case "actors":
           this.adminActor = true;
           this.displayActor = false;
+          this.actorForm = false;
           break;
         default:
           break;
@@ -56,11 +58,24 @@ export default defineComponent({
         case "actors":
           this.displayActor = true;
           this.adminActor = false;
+          this.actorForm = false;
           break;
         default:
           break;
       }
       this.forceActorRerender();
+    },
+  },
+  watch: {
+    $route: {
+      async handler(newR, old) {
+        // console.log(newR.query);
+        if (newR.query.admin !== undefined) {
+          this.adminActor = newR.query.admin === "true" ? true : false;
+          this.actorForm = this.adminActor;
+        }
+      },
+      immediate: true,
     },
   },
 });
@@ -77,6 +92,7 @@ export default defineComponent({
       <Suspense>
         <ActorContent
           v-if="renderComponent"
+          :actorForm="actorForm"
           :admin="adminActor"
           :display="displayActor"
         />

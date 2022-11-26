@@ -53,6 +53,7 @@ export default defineComponent({
     return {
       checkbox: chkbox,
       heading: headTable,
+      colSpan: "11",
     };
   },
   computed: {
@@ -229,10 +230,9 @@ export default defineComponent({
 	    "paymentTypeCHQLibelle": "Chèque",
 	    "paymentStateOkLibelle": "Payé",
 	    "paymentStateKoLibelle": "Impayé",
-	    "addButtonText": "Ajouter",
+	    "addButtonText": "Ajouter une facture",
 	    "invoicesLinkName": "Factures",
   		"invoicesLinkTarget": "/factures",
-
 	},
 	"en": {
 		"exportButtonText": "Export",
@@ -254,7 +254,7 @@ export default defineComponent({
 	    "paymentTypeCHQLibelle": "Check",
 	    "paymentStateOkLibelle": "Paid",
 	    "paymentStateKoLibelle": "Not paid",
-	    "addButtonText": "Add",
+	    "addButtonText": "Add an invoice",
 	    "invoicesLinkName": "Invoices",
   		"invoicesLinkTarget": "/invoices",
 	}
@@ -278,9 +278,18 @@ export default defineComponent({
         </thead>
         <tbody v-if="!contentsForDisp.length">
           <tr>
-            <td class="text-center" :colspan="colSpan">{{ emptyTableText }}</td>
-            <td class="text-center" v-if="admin">
-              <RouterLink :to="{ name: $t('invoicesLinkName') }">
+            <td class="text-center" :colspan="colSpan">
+              {{ $t("emptyTableBodyContentText") }}
+            </td>
+            <td class="text-center">
+              <RouterLink
+                :to="{
+                  name: $t('invoicesLinkName'),
+                  query: {
+                    admin: true,
+                  },
+                }"
+              >
                 <button
                   type="button"
                   class="btn btn-primary btn-rounded btn-sm my-0"

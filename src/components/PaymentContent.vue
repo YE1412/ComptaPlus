@@ -206,7 +206,7 @@ export default defineComponent({
     return {
       tableHeading: headTable,
       messageVisibility: false,
-      form: this.actorForm,
+      form: this.paymentForm,
       // For adding
       update: false,
       add: true,
@@ -873,7 +873,7 @@ export default defineComponent({
               v-model="selectedPaymentState"
               :multiple="false"
               :options="paymentStatesOption"
-              id="states"
+              inputId="states"
               class="custom-select w-100"
               :selectable="(option) => option.value !== 0"
             >
@@ -904,7 +904,7 @@ export default defineComponent({
               v-model="selectedPaymentType"
               :multiple="false"
               :options="paymentTypesOption"
-              id="types"
+              inputId="types"
               class="custom-select w-100"
               :selectable="
                 (option) => option.value !== 0 || option.value !== 'default'
@@ -937,7 +937,7 @@ export default defineComponent({
               v-model="selectedPaymentInvoice"
               :multiple="false"
               :options="paymentInvoicesOption"
-              id="invoices"
+              inputId="invoices"
               class="custom-select w-100"
               :selectable="(option) => option.value !== 0"
             >

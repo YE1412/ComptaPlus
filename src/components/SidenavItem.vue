@@ -41,9 +41,11 @@ export default defineComponent({
   },
   methods: {
     handleAdminClick(e: Event) {
+      e.preventDefault();
       this.$emit("show-admin", this.src);
     },
     handleDisplayClick(e: Event) {
+      e.preventDefault();
       // console.log(`Display SidenavItem - ${this.src}`);
       this.$emit("show-display", this.src);
     },

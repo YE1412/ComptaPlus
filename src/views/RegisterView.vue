@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, Suspense } from "vue";
 import TheToolbarOut from "../components/TheToolbarOut.vue";
 import RegisterContent from "../components/RegisterContent.vue";
 import { useUserStore } from "@/stores/user";
@@ -20,6 +20,8 @@ export default defineComponent({
 <template>
   <main>
     <TheToolbarOut />
-    <RegisterContent />
+    <Suspense>
+      <RegisterContent />
+    </Suspense>
   </main>
 </template>

@@ -57,7 +57,7 @@ const useSessionStore = defineStore("session", {
       return new Promise((resolve, reject) => {
         sessionAxiosService
           .validate(this.sessionId)
-          .then((res) => {
+          .then(() => {
             resolve(true);
           })
           .catch((err) => {

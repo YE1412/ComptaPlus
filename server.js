@@ -205,6 +205,26 @@ async function createViteServer() {
 //   const lang = db.langue;
 //   const paymentType = db.paymentType;
 //   const devise = db.devise;
+//   const price = db.price;
+
+//   price.create({
+//     stockPricesId: 1,
+//     euro: 1.00,
+//     dollar: 1.04,
+//     livre: 0.86
+//   });
+//   price.create({
+//     stockPricesId: 2,
+//     euro: 0.96,
+//     dollar: 1.00,
+//     livre: 0.83
+//   });
+//   price.create({
+//     stockPricesId: 3,
+//     euro: 1.16,
+//     dollar: 1.21,
+//     livre: 1.00
+//   });
 
 //   userType.create({
 //     userTypeId: 1,
@@ -271,14 +291,17 @@ async function createViteServer() {
 //   devise.create({
 //     deviseId: 3,
 //     symbole: "€",
+//     libelle: "euro"
 //   });
 //   devise.create({
 //     deviseId: 1,
 //     symbole: "$",
+//     libelle: "dollar"
 //   });
 //   devise.create({
 //     deviseId: 2,
 //     symbole: "£",
+//     libelle: "livre"
 //   });
 // }
 

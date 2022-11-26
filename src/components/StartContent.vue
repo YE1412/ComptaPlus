@@ -62,7 +62,7 @@ export default defineComponent({
                 )
                 .catch((err) => {});
               this.userStore.connected = true;
-              this.userStore.user = this.transformObj(res);
+              // this.userStore.user = this.transformObj(res);
               router.push(this.$i18n.t("home_path"));
               // console.log(this.userStore);
             },
@@ -92,18 +92,17 @@ export default defineComponent({
     transformValue(obj: string) {
       return __CRYPTAPI__.crypt(obj, __KEY__);
     },
-    transformObj(obj) {
-      let ret = {};
-      for (const key in obj) {
-        if (typeof obj[key] === "string") {
-          ret[key] = __DECRYPTAPI__.decrypt(obj[key]);
-        } else {
-          ret[key] = obj[key];
-        }
-      }
-      // console.log(ret);
-      return ret;
-    },
+    // transformObj(obj) {
+    //   let ret = {};
+    //   for (const key in obj) {
+    //     if (typeof obj[key] === "string") {
+    //       ret[key] = __DECRYPTAPI__.decrypt(obj[key]);
+    //     } else {
+    //       ret[key] = obj[key];
+    //     }
+    //   }
+    //   return ret;
+    // },
   },
 });
 </script>

@@ -20,6 +20,7 @@ export default defineComponent({
       renderComponent: true,
       adminPayment: true,
       displayPayment: false,
+      paymentForm: false,
     };
   },
   methods: {
@@ -38,6 +39,7 @@ export default defineComponent({
         case "payments":
           this.adminPayment = true;
           this.displayPayment = false;
+          this.paymentForm = false;
           break;
         default:
           break;
@@ -50,6 +52,7 @@ export default defineComponent({
         case "payments":
           this.displayPayment = true;
           this.adminPayment = false;
+          this.paymentForm = false;
           break;
         default:
           break;
@@ -62,6 +65,18 @@ export default defineComponent({
     Sidenav,
     PaymentContent,
     Suspense,
+  },
+  watch: {
+    $route: {
+      async handler(newR, old) {
+        // console.log(newR.query);
+        if (newR.query.admin !== undefined) {
+          this.adminPayment = newR.query.admin === "true" ? true : false;
+          this.paymentForm = this.adminPayment;
+        }
+      },
+      immediate: true,
+    },
   },
 });
 </script>
@@ -77,6 +92,7 @@ export default defineComponent({
       <Suspense>
         <PaymentContent
           v-if="renderComponent"
+          :paymentForm="paymentForm"
           :admin="adminPayment"
           :display="displayPayment"
         />

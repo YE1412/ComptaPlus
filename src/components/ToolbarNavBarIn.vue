@@ -21,8 +21,7 @@ export default defineComponent({
     logoutClick(e) {
       e.preventDefault();
       // console.log("logout click !");
-      this.userStore.user = {};
-      this.userStore.connected = false;
+      this.userStore.resetUser();
       this.sessionStore.deleteSession();
       this.messageStore.deleteMessages();
       router.go(0);

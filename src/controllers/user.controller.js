@@ -1,6 +1,9 @@
 import db from "../models/index.js";
+import { upload, MAX_SIZE } from "../../upload.js";
 
 const user = db.user;
+const devise = db.devise;
+const price = db.price;
 const Op = db.Sequelize.Op;
 
 const create = (req, res) => {
@@ -17,7 +20,10 @@ const create = (req, res) => {
     login: body.login,
     email: body.email,
     pass: body.password,
-    type: body.type,
+    companyName: body.companyName,
+    companyLogo: body.companyLogo,
+    deviseId: body.deviseId,
+    userTypeId: body.type,
   };
   // Save user in db
   user
@@ -42,7 +48,37 @@ const findAll = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occured while retieving user.",
+        message: err.message || "Some error occured while retieving users.",
+      });
+    });
+};
+
+const findAllDevises = (req, res) => {
+  devise
+    .findAll({
+      where: {},
+    })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occured while retieving devises.",
+      });
+    });
+};
+
+const findAllPrices = (req, res) => {
+  price
+    .findAll({
+      where: {},
+    })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occured while retieving prices.",
       });
     });
 };
@@ -76,16 +112,19 @@ const findOne = (req, res) => {
 
   user
     .findAll({
-      // attributes: [
-      // 	'userId',
-      // 	'firstName',
-      // 	'lastName',
-      // 	'login',
-      // 	'email',
-      // 	'pass',
-      // 	'type'
-      // ],
+      attributes: [
+        "userId",
+        "firstName",
+        "lastName",
+        "login",
+        "email",
+        "companyName",
+        "companyLogo",
+        "devise.deviseId",
+        "userTypeId",
+      ],
       where: whereClause,
+      include: [user.devise],
     })
     .then((data) => {
       res.send(data);
@@ -105,6 +144,17 @@ const checkOne = (req, res) => {
 
   user
     .findAll({
+      attributes: [
+        "userId",
+        "firstName",
+        "lastName",
+        "login",
+        "email",
+        "companyName",
+        "companyLogo",
+        "devise.deviseId",
+        "userTypeId",
+      ],
       where: {
         [Op.or]: [
           {
@@ -220,13 +270,47 @@ const findAllOfType = (req, res) => {
     });
 };
 
+const uploadImg = function (req, res) {
+  // console.log(req.params);
+  // console.log(req.query);
+  // console.log(req.body);
+  // console.log(req.file);
+  upload(req, res)
+    .then(() => {
+      // console.log(result);
+      if (req.file == undefined) {
+        return res.status(400).send({ message: "Please upload a file!" });
+      }
+      res.status(200).send({
+        message: "Uploaded the file successfully: " + req.file.originalname,
+      });
+    })
+    .catch((err) => {
+      // console.log(err);
+      if (err.code == "LIMIT_FILE_SIZE") {
+        return res.status(500).send({
+          message: `File size cannot be larger than ${MAX_SIZE}MB!`,
+          errFileSize: true,
+          errMaxFileSize: MAX_SIZE,
+        });
+      }
+      res.status(500).send({
+        message: `Could not upload the file: ${req.file.originalname}. ${err}`,
+        error: err,
+      });
+    });
+};
+
 export default {
   create: create,
   findAll: findAll,
+  findAllDevises: findAllDevises,
+  findAllPrices: findAllPrices,
   findOne: findOne,
   checkOne: checkOne,
   update: update,
   deleteOne: deleteOne,
   deleteAll: deleteAll,
   findAllOfType: findAllOfType,
+  uploadImg: uploadImg,
 };

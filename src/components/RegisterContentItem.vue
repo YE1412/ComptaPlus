@@ -20,6 +20,7 @@ export default defineComponent({
     inputGroup: {
       type: Boolean,
       required: false,
+      default: () => false,
     },
     type: {
       type: String,

@@ -5,6 +5,7 @@ import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import "@/assets/fonts/Avenir-Medium/Avenir-Medium-normal.js";
 import { useInvoiceStore } from "@/stores/invoice";
+import { useCounterStore } from "@/stores/counter";
 // Requiring the lodash library
 import _ from "lodash";
 
@@ -13,6 +14,7 @@ export default defineComponent({
   async setup() {
     const usrStore = useUserStore();
     const invStore = useInvoiceStore();
+    const cntStore = useCounterStore();
     const tabXPos = 26.3,
       headYPos = 41.3,
       headTableWidth = 393.9,
@@ -24,6 +26,7 @@ export default defineComponent({
     return {
       userStore: usrStore,
       invoiceStore: invStore,
+      counterStore: cntStore,
       languageVal: "",
       doc: null,
       tableXPos: tabXPos,
@@ -873,7 +876,10 @@ export default defineComponent({
         { align: "center" }
       );
       this.doc.setFont("helvetica", "normal");
-      const vatBaseValueTextCell = `${inv.tvaValue.tvaBaseLibelle} ${inv.devise}`;
+      const vatBaseValueTextCell =
+        inv.devise === "€"
+          ? `${inv.tvaValue.tvaBaseLibelle} ${inv.devise}`
+          : `${inv.devise} ${inv.tvaValue.tvaBaseLibelle}`;
       this.doc.text(
         vatBaseValueTextCell,
         this.tableXPos + this.footerCellTableWidth * 2 + 1.7,
@@ -896,7 +902,10 @@ export default defineComponent({
         { align: "center" }
       );
       this.doc.setFont("helvetica", "normal");
-      const vatAmountValueTextCell = `${inv.tvaValue.tvaMontantLibelle} ${inv.devise}`;
+      const vatAmountValueTextCell =
+        inv.devise === "€"
+          ? `${inv.tvaValue.tvaMontantLibelle} ${inv.devise}`
+          : `${inv.devise} ${inv.tvaValue.tvaMontantLibelle}`;
       this.doc.text(
         vatAmountValueTextCell,
         this.tableXPos + this.footerCellTableWidth * 3 + 1.7,
@@ -916,7 +925,10 @@ export default defineComponent({
         { align: "center" }
       );
       this.doc.setFont("helvetica", "normal");
-      const ttTotalValueTextCell = `${inv.invoiceTTPrice} ${inv.devise}`;
+      const ttTotalValueTextCell =
+        inv.devise === "€"
+          ? `${inv.invoiceTTPrice} ${inv.devise}`
+          : `${inv.devise} ${inv.invoiceTTPrice}`;
       this.doc.text(
         ttTotalValueTextCell,
         this.tableXPos + this.footerCellTableWidth * 4 + 1.7,
@@ -928,6 +940,45 @@ export default defineComponent({
       );
 
       ret += this.orderHeaderTableHeight;
+      return ret;
+    },
+    convertAmount(val: number, dest: string, func: any) {
+      return func(val, dest);
+    },
+    fromEuroToOther(val: number, dest: string): number {
+      let ret = val;
+      switch (dest) {
+        case "dollar":
+          break;
+        case "livre":
+          break;
+        default:
+          break;
+      }
+      return ret;
+    },
+    fromDollarToOther(val: number, dest: string): number {
+      let ret = val;
+      switch (dest) {
+        case "euro":
+          break;
+        case "livre":
+          break;
+        default:
+          break;
+      }
+      return ret;
+    },
+    fromLivreToOther(val: number, dest: string): number {
+      let ret = val;
+      switch (dest) {
+        case "dollar":
+          break;
+        case "euro":
+          break;
+        default:
+          break;
+      }
       return ret;
     },
   },

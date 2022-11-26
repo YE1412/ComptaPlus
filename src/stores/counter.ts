@@ -6,11 +6,6 @@ import { useStorage } from "@vueuse/core";
 
 const { t } = i18n.global;
 const useCounterStore = defineStore("counter", {
-  // const count = ref(0);
-  // const doubleCount = computed(() => count.value * 2);
-  // function increment() {
-  //   count.value++;
-  // },
   state: () => ({
     count: 0,
     languages: useStorage("languages", [
@@ -30,6 +25,7 @@ const useCounterStore = defineStore("counter", {
       },
     ]),
     langDisplayedIndex: useStorage("langDisplayedIndex", 0),
+    prices: [],
   }),
   getters: {
     getCount(state) {
@@ -41,12 +37,53 @@ const useCounterStore = defineStore("counter", {
     getLangDisplayedIndex(state) {
       return state.langDisplayedIndex;
     },
+    getPrices(state) {
+      return state.prices;
+    },
   },
-  actions: {},
-  // return { count, doubleCount, increment, connected };
+  actions: {
+    getAllPrices() {
+      return new Promise((resolve, reject) => {
+        userAxiosService
+          .getAllPrices()
+          .then((res) => {
+            // console.log(res);
+            if (res.data.length) {
+              this.prices = res.data;
+              resolve(res.data);
+            } else {
+              reject(false);
+            }
+          })
+          .catch((err) => {
+            // La requête a été faite et le code de
+            //   réponse du serveur n'est pas dans la plage 2xx
+            if (err.response) {
+              console.log(err.response.data);
+              console.log(err.response.status);
+              console.log(err.response.headers);
+            }
+            // La requête a été  faite mais aucune réponse
+            //  n'a été ruçue `error.request` est une instance de
+            //  XMLHttpRequest dans le navigateur et une instance
+            //  de http.ClientRequest avec node.js
+            else if (err.request) {
+              console.log(err.request);
+            }
+            // Quelque chose s'est passé lors de la construction de
+            //  la requête et cela a provoqué une erreur
+            else {
+              console.log("Error", err.message);
+            }
+            console.log(err.config);
+            reject(new Error(err));
+          });
+      });
+    },
+  },
 });
 
-// make sure to pass the right store definition, `useAuth` in this case.
+// make sure to pass the right store definition, `useCounterStore` in this case.
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useCounterStore, import.meta.hot));
 }

@@ -1,7 +1,7 @@
 // import { ref, computed } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
 import serviceAxiosService from "../services/service.service";
-import { genMod, cryptMod, decryptMod } from "../WasmModules";
+import { decryptMod } from "../WasmModules";
 
 let __DECRYPTAPI__: any;
 

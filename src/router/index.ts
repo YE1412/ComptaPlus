@@ -284,6 +284,7 @@ router.beforeEach(async (to: any, from: any, next: any) => {
         },
         (rej: any) => {
           // console.log(rej);
+          userStore.resetUser();
           messageStore.deleteMessages();
           return t("startLinkTarget");
         }
