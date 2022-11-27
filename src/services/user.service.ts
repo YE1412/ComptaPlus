@@ -22,6 +22,10 @@ class UserDataService {
     });
   }
 
+  retrieve(id: number) {
+    return http.get(`/users/retrieve/${id}`);
+  }
+
   checkEmail(email: string) {
     return http.get(`/users/email`, {
       params: {

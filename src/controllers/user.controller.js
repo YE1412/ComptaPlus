@@ -84,6 +84,7 @@ const findAllPrices = (req, res) => {
 };
 
 const findOne = (req, res) => {
+  console.log("findOne");
   // const params = req.params;
   // const body = req.body;
   const query = req.query;
@@ -106,6 +107,52 @@ const findOne = (req, res) => {
   } else {
     res.status(500).send({
       message: "Some error occured while retrieving user.",
+    });
+    return;
+  }
+
+  user
+    .findAll({
+      attributes: [
+        "userId",
+        "firstName",
+        "lastName",
+        "login",
+        "email",
+        "companyName",
+        "companyLogo",
+        "devise.deviseId",
+        "userTypeId",
+      ],
+      where: whereClause,
+      include: [user.devise],
+    })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occured while retieving user.",
+      });
+    });
+};
+
+const retrieveOne = (req, res) => {
+  const params = req.params;
+  console.log("retrieveOne");
+  // const body = req.body;
+  // const query = req.query;
+  // console.log(params);
+  // console.log(body);
+  // console.log(query);
+  let whereClause = {};
+  if (params.id !== undefined) {
+    whereClause = {
+      userId: params.id,
+    };
+  } else {
+    res.status(500).send({
+      message: `Some error occured while retrieving user with id=${params.id}.`,
     });
     return;
   }
@@ -182,11 +229,11 @@ const update = (req, res) => {
   user
     .update(req.body, {
       where: {
-        id: params.id,
+        userId: params.id,
       },
     })
     .then((result) => {
-      if (result === 1) {
+      if (result[0] === 1) {
         res.send({
           message: "User was updated successfully !",
         });
@@ -307,6 +354,7 @@ export default {
   findAllDevises: findAllDevises,
   findAllPrices: findAllPrices,
   findOne: findOne,
+  retrieveOne: retrieveOne,
   checkOne: checkOne,
   update: update,
   deleteOne: deleteOne,

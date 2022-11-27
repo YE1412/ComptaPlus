@@ -10,6 +10,12 @@ declare const useUserStore: import("pinia").StoreDefinition<
   },
   {
     loginUser(login: string, password: string): Promise<unknown>;
+  },
+  {
+    retrieveUser(id: number): Promise<unknown>;
+  },
+  {
+    resetUser();
   }
 >;
 export { useUserStore };

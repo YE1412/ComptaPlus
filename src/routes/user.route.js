@@ -12,6 +12,9 @@ export default () => {
   // Retrieve all Users
   router.get("/", users.findAll);
 
+  // Retrieve a Users
+  router.get("/retrieve/:id", users.retrieveOne);
+
   // Retrieve all Devises
   router.get("/devises", users.findAllDevises);
 

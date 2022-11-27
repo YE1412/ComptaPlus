@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, Suspense } from "vue";
 import TheWelcome from "../components/TheWelcome.vue";
 import TheToolbarIn from "../components/TheToolbarIn.vue";
 import Sidenav from "../components/Sidenav.vue";
@@ -20,6 +20,7 @@ export default defineComponent({
     TheWelcome,
     TheToolbarIn,
     Sidenav,
+    Suspense,
   },
   methods: {},
   mounted() {},
@@ -37,7 +38,9 @@ export default defineComponent({
     <TheToolbarIn />
     <Sidenav />
     <div class="content">
-      <TheWelcome />
+      <Suspense>
+        <TheWelcome />
+      </Suspense>
     </div>
   </main>
 </template>

@@ -88,7 +88,7 @@ let config = defineConfig(({ command, mode }) => {
         "Utilities": path.join(__dirname, "/src/plugins/modules/"),
       },
       extensions: [
-        '.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'
+        '.mjs', '.ts', '.js', '.jsx', '.tsx', '.json'
       ]
     },
     css: cssObj,

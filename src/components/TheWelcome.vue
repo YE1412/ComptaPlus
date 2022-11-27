@@ -1,4 +1,40 @@
+<script lang="ts">
+import { defineComponent } from "vue";
+import WelcomeItem from "./WelcomeItem.vue";
+import DocumentationIcon from "./icons/IconDocumentation.vue";
+import ToolingIcon from "./icons/IconTooling.vue";
+import EcosystemIcon from "./icons/IconEcosystem.vue";
+import CommunityIcon from "./icons/IconCommunity.vue";
+import SupportIcon from "./icons/IconSupport.vue";
+import { useMessageStore } from "@/stores/message";
+import { useCounterStore } from "@/stores/counter";
+import MessagesItem from "./MessagesItem.vue";
+
+export default defineComponent({
+  name: "TheWelcome",
+  async setup() {
+    const msgStore = useMessageStore();
+    const cntStore = useCounterStore();
+
+    return {
+      counterStore: cntStore,
+      messageStore: msgStore,
+    };
+  },
+  components: {
+    WelcomeItem,
+    DocumentationIcon,
+    ToolingIcon,
+    EcosystemIcon,
+    CommunityIcon,
+    SupportIcon,
+    MessagesItem,
+  },
+});
+</script>
+
 <template>
+  <MessagesItem v-if="messageStore.getMessagesVisibility"></MessagesItem>
   <WelcomeItem>
     <template #icon>
       <DocumentationIcon />
@@ -110,26 +146,3 @@
     >.
   </WelcomeItem>
 </template>
-
-<script lang="ts">
-import WelcomeItem from "./WelcomeItem.vue";
-import DocumentationIcon from "./icons/IconDocumentation.vue";
-import ToolingIcon from "./icons/IconTooling.vue";
-import EcosystemIcon from "./icons/IconEcosystem.vue";
-import CommunityIcon from "./icons/IconCommunity.vue";
-import SupportIcon from "./icons/IconSupport.vue";
-
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "TheWelcome",
-  components: {
-    WelcomeItem,
-    DocumentationIcon,
-    ToolingIcon,
-    EcosystemIcon,
-    CommunityIcon,
-    SupportIcon,
-  },
-});
-</script>

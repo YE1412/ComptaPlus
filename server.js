@@ -138,6 +138,14 @@ async function createViteServer() {
     }
     response.send({ message: "Success!" });
   });
+  if (env === "production") {
+    app.use("/app", express.static(path.join(__dirname, "/dist/prod/client")));
+  } else {
+    app.use(
+      "/public-assets",
+      express.static(path.join(__dirname, "src/assets"))
+    );
+  }
   app.get("*", async (req, res, next) => {
     // console.log("default Get");
     const url = req.originalUrl;
@@ -190,9 +198,6 @@ async function createViteServer() {
       next(e);
     }
   });
-
-  if (env === "production")
-    app.use(express.static("./app", "./dist/prod/client"));
 
   app.listen(port, () => {
     console.log(`app listening on port ${port}`);

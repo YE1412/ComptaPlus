@@ -22,18 +22,18 @@ export default defineComponent({
     class="mb-4 d-flex justify-content-center"
   >
     <slot
-		:name="val.name"
-      	:size="val.size"
-		:type="val.type"
-		:ariaLabel="key"
-		:required="val.required"
-		:value="val.model"
-		:state="val.state"
-		:label="val.label"
-		:invalidFeedback="val.invalidFeed"
-		:validFeedback="val.validFeed"
-		:isValidated="val.isValidated"
-		:isValid="val.isValid"
+      :name="val.name"
+      :size="val.size"
+      :type="val.type"
+      :ariaLabel="key"
+      :required="val.required"
+      :value="val.model"
+      :state="val.state"
+      :label="val.label"
+      :invalidFeedback="val.invalidFeed"
+      :validFeedback="val.validFeed"
+      :isValidated="val.isValidated"
+      :isValid="val.isValid"
     ></slot>
   </MDBRow>
 </template>

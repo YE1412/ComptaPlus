@@ -84,7 +84,7 @@ export default defineComponent({
       companyName_valid: false,
       companyName_validMsg: "",
       companyName_valid_errorMsg: "",
-      companyLogo: [],
+      companyLogo: null,
       companyLogo_valid: false,
       companyLogo_validMsg: "",
       companyLogo_valid_errorMsg: "",
@@ -100,30 +100,11 @@ export default defineComponent({
       modalContent: "",
     };
   },
-  computed: {
-    selectImage() {
-      let ret = false;
-      if (this.companyLogo.length && this.validCompanyLogo()) {
-        // this.currentImage = this.companyLogo.item(0);
-        // this.previewImage = URL.createObjectURL(this.currentImage);
-        // this.progress = 0;
-        // this.message = "";
-        ret = true;
-      } else {
-        // this.currentImage = undefined;
-        // this.previewImage = undefined;
-        // this.progress = 0;
-        // this.message = "";
-        ret = false;
-      }
-      return ret;
-    },
-  },
   watch: {
-    selectImage: {
+    companyLogo: {
       handler(newValue, oldValue) {
-        if (newValue) {
-          this.currentImage = this.companyLogo.item(0);
+        if (newValue !== null && this.validCompanyLogo()) {
+          this.currentImage = newValue.item(0);
           this.previewImage = URL.createObjectURL(this.currentImage);
           this.progress = 0;
           this.message = "";
@@ -307,7 +288,7 @@ export default defineComponent({
         this.passwordConfirm_valid = true;
         this.passwordConfirm_validMsg = this.$i18n.t("validMsg");
       }
-      // Company Name ckecks
+      // Company Name checks
       if (!this.companyName) {
         this.errors.push(this.$i18n.t("emptyCompanyNameErrorMsg"));
         this.companyName_valid = false;
@@ -338,7 +319,7 @@ export default defineComponent({
       // Company Logo checks
       // console.log(this.companyLogo);
       // console.log(this.companyLogo.length);
-      if (this.companyLogo.length) {
+      if (this.companyLogo !== null) {
         if (!this.validCompanyLogo()) {
           this.errors.push(this.$i18n.t("errorCompanyLogoMsg"));
           this.companyLogo_valid = false;
@@ -390,7 +371,7 @@ export default defineComponent({
 
       if (!this.errors.length) {
         const ret = await this.registerNewUser();
-        console.log(ret);
+        // console.log(ret);
         if (ret) {
           router.push("/");
         }
