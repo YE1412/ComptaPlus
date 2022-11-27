@@ -22,7 +22,7 @@ export default defineComponent({
       ordHeadTableHeight = 30,
       servHeadTableHeight = 33,
       servContentTableHeight = 20;
-
+    await cntStore.getAllPrices();
     return {
       userStore: usrStore,
       invoiceStore: invStore,
@@ -83,12 +83,31 @@ export default defineComponent({
     },
   },
   methods: {
+    getConvertFunc() {
+      let ret = undefined;
+      switch (this.userStore.getUser.devise.libelle) {
+        case "euro":
+          ret = this.fromEuroToOther;
+          break;
+        case "dollar":
+          ret = this.fromDollarToOther;
+          break;
+        case "livre":
+          ret = this.fromLivreToOther;
+          break;
+        default:
+          ret = this.fromEuroToOther;
+          break;
+      }
+      return ret;
+    },
     tableInvoicesOrdersLibelle(ind: number) {
       let ret = [],
         tvaValue = 0.0,
         totalHT = 0.0,
         totalTT = 0.0,
-        totalTTLibelle = "";
+        totalTTLibelle = "",
+        destDevise = this.invoicesDetails[ind]["devise"];
       let locale =
         this.invoicesDetails[ind]["langue"].nom === "fr" ? "fr-FR" : "";
       locale =
@@ -96,7 +115,11 @@ export default defineComponent({
       tvaValue = this.invoicesDetails[ind]["tvaValue"];
       for (const m in this.invoicesDetails[ind]["commandes"]) {
         ret[m] = {};
-        totalHT = this.invoicesDetails[ind]["commandes"][m].priceHt;
+        totalHT = this.convertAmount(
+          this.invoicesDetails[ind]["commandes"][m].priceHt,
+          destDevise.libelle,
+          this.getConvertFunc()
+        );
         totalTT = totalHT + totalHT * tvaValue;
         totalTTLibelle = new Intl.NumberFormat(locale, {
           minimumFractionDigits: 2,
@@ -115,8 +138,11 @@ export default defineComponent({
             quantity = 0;
           quantity =
             this.invoicesDetails[ind]["commandes"][m]["Services"][n].quantite;
-          priceUnitHT =
-            this.invoicesDetails[ind]["commandes"][m]["Services"][n].montantHt;
+          priceUnitHT = this.convertAmount(
+            this.invoicesDetails[ind]["commandes"][m]["Services"][n].montantHt,
+            destDevise.libelle,
+            this.getConvertFunc()
+          );
           priceUnitTT = priceUnitHT + priceUnitHT * tvaValue;
           priceUnitTTLibelle = new Intl.NumberFormat(locale, {
             minimumFractionDigits: 2,
@@ -167,9 +193,11 @@ export default defineComponent({
     },
     tableInvoicesPaymentsLibelle(ind: number) {
       let ret = "";
+      let destDevise = this.invoicesDetails[ind]["devise"];
       for (const m in this.invoicesDetails[ind]["payments"]) {
         let libelle = "";
-        let state = "";
+        let state = "",
+          paymentVal = 0.0;
         state =
           this.invoicesDetails[ind]["payments"][m].etat === 0
             ? this.$i18n.t("paymentStateKoLibelle")
@@ -178,7 +206,12 @@ export default defineComponent({
           this.invoicesDetails[ind]["payments"][m].etat === 1
             ? this.$i18n.t("paymentStateOkLibelle")
             : "";
-        libelle = `${this.invoicesDetails[ind]["payments"][m].paymentId} - ${state} - ${this.invoicesDetails[ind]["payments"][m].paymentValue}`;
+        paymentVal = this.convertAmount(
+          this.invoicesDetails[ind]["payments"][m].paymentValue,
+          destDevise.libelle,
+          this.getConvertFunc()
+        );
+        libelle = `${this.invoicesDetails[ind]["payments"][m].paymentId} - ${state} - ${paymentVal}`;
         ret +=
           m != this.invoicesDetails[ind]["payments"].length - 1
             ? `${libelle}, `
@@ -193,22 +226,27 @@ export default defineComponent({
         tvaBase = 0.0,
         tvaMontant = 0.0,
         tvaBaseLibelle = "",
-        tvaMontantLibelle = "";
+        tvaMontantLibelle = "",
+        destDevise = this.invoicesDetails[ind]["devise"],
+        invTTPrice = 0.0;
       let locale =
         this.invoicesDetails[ind]["langue"].nom === "fr" ? "fr-FR" : "";
       locale =
         this.invoicesDetails[ind]["langue"].nom === "us" ? "en-US" : locale;
+      invTTPrice = this.convertAmount(
+        this.invoicesDetails[ind].invoiceTTPrice,
+        destDevise.libelle,
+        this.getConvertFunc()
+      );
       tvaValue = this.invoicesDetails[ind]["tvaValue"] * 100;
       tvaValueLibelle = new Intl.NumberFormat(locale, {
         minimumFractionDigits: 2,
       }).format(tvaValue.toFixed(2));
-      tvaMontant =
-        this.invoicesDetails[ind].invoiceTTPrice *
-        this.invoicesDetails[ind]["tvaValue"];
+      tvaMontant = invTTPrice * this.invoicesDetails[ind]["tvaValue"];
       tvaMontantLibelle = new Intl.NumberFormat(locale, {
         minimumFractionDigits: 2,
       }).format(tvaMontant.toFixed(2));
-      tvaBase = this.invoicesDetails[ind].invoiceTTPrice - tvaMontant;
+      tvaBase = invTTPrice - tvaMontant;
       tvaBaseLibelle = new Intl.NumberFormat(locale, {
         minimumFractionDigits: 2,
       }).format(tvaBase.toFixed(2));
@@ -235,12 +273,19 @@ export default defineComponent({
       let ret = "";
       let libelle = "",
         ttPriceLibelle = "",
-        ttPrice = 0.0;
+        ttPrice = 0.0,
+        destDevise = this.invoicesDetails[ind]["devise"],
+        invTTPrice = 0.0;
       let locale =
         this.invoicesDetails[ind]["langue"].nom === "fr" ? "fr-FR" : "";
       locale =
         this.invoicesDetails[ind]["langue"].nom === "us" ? "en-US" : locale;
-      ttPrice = this.invoicesDetails[ind].invoiceTTPrice;
+      invTTPrice = this.convertAmount(
+        this.invoicesDetails[ind].invoiceTTPrice,
+        destDevise.libelle,
+        this.getConvertFunc()
+      );
+      ttPrice = invTTPrice;
       ttPriceLibelle = new Intl.NumberFormat(locale, {
         minimumFractionDigits: 2,
       }).format(ttPrice.toFixed(2));
@@ -947,10 +992,14 @@ export default defineComponent({
     },
     fromEuroToOther(val: number, dest: string): number {
       let ret = val;
+      let stock_price = this.counterStore.getEuroPrice;
+      const produit = stock_price !== null ? stock_price : null;
       switch (dest) {
         case "dollar":
+          ret *= produit !== null ? produit.dollar : 1;
           break;
         case "livre":
+          ret *= produit !== null ? produit.livre : 1;
           break;
         default:
           break;
@@ -959,10 +1008,14 @@ export default defineComponent({
     },
     fromDollarToOther(val: number, dest: string): number {
       let ret = val;
+      let stock_price = this.counterStore.getDollarPrice;
+      const produit = stock_price !== null ? stock_price : null;
       switch (dest) {
         case "euro":
+          ret *= produit !== null ? produit.euro : 1;
           break;
         case "livre":
+          ret *= produit !== null ? produit.livre : 1;
           break;
         default:
           break;
@@ -971,10 +1024,14 @@ export default defineComponent({
     },
     fromLivreToOther(val: number, dest: string): number {
       let ret = val;
+      let stock_price = this.counterStore.getLivrePrice;
+      const produit = stock_price !== null ? stock_price : null;
       switch (dest) {
         case "dollar":
+          ret *= produit !== null ? produit.dollar : 1;
           break;
         case "euro":
+          ret *= produit !== null ? produit.euro : 1;
           break;
         default:
           break;

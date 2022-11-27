@@ -26,19 +26,37 @@ const useCounterStore = defineStore("counter", {
     ]),
     langDisplayedIndex: useStorage("langDisplayedIndex", 0),
     prices: [],
+    euroPrice: [],
+    dollarPrice: [],
+    livrePrice: [],
   }),
   getters: {
-    getCount(state) {
+    getCount(state: any) {
       return state.count;
     },
-    getLanguages(state) {
+    getLanguages(state: any) {
       return state.languages;
     },
-    getLangDisplayedIndex(state) {
+    getLangDisplayedIndex(state: any) {
       return state.langDisplayedIndex;
     },
-    getPrices(state) {
+    getPrices(state: any) {
       return state.prices;
+    },
+    getEuroPrice(state: any) {
+      return state.prices.find((p: any) => {
+        return p.euro === 1;
+      });
+    },
+    getDollarPrice(state: any) {
+      return state.prices.find((p: any) => {
+        return p.dollar === 1;
+      });
+    },
+    getLivrePrice(state: any) {
+      return state.prices.find((p: any) => {
+        return p.livre === 1;
+      });
     },
   },
   actions: {

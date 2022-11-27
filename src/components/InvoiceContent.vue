@@ -195,7 +195,7 @@ export default defineComponent({
     });
     for (const key in this.devisesObj) {
       let devise = {};
-      devise.text = this.devisesObj[key].symbole;
+      devise.text = `${this.devisesObj[key].symbole} - ${this.devisesObj[key].libelle}`;
       devise.value = this.devisesObj[key].deviseId;
       devise.symbole = this.devisesObj[key].symbole;
       invoiceDevisesOpt.push(devise);
