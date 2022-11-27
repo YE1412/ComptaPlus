@@ -58,6 +58,7 @@ export default defineComponent({
     ModalItem,
   },
   data() {
+    var that = this;
     const usrDetails = this.userStore.getUser;
     const formObj = {
       login: {
@@ -72,6 +73,8 @@ export default defineComponent({
         isValidated: true,
         isValid: true,
         type: "text",
+        counter: true,
+        maxLength: 255,
       },
       email: {
         name: "formInput",
@@ -85,6 +88,8 @@ export default defineComponent({
         isValidated: true,
         isValid: true,
         type: "email",
+        counter: true,
+        maxLength: 255,
       },
       firstName: {
         name: "formInput",
@@ -98,6 +103,8 @@ export default defineComponent({
         isValidated: true,
         isValid: true,
         type: "text",
+        counter: true,
+        maxLength: 30,
       },
       lastName: {
         name: "formInput",
@@ -111,6 +118,8 @@ export default defineComponent({
         isValidated: true,
         isValid: true,
         type: "text",
+        counter: true,
+        maxLength: 30,
       },
       pass: {
         name: "formInput",
@@ -124,6 +133,8 @@ export default defineComponent({
         isValidated: true,
         isValid: true,
         type: "password",
+        counter: true,
+        maxLength: 15,
       },
       companyName: {
         name: "formInput",
@@ -137,6 +148,8 @@ export default defineComponent({
         isValidated: true,
         isValid: true,
         type: "text",
+        counter: true,
+        maxLength: 30,
       },
       companyLogo: {
         name: "formFileInput",
@@ -150,6 +163,8 @@ export default defineComponent({
         isValidated: true,
         isValid: true,
         type: "",
+        counter: false,
+        maxLength: 0,
       },
       deviseId: {
         name: "formDeviseSelect",
@@ -163,6 +178,8 @@ export default defineComponent({
         isValidated: true,
         isValid: true,
         type: "",
+        counter: false,
+        maxLength: 0,
       },
     };
     let mainDeviseCurrencyOpt = [];
@@ -209,7 +226,11 @@ export default defineComponent({
       progress: 0,
       message: "",
       deviseId: 0,
-      selectedMainDeviseCurrency: null,
+      selectedMainDeviseCurrency: [
+        mainDeviseCurrencyOpt.find((dev) => {
+          return dev.value === usrDetails.devise.deviseId;
+        })
+      ],
       mainDeviseCurrencyOption: mainDeviseCurrencyOpt,
       updateUserModal: false,
       modalTitle: "",
@@ -672,6 +693,8 @@ export default defineComponent({
               isValidated,
               isValid,
               type,
+              counter,
+              maxlength
             }"
           >
             <MDBCol :md="size">
@@ -687,6 +710,8 @@ export default defineComponent({
                 :isValidated="isValidated"
                 :type="type"
                 size="6"
+                :counter="counter"
+                :maxlength="maxlength"
                 @input="inputChanges($event)"
               >
               </MDBInput>

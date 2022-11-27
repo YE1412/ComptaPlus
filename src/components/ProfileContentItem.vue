@@ -19,7 +19,7 @@ export default defineComponent({
   <MDBRow
     v-for="(val, key) in formObj"
     v-bind:key="key"
-    class="mb-4 d-flex justify-content-center"
+    class="mb-6 d-flex justify-content-center"
   >
     <slot
       :name="val.name"
@@ -34,6 +34,8 @@ export default defineComponent({
       :validFeedback="val.validFeed"
       :isValidated="val.isValidated"
       :isValid="val.isValid"
+      :counter="val.counter"
+      :maxlength="val.maxLength"
     ></slot>
   </MDBRow>
 </template>

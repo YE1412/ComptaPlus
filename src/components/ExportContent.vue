@@ -268,9 +268,6 @@ export default defineComponent({
         <thead class="mdb-color darken-3">
           <tr class="text-black text-center">
             <th scope="col">#</th>
-            <!-- <th scope="col">Lorem</th>
-		        <th scope="col">Ipsum</th>
-		        <th scope="col">Dolor</th> -->
             <th v-for="(head, ind) in heading" v-bind:key="ind" scope="col">
               {{ head }}
             </th>
@@ -302,20 +299,20 @@ export default defineComponent({
         </tbody>
         <tbody v-if="contentsForDisp.length">
           <tr v-for="(fac, i) in contentsForDisp" v-bind:key="i">
-            <th scope="row">
+            <th scope="row" class="text-center" style="vertical-align: middle;">
               <MDBCheckbox v-model="checkbox[fac.factureId]" />
             </th>
-            <td>{{ fac.date }}</td>
-            <td>{{ fac.invoiceHTPrice }}</td>
-            <td>{{ fac.invoiceTTPrice }}</td>
-            <td>{{ fac.tvaValue }}</td>
-            <td>{{ fac.langue }}</td>
-            <td>{{ fac.devise }}</td>
-            <td>{{ fac.buyer }}</td>
-            <td>{{ fac.seller }}</td>
-            <td>{{ fac.commandes }}</td>
-            <td>{{ fac.payments }}</td>
-            <td>
+            <td class="text-center" style="vertical-align: middle;">{{ fac.date }}</td>
+            <td class="text-center" style="vertical-align: middle;">{{ fac.invoiceHTPrice }}</td>
+            <td class="text-center" style="vertical-align: middle;">{{ fac.invoiceTTPrice }}</td>
+            <td class="text-center" style="vertical-align: middle;">{{ fac.tvaValue }}</td>
+            <td class="text-center" style="vertical-align: middle;">{{ fac.langue }}</td>
+            <td class="text-center" style="vertical-align: middle;">{{ fac.devise }}</td>
+            <td class="text-center" style="vertical-align: middle;">{{ fac.buyer }}</td>
+            <td class="text-center" style="vertical-align: middle;">{{ fac.seller }}</td>
+            <td class="text-center" style="vertical-align: middle;">{{ fac.commandes }}</td>
+            <td class="text-center" style="vertical-align: middle;">{{ fac.payments }}</td>
+            <td class="text-center" style="vertical-align: middle;">
               <RouterLink
                 :to="{
                   name: $t('pdfViewLinkName'),
@@ -333,47 +330,6 @@ export default defineComponent({
               </RouterLink>
             </td>
           </tr>
-          <!-- <tr>
-		        <th scope="row">
-		          <MDBCheckbox v-model="checkbox['1']"/>
-		        </th>
-		        <td>Sit</td>
-		        <td>Amet</td>
-		        <td>
-		        	<RouterLink 
-		        		:to="{name: $t('pdfViewLinkName'),
-    						params: {
-    							invoiceIds: getSelectedInvoices
-							}
-						}"
-					>
-						<button type="button" class="btn btn-primary btn-rounded btn-sm my-0">{{ $t("exportButtonText") }}</button>
-					</RouterLink></td>
-		      </tr>
-		      <tr>
-		        <th scope="row">
-		          <MDBCheckbox v-model="checkbox['2']"/>
-		        </th>
-		        <td>Adipisicing</td>
-		        <td>Elit</td>
-		        <td><RouterLink :to="{name: $t('pdfViewLinkName'),
-    						params: {
-    							invoiceIds: getSelectedInvoices
-							}
-						}"><button type="button" class="btn btn-primary btn-rounded btn-sm my-0">{{ $t("exportButtonText") }}</button></RouterLink></td>
-		      </tr>
-		      <tr>
-		        <th scope="row">
-		          <MDBCheckbox v-model="checkbox['3']"/>
-		        </th>
-		        <td>Hic</td>
-		        <td>Fugiat</td>
-		        <td><RouterLink :to="{name: $t('pdfViewLinkName'),
-    						params: {
-    							invoiceIds: getSelectedInvoices
-							}
-						}"><button type="button" class="btn btn-primary btn-rounded btn-sm my-0">{{ $t("exportButtonText") }}</button></RouterLink></td>
-		      </tr> -->
         </tbody>
       </MDBTable>
     </div>
