@@ -2,3 +2,4 @@ src/plugins/modules/*
 .gitignore
 vite.config.js
 src/assets/fonts/
+dist/

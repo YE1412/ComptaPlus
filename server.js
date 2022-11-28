@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import cors from "cors";
 import { v4 as uuidv4 } from "uuid";
+// import { createSsrServer } from 'vite-ssr/dev';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const env = process.env.CTX;
@@ -16,13 +17,17 @@ console.log(`\n\nEnvironment - ${env}\n`);
 
 var port = env === "development" ? 3000 : null;
 port = env === "validate" ? 9000 : port;
-port = env === "production" ? 0 : port;
+port = env === "production" ? 9000 : port;
 // var corsOptions = {
 //   origin: `http://localhost:${port}`,
 // };
 const app = express();
 
 async function createViteServer() {
+  const resolve = (p) => path.resolve(__dirname, p);
+  const manifest = env === "production"
+    ? JSON.parse(fs.readFileSync(resolve('dist/prod/client/ssr-manifest.json'), 'utf-8'))
+    : {}
   // Testing db connection
   let opt = {};
   if (env === "production") opt.logging = false;
@@ -71,14 +76,14 @@ async function createViteServer() {
   let prefix = "./";
   // console.log(import("./src/routes/user.route.js")(app));
   if (env === "development") {
-    app.use("./", express.static(path.join(__dirname, "src/assets")));
+    // app.use("./", express.static(path.join(__dirname, "src/assets")));
     // app.use('/public-assets', express.static(path.join(__dirname, 'assets')));
   } else {
-    prefix = "./dist/prod/client/";
-    app.use(
-      "./",
-      express.static(path.join(__dirname, "./dist/prod/client/src/assets"))
-    );
+    prefix = "./";
+    // app.use(
+    //   "./",
+    //   express.static(path.join(__dirname, "./dist/prod/client/assets/app_assets"))
+    // );
   }
   userRouter = await import(`${prefix}src/routes/user.route.js`);
   serviceRouter = await import(`${prefix}src/routes/service.route.js`);
@@ -122,15 +127,9 @@ async function createViteServer() {
   app.use("/api/invoices", invoiceRouter.default());
   app.get("/api/session", (request, response) => {
     request.session.appSession = uuidv4();
-    // console.log(`GET - Session`);
-    // console.log(request.session);
     response.send({ id: request.session.appSession });
   });
   app.post("/api/session", (request, response) => {
-    // console.log(`POST - Session`);
-    // console.log(request.session);
-    // console.log(`POST - BODY Session`);
-    // console.log(request.body.sessionID);
     if (request.body.sessionID != request.session.appSession) {
       return response
         .status(500)
@@ -139,11 +138,17 @@ async function createViteServer() {
     response.send({ message: "Success!" });
   });
   if (env === "production") {
-    app.use("/app", express.static(path.join(__dirname, "/dist/prod/client")));
+    // app.use("/", express.static(path.join(__dirname, "/dist/prod/client")));
+    app.use(
+      '/dist',
+      (await import('serve-static')).default(resolve('dist/prod/client'), {
+        index: false
+      })
+    );
   } else {
     app.use(
-      "/public-assets",
-      express.static(path.join(__dirname, "src/assets"))
+      "/",
+      express.static(path.join(__dirname, "src"))
     );
   }
   app.get("*", async (req, res, next) => {
@@ -155,7 +160,7 @@ async function createViteServer() {
       var template;
       if (env === "development") {
         template = fs.readFileSync(
-          path.resolve(__dirname, "index.html"),
+          path.resolve(__dirname, "public/index.html"),
           "utf-8"
         );
       } else if (env === "production") {
@@ -173,19 +178,33 @@ async function createViteServer() {
         // 3.1. Apply Vite HTML transforms. This injects the Vite HMR client, and
         //    also applies HTML transforms from Vite plugins, e.g. global preambles
         //    from @vitejs/plugin-react
+        console.log("Template Before");
+        console.log(template);
         template = await vite.transformIndexHtml(url, template);
-        // render = await vite.ssrLoadModule("/src/server.js");
+        console.log("Template");
+        console.log(template);
+        render = await vite.ssrLoadModule("./src/server.js", { fixStacktrace: true });
+        // console.log("Render");
+        // console.log(render);
       } else if (env === "production") {
-        render = import("./dist/prod/server/server.js");
+        render = await import("./dist/prod/server/server.js");
+        // console.log("Render");
+        // console.log(render);
       }
 
       // 4. render the app HTML. This assumes entry-server.js's exported `render`
       //    function calls appropriate framework SSR APIs,
       //    e.g. ReactDOMServer.renderToString()
-      // const appHtml = await render(url);
+      const [appHtml, preloadLinks] = await render.default(url, manifest);
+      console.log("App HTML");
+      console.log(appHtml);
+      console.log("Preload Links");
+      console.log(preloadLinks);
       // console.log(template);
       // 5. Inject the app-rendered HTML into the template.
-      const html = template.replace(`<!--ssr-outlet-->`, render);
+      const html = template
+        .replace(`<!--preload-links-->`, preloadLinks)
+        .replace(`<!--ssr-outlet-->`, appHtml);
 
       // 6. Send the rendered HTML back.
       res.status(200).set({ "Content-Type": "text/html" }).end(html);

@@ -55,11 +55,11 @@ export default defineComponent({
 	},
 	components: {
 		MDBModal,
-	    MDBModalHeader,
-	    MDBModalTitle,
-	    MDBModalBody,
-	    MDBModalFooter,
-	    MDBBtn,
+    MDBModalHeader,
+    MDBModalTitle,
+    MDBModalBody,
+    MDBModalFooter,
+    MDBBtn,
 	},
 	data() {
 		return {

@@ -6,8 +6,8 @@ import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import vueI18n from '@intlify/vite-plugin-vue-i18n';
 import { fileURLToPath } from "node:url";
+import htmlTemplate from 'vite-plugin-html-template';
 // console.log(`\n\nEnvironnement : - ${process.env.CTX} -\n`);
-
 let config = defineConfig(({ command, mode }) => {
   console.log(`mode - ${mode}`);
   var buildObj = {},
@@ -58,6 +58,11 @@ let config = defineConfig(({ command, mode }) => {
       cssCodeSplit: true,
       // (in kbs)
       chunkSizeWarningLimit: 500,
+      rollupOptions: {
+        input: {
+          main: "src/main.ts"
+        }
+      }
     };
     cssObj = {
       devSourcemap: false,
@@ -73,7 +78,8 @@ let config = defineConfig(({ command, mode }) => {
         compositionOnly: false,
         // you need to set i18n resource including paths !
         include: path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src/locales/**'),
-      })
+      }),
+      htmlTemplate.default(),
     );
   }
   return {
@@ -95,6 +101,10 @@ let config = defineConfig(({ command, mode }) => {
     server: serverObj,
     build: buildObj,
     plugins: pluginsObj,
+    ssr: {
+      // SSG Vue-i18n workaround
+      noExternal: [/vue-i18n/],
+    }
   };
 });
 

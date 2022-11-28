@@ -1,6 +1,6 @@
 <script lang="ts">
 /*global __CRYPTAPI__, __KEY__, __DECRYPTAPI__*/
-import { defineComponent } from "vue";
+import { defineComponent, defineAsyncComponent } from "vue";
 import router from "@/router/index";
 import { RouterLink } from "vue-router";
 import { useUserStore } from "@/stores/user";
@@ -10,8 +10,11 @@ import MessagesItem from "../components/MessagesItem.vue";
 import StartContentLoginItem from "./StartContentLoginItem.vue";
 import UserIcon from "./icons/IconUser.vue";
 import LockIcon from "./icons/IconLock.vue";
-import ModalItem from "./ModalItem.vue";
-import "../globals";
+// import ModalItem from "./ModalItem.vue";
+import ClientOnly from 'vue-client-only';
+if (!import.meta.env.SSR){
+  import("../globals");
+}
 
 export default defineComponent({
   name: "StartContent",
@@ -32,7 +35,11 @@ export default defineComponent({
     StartContentLoginItem,
     UserIcon,
     LockIcon,
-    ModalItem,
+    ClientOnly,
+    ModalItem: defineAsyncComponent(() => {
+      // if (!import.meta.env.SSR)
+      return import('./ModalItem.vue')
+    }),
     MessagesItem,
   },
   data() {
@@ -40,6 +47,7 @@ export default defineComponent({
       login: "",
       password: "",
       loginModal: false,
+      isServer: import.meta.env.SSR
     };
   },
   methods: {
@@ -92,17 +100,6 @@ export default defineComponent({
     transformValue(obj: string) {
       return __CRYPTAPI__.crypt(obj, __KEY__);
     },
-    // transformObj(obj) {
-    //   let ret = {};
-    //   for (const key in obj) {
-    //     if (typeof obj[key] === "string") {
-    //       ret[key] = __DECRYPTAPI__.decrypt(obj[key]);
-    //     } else {
-    //       ret[key] = obj[key];
-    //     }
-    //   }
-    //   return ret;
-    // },
   },
 });
 </script>
@@ -188,18 +185,20 @@ export default defineComponent({
       </div>
     </div>
   </div>
-  <ModalItem
-    @loginModal="modalChange"
-    input="loginModal"
-    id="loginModal"
-    tabIndex="-1"
-    labelledBy="loginModal"
-    :model="loginModal"
-    :centered="true"
-    :modalTitle="$t('modalTitle')"
-    :modalContent="$t('modalContent')"
-    :modalCloseBtnText="$t('modalCloseBtnText')"
-    :staticBackdrop="true"
-  >
-  </ModalItem>
+  <!-- <ClientOnly> -->
+    <ModalItem v-if="!isServer"
+      @loginModal="modalChange"
+      input="loginModal"
+      id="loginModal"
+      tabIndex="-1"
+      labelledBy="loginModal"
+      :model="loginModal"
+      :centered="true"
+      :modalTitle="$t('modalTitle')"
+      :modalContent="$t('modalContent')"
+      :modalCloseBtnText="$t('modalCloseBtnText')"
+      :staticBackdrop="true"
+    >
+    </ModalItem>
+  <!-- </ClientOnly> -->
 </template>

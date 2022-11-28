@@ -10,7 +10,7 @@ import "./assets/styles.css";
 import "./assets/main.css";
 import "./assets/style2.css";
 
-const isSSR = typeof window === "undefined";
+const isSSR = import.meta.env.SSR;
 const vuetify = createVuetify({
   // components,
   // directives,

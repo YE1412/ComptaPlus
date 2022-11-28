@@ -784,7 +784,7 @@ i.smallIcons {
 
 /* FOOTER */
 
-.footer {
+/*.footer {
     min-height: 268px;
     background-color: #333;
     display: flex;
@@ -827,7 +827,7 @@ i.smallIcons {
 .footer > div > p {
     color: #FFF;
     margin: 1em 0 0 0;
-}
+}*/
 
 /* Button */
 button.scrollToTopButton {
@@ -1776,7 +1776,7 @@ button.scrollToTopButton:hover {
         font-size: smaller;
     }*/
     /* FOOTER */
-    .footer > div {
+    /*.footer > div {
         background-size: 100% 170px;
         padding: 0 20px;
     }
@@ -1789,5 +1789,5 @@ button.scrollToTopButton:hover {
     }
     .footer > div > p {
         font-size: 80%;      
-    }
+    }*/
 }

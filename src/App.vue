@@ -31,9 +31,12 @@ export default defineComponent({
   watch: {
     $route: {
       handler(newR, old) {
-        document.title = `Easy-Compta - ${newR.meta.title}`;
-        const link = document.querySelector("[rel='icon']") as Element;
-        link.setAttribute("href", `${newR.meta.icon}`);
+        if (!import.meta.env.SSR)
+        {
+          document.title = `Easy-Compta - ${newR.meta.title}`;
+          const link = document.querySelector("[rel='icon']") as Element;
+          link.setAttribute("href", `${newR.meta.icon}`);
+        }
       },
       immediate: true,
     },

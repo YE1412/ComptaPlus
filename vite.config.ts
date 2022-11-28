@@ -51,6 +51,11 @@ const config = defineConfig(({ command, mode }) => {
       cssCodeSplit: true,
       // (in kbs)
       chunkSizeWarningLimit: 500,
+      rollupOptions: {
+        input: {
+          main: "src/main.ts"
+        }
+      }
     };
     cssObj = {
       devSourcemap: false,
@@ -73,7 +78,7 @@ const config = defineConfig(({ command, mode }) => {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
         "~": fileURLToPath(new URL("./node_modules", import.meta.url)),
       },
-      extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json"],
+      extensions: [".mjs", ".ts", ".js", ".jsx", ".tsx", ".json"],
     },
     css: cssObj,
     server: serverObj,
