@@ -195,13 +195,13 @@ async function createViteServer() {
     // app.use(router);
   }
   if (env === "production") {
-    // app.use("/", express.static(path.join(__dirname, "/dist/prod/client")));
+    // app.use("/dist", express.static(resolve("/dist/prod/client")));
     const mid = await import('sirv');
     app.use(
       '/dist',
       mid.default(resolve('dist/prod/client'), {
         maxAge: 31536000, // 1Y
-        immutable: true
+        immutable: false
       })
     );
   } else {

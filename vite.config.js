@@ -8,8 +8,6 @@ import vueI18n from '@intlify/vite-plugin-vue-i18n';
 import { fileURLToPath } from "node:url";
 import htmlTemplate from 'vite-plugin-html-template';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
-// import htmlPlugin from "vite-plugin-html-config";
-// import ssr from 'vite-plugin-ssr/plugin'
 
 // console.log(htmlPlugin);
 // console.log(`\n\nEnvironnement : - ${process.env.CTX} -\n`);

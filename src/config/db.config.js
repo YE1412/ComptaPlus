@@ -1,10 +1,20 @@
+import * as dotenv from 'dotenv';
+import path from "path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, "../../", "envs/.env") });
+
+// console.log(__dirname);
+// console.log(process.env);
+
 const config = {
-  HOST: "localhost",
-  USER: "root",
-  PASSWORD: null,
-  DB: "easy_compta_v2",
-  dialect: "mysql",
-  PORT: 3308,
+  HOST: process.env.DB_HOST,
+  USER: process.env.DB_USER,
+  PASSWORD: process.env.DB_PASSWORD,
+  DB: process.env.DB_NAME,
+  dialect: process.env.DB_DIALECT,
+  PORT: process.env.DB_PORT,
   pool: {
     // maximum number of connection in pool
     max: 5,

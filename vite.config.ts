@@ -4,8 +4,13 @@ import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import path from "path";
+import vueI18n from '@intlify/vite-plugin-vue-i18n';
+import { fileURLToPath } from "node:url";
+import htmlTemplate from 'vite-plugin-html-template';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
-console.log(`\n\nEnvironment : - ${process.env.CTX} -\n`);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// console.log(`\n\nEnvironment : - ${process.env.CTX} -\n`);
 
 // https://vitejs.dev/config/
 const config = defineConfig(({ command, mode }) => {
@@ -19,12 +24,12 @@ const config = defineConfig(({ command, mode }) => {
       sourcemap: "inline",
       minify: false,
     };
-    serverObj = {
-      port: 3000,
-      strictPort: true,
-      open: true,
-      hmr: true,
-    };
+    // serverObj = {
+    //   port: 3000,
+    //   strictPort: true,
+    //   open: true,
+    //   hmr: true,
+    // };
     cssObj = {
       devSourcemap: true,
     };
@@ -34,11 +39,15 @@ const config = defineConfig(({ command, mode }) => {
         exclude: /node_modules\//,
         isProduction: false,
       }),
-      vueJsx()
+      vueJsx(),
+      vueI18n({
+        compositionOnly: false,
+        include: path.resolve(__dirname, './src/locales/**'),
+      })
     );
   } else {
     buildObj = {
-      // outDir: path.resolve(__dirname, "/dist/prod"),
+      outDir: path.resolve(__dirname, "/dist/prod"),
       assetsDir: "assets/app_assets",
       sourcemap: false,
       minify: "terser",
@@ -51,11 +60,11 @@ const config = defineConfig(({ command, mode }) => {
       cssCodeSplit: true,
       // (in kbs)
       chunkSizeWarningLimit: 500,
-      rollupOptions: {
-        input: {
-          main: "src/main.ts"
-        }
-      }
+      // rollupOptions: {
+      //   input: {
+      //     main: "src/main.ts"
+      //   }
+      // }
     };
     cssObj = {
       devSourcemap: false,
@@ -66,17 +75,32 @@ const config = defineConfig(({ command, mode }) => {
         exclude: /node_modules\//,
         isProduction: true,
       }),
-      vueJsx()
+      vueJsx(),
+      vueI18n({
+        compositionOnly: false,
+        include: path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src/locales/**'),
+      }),
+      htmlTemplate.default(),
+      viteStaticCopy({
+        targets: [
+          {
+            src: "src/assets/uploads",
+            dest: "assets/"
+          }
+        ]
+      })
     );
   }
   return {
     define: {},
+    mode: mode,
     base: "/dist/",
     publicDir: path.resolve(__dirname, "public/"),
     resolve: {
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
         "~": fileURLToPath(new URL("./node_modules", import.meta.url)),
+        "Utilities": path.join(__dirname, "src/plugins/modules/"),
       },
       extensions: [".mjs", ".ts", ".js", ".jsx", ".tsx", ".json"],
     },
@@ -84,6 +108,11 @@ const config = defineConfig(({ command, mode }) => {
     server: serverObj,
     build: buildObj,
     plugins: pluginsObj,
+    ssr: {
+      noExternal: [/vue-i18n/],
+    },
+    envDir: path.join(__dirname, "envs"),
+    envPrifex: "CLIENT_",
   };
 });
 

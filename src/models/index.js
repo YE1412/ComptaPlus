@@ -14,6 +14,8 @@ import service from "./service.model.js";
 import user from "./user.model.js";
 import userType from "./userType.model.js";
 
+// console.log(dbConfig);
+
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   logging: console.log,
   host: dbConfig.HOST,

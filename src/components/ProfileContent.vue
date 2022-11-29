@@ -524,7 +524,7 @@ export default defineComponent({
     this.currentImage = this.userStore.getUser.companyLogo;
     this.previewImage =
       this.currentImage !== null
-        ? `${window.location.origin}/assets/uploads/${this.currentImage}`
+        ? `${window.location.origin}/dist/assets/uploads/${this.currentImage}`
         : undefined;
     this.progress = 0;
     this.message = "";
