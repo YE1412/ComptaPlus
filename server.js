@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import cors from "cors";
 import { v4 as uuidv4 } from "uuid";
+import * as dotenv from 'dotenv';
 // import { createSsrServer } from 'vite-ssr/dev';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -15,9 +16,12 @@ const env = process.env.CTX;
 
 console.log(`\n\nEnvironment - ${env}\n`);
 
-var port = env === "development" ? 3000 : null;
-port = env === "validate" ? 9000 : port;
-port = env === "production" ? 9000 : port;
+dotenv.config({ path: path.join(__dirname, 'envs/.env') });
+
+// console.log(process.env);
+var port = env === "development" ? process.env.CLIENT_DEV_PORT : null;
+port = env === "validate" ? process.env.CLIENT_PROD_PORT : port;
+port = env === "production" ? process.env.CLIENT_PROD_PORT : port;
 // var corsOptions = {
 //   origin: `http://localhost:${port}`,
 // };
@@ -64,85 +68,140 @@ async function createViteServer() {
     // if you use own express router (express.Router()), you should
     // use router.use
     app.use(vite.middlewares);
+    var userRouter,
+      serviceRouter,
+      sessionsRouter,
+      actorRouter,
+      orderRouter,
+      paymentRouter,
+      invoiceRouter;
+    let prefix = "./";
+    userRouter = await import(`${prefix}src/routes/user.route.js`);
+    serviceRouter = await import(`${prefix}src/routes/service.route.js`);
+    sessionsRouter = await import(`${prefix}src/routes/sessions.route.js`);
+    actorRouter = await import(`${prefix}src/routes/actor.route.js`);
+    orderRouter = await import(`${prefix}src/routes/order.route.js`);
+    paymentRouter = await import(`${prefix}src/routes/payment.route.js`);
+    invoiceRouter = await import(`${prefix}src/routes/invoice.route.js`);
+    //  Populate req.cookies
+    app.use(cookieParser());
+    //  Session setup
+    app.use(
+      session({
+        secret: "myLittleSecret",
+        cookie: {
+          maxAge: 600000,
+          // secure: true,
+        },
+        saveUninitialized: true,
+        resave: false,
+        unset: "keep",
+      })
+    );
+    app.use(
+      cors({
+        origin: [`http://localhost:${port}`, `https://localhost:${port}`],
+        credentials: true,
+        exposedHeaders: ["set-cookie"],
+      })
+    );
+    // parse requests of content-type - application/x-www-form-urlencoded
+    app.use(express.urlencoded({ extended: true }));
+    // parse requests of content-type - application/json
+    app.use(express.json());
+    app.use("/api/users", userRouter.default());
+    app.use("/api/services", serviceRouter.default());
+    app.use("/api/sessions", sessionsRouter.default());
+    app.use("/api/actors", actorRouter.default());
+    app.use("/api/orders", orderRouter.default());
+    app.use("/api/payments", paymentRouter.default());
+    app.use("/api/invoices", invoiceRouter.default());
+    app.get("/api/session", (request, response) => {
+      request.session.appSession = uuidv4();
+      response.send({ id: request.session.appSession });
+    });
+    app.post("/api/session", (request, response) => {
+      if (request.body.sessionID != request.session.appSession) {
+        return response
+          .status(500)
+          .send({ message: "The data in the session does not match!" });
+      }
+      response.send({ message: "Success!" });
+    });
+  }else{
+    // Single routing
+    // var router = express.Router();
+    var userRouter,
+      serviceRouter,
+      sessionsRouter,
+      actorRouter,
+      orderRouter,
+      paymentRouter,
+      invoiceRouter;
+    let prefix = "./";
+    userRouter = await import(`${prefix}src/routes/user.route.js`);
+    serviceRouter = await import(`${prefix}src/routes/service.route.js`);
+    sessionsRouter = await import(`${prefix}src/routes/sessions.route.js`);
+    actorRouter = await import(`${prefix}src/routes/actor.route.js`);
+    orderRouter = await import(`${prefix}src/routes/order.route.js`);
+    paymentRouter = await import(`${prefix}src/routes/payment.route.js`);
+    invoiceRouter = await import(`${prefix}src/routes/invoice.route.js`);
+    //  Populate req.cookies
+    app.use(cookieParser());
+    //  Session setup
+    app.use(
+      session({
+        secret: "myLittleSecret",
+        cookie: {
+          maxAge: 600000,
+          // secure: true,
+        },
+        saveUninitialized: true,
+        resave: false,
+        unset: "keep",
+      })
+    );
+    app.use(
+      cors({
+        origin: [`http://localhost:${port}`, `https://localhost:${port}`],
+        credentials: true,
+        exposedHeaders: ["set-cookie"],
+      })
+    );
+    // parse requests of content-type - application/x-www-form-urlencoded
+    app.use(express.urlencoded({ extended: true }));
+    // parse requests of content-type - application/json
+    app.use(express.json());
+    app.use("/dist/api/users", userRouter.default());
+    app.use("/dist/api/services", serviceRouter.default());
+    app.use("/dist/api/sessions", sessionsRouter.default());
+    app.use("/dist/api/actors", actorRouter.default());
+    app.use("/dist/api/orders", orderRouter.default());
+    app.use("/dist/api/payments", paymentRouter.default());
+    app.use("/dist/api/invoices", invoiceRouter.default());
+    app.get("/dist/api/session", (request, response) => {
+      console.log("GET SESSION");
+      request.session.appSession = uuidv4();
+      response.send({ id: request.session.appSession });
+    });
+    app.post("/dist/api/session", (request, response) => {
+      if (request.body.sessionID != request.session.appSession) {
+        return response
+          .status(500)
+          .send({ message: "The data in the session does not match!" });
+      }
+      response.send({ message: "Success!" });
+    });
+    // app.use(router);
   }
-
-  var userRouter,
-    serviceRouter,
-    sessionsRouter,
-    actorRouter,
-    orderRouter,
-    paymentRouter,
-    invoiceRouter;
-  let prefix = "./";
-  // console.log(import("./src/routes/user.route.js")(app));
-  if (env === "development") {
-    // app.use("./", express.static(path.join(__dirname, "src/assets")));
-    // app.use('/public-assets', express.static(path.join(__dirname, 'assets')));
-  } else {
-    prefix = "./";
-    // app.use(
-    //   "./",
-    //   express.static(path.join(__dirname, "./dist/prod/client/assets/app_assets"))
-    // );
-  }
-  userRouter = await import(`${prefix}src/routes/user.route.js`);
-  serviceRouter = await import(`${prefix}src/routes/service.route.js`);
-  sessionsRouter = await import(`${prefix}src/routes/sessions.route.js`);
-  actorRouter = await import(`${prefix}src/routes/actor.route.js`);
-  orderRouter = await import(`${prefix}src/routes/order.route.js`);
-  paymentRouter = await import(`${prefix}src/routes/payment.route.js`);
-  invoiceRouter = await import(`${prefix}src/routes/invoice.route.js`);
-  //  Populate req.cookies
-  app.use(cookieParser());
-  //  Session setup
-  app.use(
-    session({
-      secret: "myLittleSecret",
-      cookie: {
-        maxAge: 600000,
-        // secure: true,
-      },
-      saveUninitialized: true,
-      resave: false,
-      unset: "keep",
-    })
-  );
-  app.use(
-    cors({
-      origin: [`http://localhost:${port}`, `https://localhost:${port}`],
-      credentials: true,
-      exposedHeaders: ["set-cookie"],
-    })
-  );
-  // parse requests of content-type - application/x-www-form-urlencoded
-  app.use(express.urlencoded({ extended: true }));
-  // parse requests of content-type - application/json
-  app.use(express.json());
-  app.use("/api/users", userRouter.default());
-  app.use("/api/services", serviceRouter.default());
-  app.use("/api/sessions", sessionsRouter.default());
-  app.use("/api/actors", actorRouter.default());
-  app.use("/api/orders", orderRouter.default());
-  app.use("/api/payments", paymentRouter.default());
-  app.use("/api/invoices", invoiceRouter.default());
-  app.get("/api/session", (request, response) => {
-    request.session.appSession = uuidv4();
-    response.send({ id: request.session.appSession });
-  });
-  app.post("/api/session", (request, response) => {
-    if (request.body.sessionID != request.session.appSession) {
-      return response
-        .status(500)
-        .send({ message: "The data in the session does not match!" });
-    }
-    response.send({ message: "Success!" });
-  });
   if (env === "production") {
     // app.use("/", express.static(path.join(__dirname, "/dist/prod/client")));
+    const mid = await import('sirv');
     app.use(
       '/dist',
-      (await import('serve-static')).default(resolve('dist/prod/client'), {
-        index: false
+      mid.default(resolve('dist/prod/client'), {
+        maxAge: 31536000, // 1Y
+        immutable: true
       })
     );
   } else {
@@ -153,14 +212,16 @@ async function createViteServer() {
   }
   app.get("*", async (req, res, next) => {
     // console.log("default Get");
+    // console.log(__dirname);
     const url = req.originalUrl;
-
+    // console.log("URL");
+    // console.log(url);
     try {
       // 1. Read index.html
       var template;
       if (env === "development") {
         template = fs.readFileSync(
-          path.resolve(__dirname, "public/index.html"),
+          path.resolve(__dirname, "index.html"),
           "utf-8"
         );
       } else if (env === "production") {
@@ -178,11 +239,11 @@ async function createViteServer() {
         // 3.1. Apply Vite HTML transforms. This injects the Vite HMR client, and
         //    also applies HTML transforms from Vite plugins, e.g. global preambles
         //    from @vitejs/plugin-react
-        console.log("Template Before");
-        console.log(template);
+        // console.log("Template Before");
+        // console.log(template);
         template = await vite.transformIndexHtml(url, template);
-        console.log("Template");
-        console.log(template);
+        // console.log("Template");
+        // console.log(template);
         render = await vite.ssrLoadModule("./src/server.js", { fixStacktrace: true });
         // console.log("Render");
         // console.log(render);
@@ -195,11 +256,13 @@ async function createViteServer() {
       // 4. render the app HTML. This assumes entry-server.js's exported `render`
       //    function calls appropriate framework SSR APIs,
       //    e.g. ReactDOMServer.renderToString()
+      // console.log("Manifest");
+      // console.log(manifest);
       const [appHtml, preloadLinks] = await render.default(url, manifest);
-      console.log("App HTML");
-      console.log(appHtml);
-      console.log("Preload Links");
-      console.log(preloadLinks);
+      // console.log("App HTML");
+      // console.log(appHtml);
+      // console.log("Preload Links");
+      // console.log(preloadLinks);
       // console.log(template);
       // 5. Inject the app-rendered HTML into the template.
       const html = template

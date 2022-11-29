@@ -3,8 +3,8 @@ import { renderToString } from "vue/server-renderer";
 import { basename } from 'node:path';
 
 export default (context, manifest) => {
-  console.log("context");
-  console.log(context);
+  // console.log("context");
+  // console.log(context);
   return new Promise(async (resolve, reject) => {
     const { app, router } = buildApp();
     // console.log("App");

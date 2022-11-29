@@ -7,6 +7,11 @@ import vueJsx from "@vitejs/plugin-vue-jsx";
 import vueI18n from '@intlify/vite-plugin-vue-i18n';
 import { fileURLToPath } from "node:url";
 import htmlTemplate from 'vite-plugin-html-template';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
+// import htmlPlugin from "vite-plugin-html-config";
+// import ssr from 'vite-plugin-ssr/plugin'
+
+// console.log(htmlPlugin);
 // console.log(`\n\nEnvironnement : - ${process.env.CTX} -\n`);
 let config = defineConfig(({ command, mode }) => {
   console.log(`mode - ${mode}`);
@@ -58,11 +63,6 @@ let config = defineConfig(({ command, mode }) => {
       cssCodeSplit: true,
       // (in kbs)
       chunkSizeWarningLimit: 500,
-      rollupOptions: {
-        input: {
-          main: "src/main.ts"
-        }
-      }
     };
     cssObj = {
       devSourcemap: false,
@@ -80,6 +80,25 @@ let config = defineConfig(({ command, mode }) => {
         include: path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src/locales/**'),
       }),
       htmlTemplate.default(),
+      viteStaticCopy({
+        targets: [
+          {
+            src: 'src/assets/uploads',
+            dest: 'assets/'
+          }
+        ]
+      })
+      // htmlPlugin({
+        // favicon: 'public/favicon.ico',
+      //   scripts: [
+      //     {
+      //       async: true,
+      //       src: "src/client.js",
+      //       type: "module",
+      //     }
+      //   ]
+      // }),
+      // ssr(),
     );
   }
   return {
@@ -104,7 +123,10 @@ let config = defineConfig(({ command, mode }) => {
     ssr: {
       // SSG Vue-i18n workaround
       noExternal: [/vue-i18n/],
-    }
+    },
+    envDir: path.join(__dirname, "envs"),
+    envPrefix: "CLIENT_",
+    // root: path.join(__dirname, "src/"),
   };
 });
 
