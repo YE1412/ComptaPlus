@@ -54,7 +54,40 @@ async function createViteServer() {
     });
   if (!ret) return;
 
-  var vite = null;
+  var vite = null, prefixRoute = "./", prefixMiddleware = "";
+  var userRouter,
+    serviceRouter,
+    sessionsRouter,
+    actorRouter,
+    orderRouter,
+    paymentRouter,
+    invoiceRouter;
+  //  Populate req.cookies
+  app.use(cookieParser());
+  //  Session setup
+  app.use(
+    session({
+      secret: "myLittleSecret",
+      cookie: {
+        maxAge: 600000,
+        // secure: true,
+      },
+      saveUninitialized: true,
+      resave: false,
+      unset: "keep",
+    })
+  );
+  app.use(
+    cors({
+      origin: [`http://localhost:${port}`, `https://localhost:${port}`],
+      credentials: true,
+      exposedHeaders: ["set-cookie"],
+    })
+  );
+  // parse requests of content-type - application/x-www-form-urlencoded
+  app.use(express.urlencoded({ extended: true }));
+  // parse requests of content-type - application/json
+  app.use(express.json());
   if (env === "development") {
     // Create Vite server in middleware mode and configure the app type as
     // 'custom', disabling Vite's own HTML serving logic so parent server
@@ -67,133 +100,37 @@ async function createViteServer() {
     // use vite's connect instance as middleware
     // if you use own express router (express.Router()), you should
     // use router.use
-    app.use(vite.middlewares);
-    var userRouter,
-      serviceRouter,
-      sessionsRouter,
-      actorRouter,
-      orderRouter,
-      paymentRouter,
-      invoiceRouter;
-    let prefix = "./";
-    userRouter = await import(`${prefix}src/routes/user.route.js`);
-    serviceRouter = await import(`${prefix}src/routes/service.route.js`);
-    sessionsRouter = await import(`${prefix}src/routes/sessions.route.js`);
-    actorRouter = await import(`${prefix}src/routes/actor.route.js`);
-    orderRouter = await import(`${prefix}src/routes/order.route.js`);
-    paymentRouter = await import(`${prefix}src/routes/payment.route.js`);
-    invoiceRouter = await import(`${prefix}src/routes/invoice.route.js`);
-    //  Populate req.cookies
-    app.use(cookieParser());
-    //  Session setup
-    app.use(
-      session({
-        secret: "myLittleSecret",
-        cookie: {
-          maxAge: 600000,
-          // secure: true,
-        },
-        saveUninitialized: true,
-        resave: false,
-        unset: "keep",
-      })
-    );
-    app.use(
-      cors({
-        origin: [`http://localhost:${port}`, `https://localhost:${port}`],
-        credentials: true,
-        exposedHeaders: ["set-cookie"],
-      })
-    );
-    // parse requests of content-type - application/x-www-form-urlencoded
-    app.use(express.urlencoded({ extended: true }));
-    // parse requests of content-type - application/json
-    app.use(express.json());
-    app.use("/api/users", userRouter.default());
-    app.use("/api/services", serviceRouter.default());
-    app.use("/api/sessions", sessionsRouter.default());
-    app.use("/api/actors", actorRouter.default());
-    app.use("/api/orders", orderRouter.default());
-    app.use("/api/payments", paymentRouter.default());
-    app.use("/api/invoices", invoiceRouter.default());
-    app.get("/api/session", (request, response) => {
-      request.session.appSession = uuidv4();
-      response.send({ id: request.session.appSession });
-    });
-    app.post("/api/session", (request, response) => {
-      if (request.body.sessionID != request.session.appSession) {
-        return response
-          .status(500)
-          .send({ message: "The data in the session does not match!" });
-      }
-      response.send({ message: "Success!" });
-    });
+    app.use(vite.middlewares);  
   }else{
-    // Single routing
-    // var router = express.Router();
-    var userRouter,
-      serviceRouter,
-      sessionsRouter,
-      actorRouter,
-      orderRouter,
-      paymentRouter,
-      invoiceRouter;
-    let prefix = "./";
-    userRouter = await import(`${prefix}src/routes/user.route.js`);
-    serviceRouter = await import(`${prefix}src/routes/service.route.js`);
-    sessionsRouter = await import(`${prefix}src/routes/sessions.route.js`);
-    actorRouter = await import(`${prefix}src/routes/actor.route.js`);
-    orderRouter = await import(`${prefix}src/routes/order.route.js`);
-    paymentRouter = await import(`${prefix}src/routes/payment.route.js`);
-    invoiceRouter = await import(`${prefix}src/routes/invoice.route.js`);
-    //  Populate req.cookies
-    app.use(cookieParser());
-    //  Session setup
-    app.use(
-      session({
-        secret: "myLittleSecret",
-        cookie: {
-          maxAge: 600000,
-          // secure: true,
-        },
-        saveUninitialized: true,
-        resave: false,
-        unset: "keep",
-      })
-    );
-    app.use(
-      cors({
-        origin: [`http://localhost:${port}`, `https://localhost:${port}`],
-        credentials: true,
-        exposedHeaders: ["set-cookie"],
-      })
-    );
-    // parse requests of content-type - application/x-www-form-urlencoded
-    app.use(express.urlencoded({ extended: true }));
-    // parse requests of content-type - application/json
-    app.use(express.json());
-    app.use("/dist/api/users", userRouter.default());
-    app.use("/dist/api/services", serviceRouter.default());
-    app.use("/dist/api/sessions", sessionsRouter.default());
-    app.use("/dist/api/actors", actorRouter.default());
-    app.use("/dist/api/orders", orderRouter.default());
-    app.use("/dist/api/payments", paymentRouter.default());
-    app.use("/dist/api/invoices", invoiceRouter.default());
-    app.get("/dist/api/session", (request, response) => {
-      console.log("GET SESSION");
-      request.session.appSession = uuidv4();
-      response.send({ id: request.session.appSession });
-    });
-    app.post("/dist/api/session", (request, response) => {
-      if (request.body.sessionID != request.session.appSession) {
-        return response
-          .status(500)
-          .send({ message: "The data in the session does not match!" });
-      }
-      response.send({ message: "Success!" });
-    });
-    // app.use(router);
+    prefixMiddleware = "/dist";
   }
+  userRouter = await import(`${prefixRoute}src/routes/user.route.js`);
+  serviceRouter = await import(`${prefixRoute}src/routes/service.route.js`);
+  sessionsRouter = await import(`${prefixRoute}src/routes/sessions.route.js`);
+  actorRouter = await import(`${prefixRoute}src/routes/actor.route.js`);
+  orderRouter = await import(`${prefixRoute}src/routes/order.route.js`);
+  paymentRouter = await import(`${prefixRoute}src/routes/payment.route.js`);
+  invoiceRouter = await import(`${prefixRoute}src/routes/invoice.route.js`);
+  
+  app.use(`${prefixMiddleware}/api/users`, userRouter.default());
+  app.use(`${prefixMiddleware}/api/services`, serviceRouter.default());
+  app.use(`${prefixMiddleware}/api/sessions`, sessionsRouter.default());
+  app.use(`${prefixMiddleware}/api/actors`, actorRouter.default());
+  app.use(`${prefixMiddleware}/api/orders`, orderRouter.default());
+  app.use(`${prefixMiddleware}/api/payments`, paymentRouter.default());
+  app.use(`${prefixMiddleware}/api/invoices`, invoiceRouter.default());
+  app.get(`${prefixMiddleware}/api/session`, (request, response) => {
+    request.session.appSession = uuidv4();
+    response.send({ id: request.session.appSession });
+  });
+  app.post(`${prefixMiddleware}/api/session`, (request, response) => {
+    if (request.body.sessionID != request.session.appSession) {
+      return response
+        .status(500)
+        .send({ message: "The data in the session does not match!" });
+    }
+    response.send({ message: "Success!" });
+  });
   if (env === "production") {
     // app.use("/dist", express.static(resolve("/dist/prod/client")));
     const mid = await import('sirv');
