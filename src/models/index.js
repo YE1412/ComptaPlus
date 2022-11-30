@@ -17,7 +17,7 @@ import userType from "./userType.model.js";
 // console.log(dbConfig);
 
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
-  logging: console.log,
+  logging: dbConfig.ENV === "development" ? console.log :  false,
   host: dbConfig.HOST,
   dialect: dbConfig.dialect,
   port: dbConfig.PORT,

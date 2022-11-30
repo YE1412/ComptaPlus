@@ -84,7 +84,6 @@ const findAllPrices = (req, res) => {
 };
 
 const findOne = (req, res) => {
-  console.log("findOne");
   // const params = req.params;
   // const body = req.body;
   const query = req.query;

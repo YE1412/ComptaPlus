@@ -15,6 +15,7 @@ const config = {
   DB: process.env.DB_NAME,
   dialect: process.env.DB_DIALECT,
   PORT: process.env.DB_PORT,
+  ENV: process.env.CTX,
   pool: {
     // maximum number of connection in pool
     max: 5,

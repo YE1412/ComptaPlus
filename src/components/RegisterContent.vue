@@ -429,7 +429,7 @@ export default defineComponent({
       return re.test(this.companyName);
     },
     validCompanyLogo: function () {
-      var re = /(?:\.(jpg|jpeg|svg|png|ico))$/i;
+      var re = /(?:\.(svg))$/i;
       return re.test(this.companyLogo[0].name);
     },
     registerNewUser() {
@@ -541,8 +541,8 @@ export default defineComponent({
     "companyNamePlaceholder": "Société",
     "emptyCompanyNameErrorMsg": "Nom de société requis !",
     "errorCompanyNameMsg": "Nom de société incorrect !",
-    "companyLogoLabelText": "Logo de la société (.png/.jpg/.ico/.svg) < {size}MB",
-    "companyLogoPlaceholder": "Logo (.png/.jpg/.ico/.svg)",
+    "companyLogoLabelText": "Logo de la société (.svg) < {size}MB",
+    "companyLogoPlaceholder": "Logo (.svg)",
     "emptyCompanyLogoErrorMsg": "Logo de la société requis !",
     "errorCompanyLogoMsg": "Fichier de logo incorrect !",
     "errorCompanyLogoFileUploadMsg": "Erreur lors de l'upload du fichier : {err}",
@@ -597,8 +597,8 @@ export default defineComponent({
     "companyNamePlaceholder": "Company",
     "emptyCompanyNameErrorMsg": "Company name required !",
     "errorCompanyNameMsg": "Bad company name supplied !",
-    "companyLogoLabelText": "Company icon (.png/.jpg/.ico/.svg) < {size}MB",
-    "companyLogoPlaceholder": "Icon (.png/.jpg/.ico/.svg)",
+    "companyLogoLabelText": "Company icon (.svg) < {size}MB",
+    "companyLogoPlaceholder": "Icon (.svg)",
     "emptyCompanyLogoErrorMsg": "Company icon required !",
     "errorCompanyLogoMsg": "Bad company icon file supplied !",
     "errorCompanyLogoFileUploadMsg": "Error while uploading file : {err}",

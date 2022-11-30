@@ -157,7 +157,7 @@ export default defineComponent({
         required: "",
         value: "",
         state: false,
-        label: "",
+        label: this.$i18n.t('companyLogoLabelText', { size: 2 }),
         invalidFeedback: "",
         validFeedback: "",
         isValidated: true,
@@ -436,7 +436,7 @@ export default defineComponent({
       return re.test(this.companyname);
     },
     validCompanyLogo: function () {
-      var re = /(?:\.(jpg|jpeg|svg|png|ico))$/i;
+      var re = /(?:\.(svg))$/i;
       // console.log(this.companylogo);
       return this.companylogo === null
         ? false
@@ -587,8 +587,8 @@ export default defineComponent({
     "passwordPlaceholder": "Mot de passe",
     "emptyPasswordErrorMsg": "Mot de passe requis !",
     "errorPasswordMsg": "Mot de passe invalide !",
-    "companyLogoLabelText": "Logo de la société (.png/.jpg/.ico/.svg) < {size}MB",
-    "companyLogoPlaceholder": "Logo (.png/.jpg/.ico/.svg)",
+    "companyLogoLabelText": "Logo de la société (.svg) < {size}MB",
+    "companyLogoPlaceholder": "Logo (.svg)",
     "emptyCompanyLogoErrorMsg": "Logo de la société requis !",
     "errorCompanyLogoMsg": "Fichier de logo incorrect !",
     "errorCompanyLogoFileUploadMsg": "Erreur lors de l'upload du fichier : {err}",
@@ -635,8 +635,8 @@ export default defineComponent({
     "passwordPlaceholder": "Passwword",
     "emptyPasswordErrorMsg": "Password required !",
     "errorPasswordMsg": "Wrong paswword !",
-    "companyLogoLabelText": "Company icon (.png/.jpg/.ico/.svg) < {size}MB",
-    "companyLogoPlaceholder": "Icon (.png/.jpg/.ico/.svg)",
+    "companyLogoLabelText": "Company icon (.svg) < {size}MB",
+    "companyLogoPlaceholder": "Icon (.svg)",
     "emptyCompanyLogoErrorMsg": "Company icon required !",
     "errorCompanyLogoMsg": "Bad company icon file supplied !",
     "errorCompanyLogoFileUploadMsg": "Error while uploading file : {err}",

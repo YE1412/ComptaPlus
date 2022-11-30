@@ -8,6 +8,7 @@ import { useInvoiceStore } from "@/stores/invoice";
 import { useCounterStore } from "@/stores/counter";
 // Requiring the lodash library
 import _ from "lodash";
+import { Canvg } from 'canvg';
 
 export default defineComponent({
   name: "PdfView",
@@ -307,7 +308,7 @@ export default defineComponent({
       ret.thirdLine = `${this.invoicesDetails[ind]["buyer"].cp} ${villeLibelle}`;
       return ret;
     },
-    buildAndSavePdf(inv: any) {
+    async buildAndSavePdf(inv: any) {
       // console.log(this.invoicesDetails);
       this.languageVal = inv.langue === "fr" ? inv.langue : "";
       this.languageVal = inv.langue === "us" ? "en" : this.langueVal;
@@ -317,6 +318,8 @@ export default defineComponent({
         format: "a4",
       });
       let yPos = this.insertHead(inv);
+      if (this.userStore.getUser.companyLogo !== null)
+        await this.insertLogo()
       for (const k in inv.commandes) {
         yPos = this.insertOrder(inv, yPos, k);
       }
@@ -359,9 +362,8 @@ export default defineComponent({
     },
     insertHead(inv: any): number {
       let ret = this.headerYPos;
-      const heading = "INFOSERVICES";
+      const heading = this.userStore.getUser.companyName.toUpperCase();
       this.doc.setLanguage(this.languageVal);
-      // // doc.addSvg(SVG-Data, x, y, width, height);
       this.doc.setFont("helvetica", "bold");
       this.doc.setFontSize(14).text(heading, this.tableXPos, ret);
       this.doc.setFont("helvetica", "bold");
@@ -413,6 +415,20 @@ export default defineComponent({
         );
       ret += this.headerTableHeight;
       return ret;
+    },
+    async insertLogo() {
+      var canvas = document.createElement('canvas');
+      var context = canvas.getContext('2d');
+
+
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      const v = await Canvg.from(context, `${window.location.origin}/dist/assets/uploads/${this.userStore.getUser.companyLogo}`);
+
+      // Start SVG rendering with animations and mouse handling.
+      v.start();
+
+      var imgData = canvas.toDataURL('image/png');
+      this.doc.addImage(imgData, "PNG", this.tableXPos + (this.footerCellTableWidth * 4), this.headerYPos * (1 - 1 / 2), this.footerCellTableWidth, 48, "CompanyLogo", "MEDIUM", 0);
     },
     insertOrder(inv: any, yPos: number, ind: number): number {
       let ret = yPos;
@@ -1061,7 +1077,7 @@ export default defineComponent({
           });
         this.invoicesDetails = invoicesObj;
         for (const key in this.contentsForPrint)
-          this.buildAndSavePdf(this.contentsForPrint[key]);
+          await this.buildAndSavePdf(this.contentsForPrint[key]);
       },
       immediate: true,
     },
