@@ -3,18 +3,16 @@ import { defineComponent, Suspense } from "vue";
 import TheWelcome from "../components/TheWelcome.vue";
 import TheToolbarIn from "../components/TheToolbarIn.vue";
 import Sidenav from "../components/Sidenav.vue";
-import { useUserStore } from "@/stores/user";
-import { useSessionStore } from "@/stores/session";
+// import { useUserStore } from "@/stores/user";
+// import { useSessionStore } from "@/stores/session";
 import { useCounterStore } from "@/stores/counter";
-import { RouterLink } from "vue-router";
+// import { RouterLink } from "vue-router";
 
 export default defineComponent({
   name: "HomeView",
   setup() {
-    const userStore = useUserStore();
-    const sessionStore = useSessionStore();
     const counterStore = useCounterStore();
-    return { userStore, sessionStore, counterStore };
+    return { counterStore };
   },
   components: {
     TheWelcome,
@@ -22,24 +20,36 @@ export default defineComponent({
     Sidenav,
     Suspense,
   },
-  methods: {},
+  methods: {
+    async forceHomeRerender() {
+      // Remove MyComponent from the DOM
+      this.renderComponent = false;
+
+      // Wait for the change to get flushed to the DOM
+      await this.$nextTick();
+
+      // Add the component back in
+      this.renderComponent = true;
+    },
+  },
   mounted() {},
   data() {
-    this.$i18n.locale =
-      this.counterStore.getLanguages[
+    this.$i18n.locale = this.counterStore.getLanguages[
         this.counterStore.getLangDisplayedIndex
       ].lang;
-    return {};
+    return {
+      renderComponent: true,
+    };
   },
 });
 </script>
 <template>
   <main>
-    <TheToolbarIn />
+    <TheToolbarIn @language-changed-re-render="forceHomeRerender" />
     <Sidenav />
     <div class="content">
       <Suspense>
-        <TheWelcome />
+        <TheWelcome v-if="renderComponent" />
       </Suspense>
     </div>
   </main>

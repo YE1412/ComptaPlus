@@ -55,6 +55,15 @@ userModelObj.type = userModelObj.belongsTo(userTypeModelObj, {
   foreignKey: "userTypeId",
 });
 
+userModelObj.invoices = userModelObj.hasMany(invoiceModelObj, {
+  onDelete: "SET NULL",
+  onUpdate: "CASCADE",
+  foreignKey: "administratorId",
+});
+invoiceModelObj.admin = invoiceModelObj.belongsTo(userModelObj, {
+  foreignKey: "administratorId",
+});
+
 actorTypeModelObj.actors = actorTypeModelObj.hasMany(actorModelObj, {
   foreignKey: "actorTypeId",
   onUpdate: "CASCADE",

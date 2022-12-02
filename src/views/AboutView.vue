@@ -10,6 +10,23 @@ export default defineComponent({
     // console.log(store);
     return { store };
   },
+  data() {
+    return {
+      renderComponent: true,
+    };
+  },
+  methods: {
+    async forceAboutRerender() {
+      // Remove MyComponent from the DOM
+      this.renderComponent = false;
+
+      // Wait for the change to get flushed to the DOM
+      await this.$nextTick();
+
+      // Add the component back in
+      this.renderComponent = true;
+    },
+  },
   mounted() {},
   components: {
     TheToolbarIn,
@@ -20,12 +37,12 @@ export default defineComponent({
 
 <template>
   <main>
-    <TheToolbarIn />
+    <TheToolbarIn @language-changed-re-render="forceAboutRerender" />
     <div class="fullContent">
       <div class="about">
         <h1>This is an about page</h1>
       </div>
-      <AboutContent />
+      <AboutContent v-if="renderComponent" />
     </div>
   </main>
 </template>

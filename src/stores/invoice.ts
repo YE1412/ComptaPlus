@@ -82,11 +82,11 @@ const useInvoiceStore = defineStore("invoice", {
     },
   },
   actions: {
-    getAllInvoices() {
+    getAllInvoices(userId: number) {
       // console.log("Login...");
       return new Promise((resolve, reject) => {
         invoiceAxiosService
-          .getAll()
+          .getAll(userId)
           .then(async (res) => {
             // console.log(res);
             if (res.data.length) {

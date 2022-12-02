@@ -8,6 +8,7 @@ import { useOrderStore } from "@/stores/order";
 import { usePaymentStore } from "@/stores/payment";
 import { useInvoiceStore } from "@/stores/invoice";
 import { useCounterStore } from "@/stores/counter";
+import { useUserStore } from "@/stores/user";
 
 export default defineComponent({
   name: "TableItem",
@@ -84,6 +85,7 @@ export default defineComponent({
     const payStore = usePaymentStore();
     const invStore = useInvoiceStore();
     const cntStore = useCounterStore();
+    const usrStore = useUserStore();
     return {
       serviceStore: servStore,
       actorStore: actStore,
@@ -91,6 +93,7 @@ export default defineComponent({
       paymentStore: payStore,
       invoiceStore: invStore,
       counterStore: cntStore,
+      userStore: usrStore,
     };
   },
   data() {
@@ -405,7 +408,7 @@ export default defineComponent({
           }));
       } else if (this.src === "invoices") {
         return (contentTab = await this.invoiceStore
-          .getAllInvoices()
+          .getAllInvoices(this.userStore.getUser.userId)
           .then(
             (res) => {
               return res;

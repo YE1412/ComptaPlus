@@ -4,6 +4,7 @@ import { defineComponent } from "vue";
 // import { RouterLink } from "vue-router";
 import { useUserStore } from "@/stores/user";
 import { useCounterStore } from "@/stores/counter";
+import OrgChart from "./OrgChart.vue";
 
 export default defineComponent({
   name: "AboutContent",
@@ -16,10 +17,14 @@ export default defineComponent({
       counterStore: cntStore,
     };
   },
-  components: {},
+  components: {
+    OrgChart,
+  },
 });
 </script>
 
 <template>
-  <div class="container"></div>
+  <div class="container">
+    <OrgChart/>
+  </div>
 </template>

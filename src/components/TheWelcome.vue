@@ -8,17 +8,24 @@ import CommunityIcon from "./icons/IconCommunity.vue";
 import SupportIcon from "./icons/IconSupport.vue";
 import { useMessageStore } from "@/stores/message";
 import { useCounterStore } from "@/stores/counter";
+import { useUserStore } from "@/stores/user";
 import MessagesItem from "./MessagesItem.vue";
+import BarChart from "./BarChart.vue";
+import PieChart from "./PieChart.vue";
+import HomeTable from "./HomeTable.vue";
 
 export default defineComponent({
   name: "TheWelcome",
   async setup() {
     const msgStore = useMessageStore();
     const cntStore = useCounterStore();
-
+    const usrStore = useUserStore();
+    await cntStore.getFinancialYearIncomes(usrStore.getUser.userId);
+    await cntStore.getFinancialYearPaymentsIncomes(usrStore.getUser.userId);
     return {
       counterStore: cntStore,
       messageStore: msgStore,
+      userStore: usrStore,
     };
   },
   components: {
@@ -29,12 +36,63 @@ export default defineComponent({
     CommunityIcon,
     SupportIcon,
     MessagesItem,
+    BarChart,
+    PieChart,
+    HomeTable
+  },
+  data() {
+    const devise = this.userStore.getUser.devise.symbole;
+    const headTableObj = [
+      this.$i18n.t("totalFiscalYearHTIncomes"),
+      this.$i18n.t("totalFiscalYearTTIncomes"),
+      this.$i18n.t("totalFiscalYearPaymentsIncomes"),
+    ];
+    let contentTableObj = [];
+    if (this.userStore.getUser.devise.deviseId == 3)
+    {
+      contentTableObj.push(
+          `${this.counterStore.getHtFYI} ${devise}`,
+          `${this.counterStore.getTtFYI} ${devise}`,
+          `${this.counterStore.getPayFYI} ${devise}`,
+        );
+    } else {
+      contentTableObj.push(
+          `${devise} ${this.counterStore.getHtFYI}`,
+          `${devise} ${this.counterStore.getTtFYI}`,
+          `${devise} ${this.counterStore.getPayFYI}`,
+        );
+    }
+    return {
+      head: headTableObj,
+      content: contentTableObj
+    };
   },
 });
 </script>
 
+<i18n>
+{
+  "fr": {
+    "totalFiscalYearHTIncomes": "Revenus Hors taxes sur l'année fiscale",
+    "totalFiscalYearTTIncomes": "Revenus TTC sur l'année fiscale",
+    "totalFiscalYearPaymentsIncomes": "Encaissements sur l'année fiscale",
+  },
+  "en": {
+    "totalFiscalYearHTIncomes": "Total fiscal year incomes excl. taxes",
+    "totalFiscalYearTTIncomes": "Total fiscal year incomes incl. taxes",
+    "totalFiscalYearPaymentsIncomes": "Withdrawal in the fiscal year",
+  }
+}
+</i18n>
+
 <template>
-  <MessagesItem v-if="messageStore.getMessagesVisibility"></MessagesItem>
+  <div class="container">
+    <MessagesItem v-if="messageStore.getMessagesVisibility"></MessagesItem>
+    <HomeTable :headTableObj="head" :contentTableObj="content" />
+    <BarChart />
+    <PieChart />
+  </div>
+  
   <WelcomeItem>
     <template #icon>
       <DocumentationIcon />

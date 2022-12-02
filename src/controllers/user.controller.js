@@ -198,7 +198,7 @@ const checkOne = (req, res) => {
         "email",
         "companyName",
         "companyLogo",
-        "devise.deviseId",
+        "deviseId",
         "userTypeId",
       ],
       where: {

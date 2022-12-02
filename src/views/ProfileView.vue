@@ -9,6 +9,23 @@ export default defineComponent({
     const store = useUserStore();
     return { store };
   },
+  data() {
+    return {
+      renderComponent: true,
+    };
+  },
+  methods: {
+    async forceProfileRerender() {
+      // Remove MyComponent from the DOM
+      this.renderComponent = false;
+
+      // Wait for the change to get flushed to the DOM
+      await this.$nextTick();
+
+      // Add the component back in
+      this.renderComponent = true;
+    },
+  },
   components: {
     TheToolbarIn,
     ProfileContent,
@@ -17,10 +34,10 @@ export default defineComponent({
 </script>
 <template>
   <main>
-    <TheToolbarIn />
+    <TheToolbarIn @language-changed-re-render="forceProfileRerender" />
     <div class="fullContent">
       <Suspense>
-        <ProfileContent />
+        <ProfileContent v-if="renderComponent" />
       </Suspense>
     </div>
   </main>

@@ -1,6 +1,7 @@
 <script lang="ts">
 /*global __CRYPTAPI__, __KEY__*/
 import { defineComponent, nextTick, ref } from "vue";
+import { useUserStore } from "@/stores/user";
 import { useInvoiceStore } from "@/stores/invoice";
 import { useMessageStore } from "@/stores/message";
 import MessagesItem from "../components/MessagesItem.vue";
@@ -37,6 +38,7 @@ export default defineComponent({
     // console.log(`Setup`);
     const invoiceStore = useInvoiceStore();
     const messageStore = useMessageStore();
+    const userStore = useUserStore();
     const languagesObj = await invoiceStore
       .getAllLanguages()
       .then(
@@ -130,6 +132,7 @@ export default defineComponent({
       buyersObj,
       paymentsObj,
       ordersObj,
+      userStore
     };
   },
   beforeCreate() {
@@ -774,6 +777,7 @@ export default defineComponent({
         tvaValue: this.tvaValue,
         buyerId: this.buyerId,
         sellerId: this.sellerId,
+        adminId: this.userStore.getUser.userId,
         orders: this.selectedInvoiceOrder,
         payments: this.selectedInvoicePayment,
       };

@@ -352,6 +352,8 @@ export default defineComponent({
       if (this.companylogo !== null) {
         if (!this.validCompanyLogo()) {
           this.errors.push(this.$i18n.t("errorCompanyLogoMsg"));
+          // this.obj["companyLogo"].isValid = false;
+          // this.obj["companyLogo"].invalidFeed = this.$i18n.t("errorCompanyLogoMsg");
           this.companylogo_valid = false;
           this.companylogo_valid_errorMsg = this.$i18n.t("errorCompanyLogoMsg");
         } else {
@@ -359,6 +361,8 @@ export default defineComponent({
             .then((response) => {
               // console.log(response);
               this.message = response.data.message;
+              // this.obj["companyLogo"].isValid = true;
+              // this.obj["companyLogo"].validFeed = this.$i18n.t("validMsg");
               this.companylogo_valid = true;
               this.companylogo_validMsg = this.$i18n.t("validMsg");
             })
@@ -378,6 +382,11 @@ export default defineComponent({
                     size: err.response.data.errMaxFileSize,
                   })
                 );
+                // this.obj["companyLogo"].isValid = false;
+                // this.obj["companyLogo"].invalidFeed = this.$i18n.t(
+                //   "errorCompanyLogoMaxSizeFileUploadMsg",
+                //   { size: err.response.data.errMaxFileSize }
+                // );
                 this.companylogo_valid = false;
                 this.companylogo_valid_errorMsg = this.$i18n.t(
                   "errorCompanyLogoMaxSizeFileUploadMsg",
@@ -389,6 +398,11 @@ export default defineComponent({
                     err: this.message,
                   })
                 );
+                // this.obj["companyLogo"].isValid = false;
+                // this.obj["companyLogo"].invalidFeed = this.$i18n.t(
+                //   "errorCompanyLogoFileUploadMsg",
+                //   { err: this.message }
+                // );
                 this.companylogo_valid = false;
                 this.companylogo_valid_errorMsg = this.$i18n.t(
                   "errorCompanyLogoFileUploadMsg",
@@ -749,8 +763,8 @@ export default defineComponent({
                 :label="label"
                 :isValid="companylogo_valid"
                 :isValidated="true"
-                :invalidFeedback="companylogo_validMsg"
-                :validFeedback="companylogo_valid_errorMsg"
+                :invalidFeedback="companylogo_valid_errorMsg"
+                :validFeedback="companylogo_validMsg"
                 size="lg"
               />
               <div

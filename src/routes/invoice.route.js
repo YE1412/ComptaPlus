@@ -6,11 +6,16 @@ export default () => {
   // Create a new Invoice
   router.post("/", invoices.create);
 
-  // Retrieve all Invoices
-  router.get("/", invoices.findAll);
+  // Retrieve all Invoices of an administrator
+  router.get("/all/:userId", invoices.findAll);
 
   // Retrieve a single Invoice with id
   router.get("/find", invoices.findOne);
+
+  // Get Financial Year Incomes of the given seller id
+  router.get("/financialYearIncomes", invoices.getFinancialYearIncomes);
+
+  router.get("/financialYearPaymentsIncomes", invoices.getFinancialYearPaymentsIncomes);
 
   // Retrieve more Invoices with ids
   router.get("/find/:ids", invoices.findMore);

@@ -53,6 +53,14 @@ const model = (sequelize) => {
           key: "actorId",
         },
       },
+      administratorId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        reference: {
+          model: "user",
+          key: "userId",
+        },
+      },
     },
     {
       freezeTableName: true,

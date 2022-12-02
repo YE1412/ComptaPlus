@@ -1,8 +1,8 @@
 import http from "../http.common";
 
 class InvoiceDataService {
-  getAll() {
-    return http.get("/invoices");
+  getAll(id: number) {
+    return http.get(`/invoices/all/${id}`);
   }
 
   getAllSellers() {
@@ -36,6 +36,22 @@ class InvoiceDataService {
       },
     });
   }
+
+  getFinancialYearIncomes(id: number) {
+    return http.get(`/invoices/financialYearIncomes`, {
+      params: {
+        adminId: id,
+      },
+    });
+  }
+
+  getFinancialYearPaymentsIncomes(id: number) {
+    return http.get(`/invoices/financialYearPaymentsIncomes`, {
+      params: {
+        adminId: id,
+      },
+    });
+  }  
 
   getMore(ids: number[]) {
     return http.get(`/invoices/find/${ids}`);

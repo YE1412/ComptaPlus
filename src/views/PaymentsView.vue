@@ -6,7 +6,7 @@ import { useUserStore } from "@/stores/user";
 import { useSessionStore } from "@/stores/session";
 import PaymentContent from "../components/PaymentContent.vue";
 
-const renderComponent = ref(true);
+// const renderComponent = ref(true);
 
 export default defineComponent({
   name: "PaymentsView",
