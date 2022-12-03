@@ -462,9 +462,9 @@ export default defineComponent({
         firstname: this.firstname,
         companyName: this.companyname,
         companyLogo:
-          this.currentImage !== null
+          this.companylogo !== null
             ? this.currentImage.name
-            : this.currentImage,
+            : this.companylogo,
         pass: this.password,
         deviseId: this.deviseId,
         userTypeId: 1,

@@ -50,6 +50,7 @@ export default defineComponent({
     <div class="content">
       <Suspense>
         <TheWelcome v-if="renderComponent" />
+        <template #fallback> Loading... </template>
       </Suspense>
     </div>
   </main>

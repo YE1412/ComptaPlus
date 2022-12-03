@@ -20,8 +20,9 @@ export default defineComponent({
     const msgStore = useMessageStore();
     const cntStore = useCounterStore();
     const usrStore = useUserStore();
-    await cntStore.getFinancialYearIncomes(usrStore.getUser.userId);
-    await cntStore.getFinancialYearPaymentsIncomes(usrStore.getUser.userId);
+    // await cntStore.getFinancialYearIncomes(usrStore.getUser.userId);
+    // await cntStore.getFinancialYearPaymentsIncomes(usrStore.getUser.userId);
+    await cntStore.getFinancialYearInvoices(usrStore.getUser.userId);
     return {
       counterStore: cntStore,
       messageStore: msgStore,
@@ -51,21 +52,49 @@ export default defineComponent({
     if (this.userStore.getUser.devise.deviseId == 3)
     {
       contentTableObj.push(
-          `${this.counterStore.getHtFYI} ${devise}`,
-          `${this.counterStore.getTtFYI} ${devise}`,
-          `${this.counterStore.getPayFYI} ${devise}`,
+          `${this.getHtFYI()} ${devise}`,
+          `${this.getTtFYI()} ${devise}`,
+          `${this.getPayFYI()} ${devise}`,
         );
     } else {
       contentTableObj.push(
-          `${devise} ${this.counterStore.getHtFYI}`,
-          `${devise} ${this.counterStore.getTtFYI}`,
-          `${devise} ${this.counterStore.getPayFYI}`,
+          `${devise} ${this.getHtFYI()}`,
+          `${devise} ${this.getTtFYI()}`,
+          `${devise} ${this.getPayFYI()}`,
         );
     }
     return {
       head: headTableObj,
       content: contentTableObj
     };
+  },
+  methods: {
+    getHtFYI() {
+      let ret = 0.0;
+      for(const k in this.counterStore.getInvoicesFY){
+        ret += this.counterStore.getInvoicesFY[k].invoiceHTPrice;
+      }
+      return ret;
+    },
+    getTtFYI() {
+      let ret = 0.0;
+      for(const k in this.counterStore.getInvoicesFY){
+        ret += this.counterStore.getInvoicesFY[k].invoiceTTPrice;
+      }
+      return ret;
+    },
+    getPayFYI() {
+      let ret = 0.0;
+      for(const k in this.counterStore.getInvoicesFY){
+        for (const l in this.counterStore.getInvoicesFY[k]["payments"])
+        { 
+          if (this.counterStore.getInvoicesFY[k]["payments"][l].etat === 1){
+            ret += this.counterStore.getInvoicesFY[k]["payments"][l].paymentValue;
+          }
+        }
+      }
+      return ret;
+    },
   },
 });
 </script>

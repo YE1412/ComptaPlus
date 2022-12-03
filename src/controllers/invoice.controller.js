@@ -206,48 +206,84 @@ const findOne = (req, res) => {
     });
 };
 
-const getFinancialYearIncomes = async (req, res) => {
-  const query = req.query;
-  if (query.adminId === undefined) {
-    res.status(500).send({
-      message: `Some error occured while retrieving financial year incomes, bad query.`,
-    });
-    return;
-  }
-  let ret = [], dateStart = null;
-  const now = new Date();
-  if (now.getMonth() < 5) {
-    dateStart = new Date(`${now.getFullYear() - 1}-06-01`);
-  } else {
-    dateStart = new Date(`${now.getFullYear()}-06-01`);
-  }
-  const n_ht = await invoice
-    .sum("invoiceHTPrice", {
-      where: {
-        administratorId: query.adminId,
-        date: {
-          [Op.gt]: dateStart,
-        }
-      },
-    });
-  const n_tt = await invoice
-    .sum("invoiceTTPrice", {
-      where: {
-        administratorId: query.adminId,
-        date: {
-          [Op.gt]: dateStart,
-        }
-      },
-    });
-    ret.push({n_ht, n_tt});
-    res.send(ret);
-};
+// const getFinancialYearIncomes = async (req, res) => {
+//   const query = req.query;
+//   if (query.adminId === undefined) {
+//     res.status(500).send({
+//       message: `Some error occured while retrieving financial year incomes, bad query.`,
+//     });
+//     return;
+//   }
+//   let ret = [], dateStart = null;
+//   const now = new Date();
+//   if (now.getMonth() < 5) {
+//     dateStart = new Date(`${now.getFullYear() - 1}-06-01`);
+//   } else {
+//     dateStart = new Date(`${now.getFullYear()}-06-01`);
+//   }
+//   const n_ht = await invoice
+//     .sum("invoiceHTPrice", {
+//       where: {
+//         administratorId: query.adminId,
+//         date: {
+//           [Op.gt]: dateStart,
+//         }
+//       },
+//     });
+//   const n_tt = await invoice
+//     .sum("invoiceTTPrice", {
+//       where: {
+//         administratorId: query.adminId,
+//         date: {
+//           [Op.gt]: dateStart,
+//         }
+//       },
+//     });
+//     ret.push({n_ht, n_tt});
+//     res.send(ret);
+// };
 
-const getFinancialYearPaymentsIncomes = async (req, res) => {
+// const getFinancialYearPaymentsIncomes = async (req, res) => {
+//   const query = req.query;
+//   if (query.adminId === undefined) {
+//     res.status(500).send({
+//       message: `Some error occured while retrieving financial year payments incomes, bad query.`,
+//     });
+//     return;
+//   }
+//   let ret = [], dateStart = null;
+//   const now = new Date();
+//   if (now.getMonth() < 5) {
+//     dateStart = new Date(`${now.getFullYear() - 1}-06-01`);
+//   } else {
+//     dateStart = new Date(`${now.getFullYear()}-06-01`);
+//   }
+//   const pay = await invoice
+//     .sum("payments.paymentValue", {
+//       where: {
+//         administratorId: query.adminId,
+//         date: {
+//           [Op.gt]: dateStart,
+//         }
+//       },
+//       include: [
+//         {
+//           model: payment,
+//           where: {
+//             etat: 1,
+//           }
+//         }
+//       ]
+//     });
+//     ret.push({pay});
+//     res.send(ret);
+// };
+
+const getFinancialYearInvoices = (req, res) => {
   const query = req.query;
   if (query.adminId === undefined) {
     res.status(500).send({
-      message: `Some error occured while retrieving financial year payments incomes, bad query.`,
+      message: `Some error occured while retrieving financial year invoices, bad query.`,
     });
     return;
   }
@@ -258,8 +294,21 @@ const getFinancialYearPaymentsIncomes = async (req, res) => {
   } else {
     dateStart = new Date(`${now.getFullYear()}-06-01`);
   }
-  const pay = await invoice
-    .sum("payments.paymentValue", {
+  invoice
+    .findAll({
+      attributes: [
+        "factureId",
+        "date",
+        "invoiceHTPrice",
+        "invoiceTTPrice",
+        "tvaValue",
+        "langue.langueId",
+        "devise.deviseId",
+        "buyer.actorId",
+        "seller.actorId",
+        // "commandes.orderId",
+        "payments.paymentId",
+      ],
       where: {
         administratorId: query.adminId,
         date: {
@@ -267,16 +316,27 @@ const getFinancialYearPaymentsIncomes = async (req, res) => {
         }
       },
       include: [
+        invoice.langue,
+        {
+          model: devise,
+        },
+        { model: actor, as: "buyer" },
+        { model: actor, as: "seller" },
         {
           model: payment,
-          where: {
-            etat: 1,
-          }
-        }
+        },
       ]
+    })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message ||
+          `Some error occured while retieving financial year invoices with administrator id=${query.adminId}.`,
+      });
     });
-    ret.push({pay});
-    res.send(ret);
 };
 
 const findMore = (req, res) => {
@@ -636,8 +696,9 @@ export default {
   create: create,
   findAll: findAll,
   findOne: findOne,
-  getFinancialYearIncomes: getFinancialYearIncomes,
-  getFinancialYearPaymentsIncomes: getFinancialYearPaymentsIncomes,
+  // getFinancialYearIncomes: getFinancialYearIncomes,
+  // getFinancialYearPaymentsIncomes: getFinancialYearPaymentsIncomes,
+  getFinancialYearInvoices: getFinancialYearInvoices,
   findMore: findMore,
   findAllLanguages: findAllLanguages,
   findAllDevises: findAllDevises,

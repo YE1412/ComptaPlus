@@ -37,16 +37,24 @@ class InvoiceDataService {
     });
   }
 
-  getFinancialYearIncomes(id: number) {
-    return http.get(`/invoices/financialYearIncomes`, {
-      params: {
-        adminId: id,
-      },
-    });
-  }
+  // getFinancialYearIncomes(id: number) {
+  //   return http.get(`/invoices/financialYearIncomes`, {
+  //     params: {
+  //       adminId: id,
+  //     },
+  //   });
+  // }
 
-  getFinancialYearPaymentsIncomes(id: number) {
-    return http.get(`/invoices/financialYearPaymentsIncomes`, {
+  // getFinancialYearPaymentsIncomes(id: number) {
+  //   return http.get(`/invoices/financialYearPaymentsIncomes`, {
+  //     params: {
+  //       adminId: id,
+  //     },
+  //   });
+  // }
+
+  getFinancialYearInvoices(id: number) {
+    return http.get(`/invoices/financialYearInvoices`, {
       params: {
         adminId: id,
       },

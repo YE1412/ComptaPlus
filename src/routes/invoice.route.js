@@ -12,10 +12,14 @@ export default () => {
   // Retrieve a single Invoice with id
   router.get("/find", invoices.findOne);
 
-  // Get Financial Year Incomes of the given seller id
-  router.get("/financialYearIncomes", invoices.getFinancialYearIncomes);
+  // Get Financial Year Incomes of the given administrator id
+  // router.get("/financialYearIncomes", invoices.getFinancialYearIncomes);
 
-  router.get("/financialYearPaymentsIncomes", invoices.getFinancialYearPaymentsIncomes);
+  // Get Financial Year Payments Incomes of the given administrator id
+  // router.get("/financialYearPaymentsIncomes", invoices.getFinancialYearPaymentsIncomes);
+
+  // Get Financial Year Invoices of the given administrator id
+  router.get("/financialYearInvoices", invoices.getFinancialYearInvoices);
 
   // Retrieve more Invoices with ids
   router.get("/find/:ids", invoices.findMore);

@@ -4,8 +4,56 @@ import userAxiosService from "../services/user.service";
 import invoiceAxiosService from "../services/invoice.service";
 import i18n from "../plugins/i18n";
 import { useStorage } from "@vueuse/core";
+import { decryptMod } from "../WasmModules";
 
 const { t } = i18n.global;
+let __DECRYPTAPI__: any;
+
+async function define() {
+  if (__DECRYPTAPI__ === undefined) {
+    return (__DECRYPTAPI__ = await decryptMod.then((e: any) => {
+      return e;
+    }));
+  }
+  return;
+}
+
+async function transformObject(obj: any) {
+  await define();
+  let ret: any;
+  if (typeof obj === "string") {
+    ret = "";
+  } else if (typeof obj === "object" && !Array.isArray(obj)) {
+    ret = {};
+  } else {
+    ret = [];
+  }
+  for (const k in obj) {
+    if (
+      typeof obj[k] === "string" &&
+      k !== "date" &&
+      k !== "langue" &&
+      k !== "devise"
+    ) {
+      ret[k] = __DECRYPTAPI__.decrypt(obj[k]);
+    } else if (
+      typeof obj[k] === "object" &&
+      !Array.isArray(obj[k]) &&
+      k !== "langue" &&
+      k !== "devise"
+    ) {
+      if (obj[k] === null) ret[k] = null;
+      else ret[k] = await transformObject(obj[k]);
+    } else if (Array.isArray(obj[k])) {
+      ret[k] = await transformObject(obj[k]);
+    } else if (obj[k] === null) {
+      // console.log(k);
+    } else ret[k] = obj[k];
+  }
+  // console.log(ret);
+  return ret;
+}
+
 const useCounterStore = defineStore("counter", {
   state: () => ({
     count: 0,
@@ -30,6 +78,7 @@ const useCounterStore = defineStore("counter", {
     htFYI: 0.0,
     ttFYI: 0.0,
     payFYI: 0.0,
+    invoicesFY: [],
   }),
   getters: {
     getCount(state: any) {
@@ -67,6 +116,9 @@ const useCounterStore = defineStore("counter", {
     },
     getPayFYI(state: any) {
       return state.payFYI;
+    },
+    getInvoicesFY(state: any) {
+      return state.invoicesFY;
     },
   },
   actions: {
@@ -108,56 +160,18 @@ const useCounterStore = defineStore("counter", {
           });
       });
     },
-    getFinancialYearIncomes(adminId: number) {
+    getFinancialYearInvoices(adminId: number) {
       return new Promise((resolve, reject) => {
         invoiceAxiosService
-          .getFinancialYearIncomes(adminId)
-          .then((res) => {
+          .getFinancialYearInvoices(adminId)
+          .then(async (res) => {
             // console.log(res.data);
             if (res.data.length) {
-              this.htFYI = res.data[0].n_ht !== null ? res.data[0].n_ht : 0.0;
-              this.ttFYI = res.data[0].n_tt !== null ? res.data[0].n_tt : 0.0;
-              resolve(res.data);
+              const dataClear = await transformObject(res.data);
+              this.invoicesFY = dataClear;
+              resolve(dataClear);
             } else {
-              reject(false);
-            }
-          })
-          .catch((err) => {
-            // La requête a été faite et le code de
-            //   réponse du serveur n'est pas dans la plage 2xx
-            if (err.response) {
-              console.log(err.response.data);
-              console.log(err.response.status);
-              console.log(err.response.headers);
-            }
-            // La requête a été  faite mais aucune réponse
-            //  n'a été ruçue `error.request` est une instance de
-            //  XMLHttpRequest dans le navigateur et une instance
-            //  de http.ClientRequest avec node.js
-            else if (err.request) {
-              console.log(err.request);
-            }
-            // Quelque chose s'est passé lors de la construction de
-            //  la requête et cela a provoqué une erreur
-            else {
-              console.log("Error", err.message);
-            }
-            console.log(err.config);
-            reject(new Error(err));
-          });
-      });
-    },
-    getFinancialYearPaymentsIncomes(adminId: number) {
-      return new Promise((resolve, reject) => {
-        invoiceAxiosService
-          .getFinancialYearPaymentsIncomes(adminId)
-          .then((res) => {
-            // console.log(res.data);
-            if (res.data.length) {
-              this.payFYI = res.data[0].pay !== null ? res.data[0].pay : 0.0;
-              resolve(res.data);
-            } else {
-              reject(false);
+              resolve(false);
             }
           })
           .catch((err) => {

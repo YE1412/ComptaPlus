@@ -128,7 +128,7 @@ export default defineComponent({
         ret[m]["orderId"] = this.invoicesDetails[ind]["commandes"][m].orderId;
         ret[m]["contenuAdditionnel"] =
           this.invoicesDetails[ind]["commandes"][m].contenuAdditionnel;
-        ret[m]["totalTTLibelle"] = totalTTLibelle;
+        ret[m]["totalTTLibelle"] = totalTTLibelle.replaceAll(/\s/ig, "");
         ret[m]["Services"] = [];
         for (const n in this.invoicesDetails[ind]["commandes"][m]["Services"]) {
           let priceUnitTTLibelle = "",
@@ -158,8 +158,8 @@ export default defineComponent({
           ret[m]["Services"][n].quantite = quantity;
           ret[m]["Services"][n].nom =
             this.invoicesDetails[ind]["commandes"][m]["Services"][n].nom;
-          ret[m]["Services"][n].montantNetTTLibelle = montantNetTTLibelle;
-          ret[m]["Services"][n].priceUnitTTLibelle = priceUnitTTLibelle;
+          ret[m]["Services"][n].montantNetTTLibelle = montantNetTTLibelle.replaceAll(/\s/ig, "");
+          ret[m]["Services"][n].priceUnitTTLibelle = priceUnitTTLibelle.replaceAll(/\s/ig, "");
         }
       }
       return ret;
@@ -252,8 +252,8 @@ export default defineComponent({
         minimumFractionDigits: 2,
       }).format(tvaBase.toFixed(2));
       ret.tvaValueLibelle = `${tvaValueLibelle} %`;
-      ret.tvaBaseLibelle = tvaBaseLibelle;
-      ret.tvaMontantLibelle = tvaMontantLibelle;
+      ret.tvaBaseLibelle = tvaBaseLibelle.replaceAll(/\s/ig, "");
+      ret.tvaMontantLibelle = tvaMontantLibelle.replaceAll(/\s/ig, "");
       return ret;
     },
     tableInvoicesDateLibelle(ind: number) {
@@ -290,7 +290,7 @@ export default defineComponent({
       ttPriceLibelle = new Intl.NumberFormat(locale, {
         minimumFractionDigits: 2,
       }).format(ttPrice.toFixed(2));
-      ret = ttPriceLibelle;
+      ret = ttPriceLibelle.replaceAll(/\s/ig, "");
       return ret;
     },
     tableInvoicesBillingLibelle(ind: number) {
@@ -937,6 +937,7 @@ export default defineComponent({
         { align: "center" }
       );
       this.doc.setFont("helvetica", "normal");
+      // console.log(inv.tvaValue.tvaBaseLibelle.replaceAll(" ", ""));
       const vatBaseValueTextCell =
         inv.devise === "€"
           ? `${inv.tvaValue.tvaBaseLibelle} ${inv.devise}`

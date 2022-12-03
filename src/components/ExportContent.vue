@@ -5,14 +5,16 @@ import router from "@/router/index";
 import { RouterLink } from "vue-router";
 import { useInvoiceStore } from "@/stores/invoice";
 import { useCounterStore } from "@/stores/counter";
+import { useUserStore } from "@/stores/user";
 
 export default defineComponent({
   name: "ExportContent",
   async setup() {
     const invStore = useInvoiceStore();
     const cntStore = useCounterStore();
+    const usrStore = useUserStore();
     const invoicesObj = await invStore
-      .getAllInvoices()
+      .getAllInvoices(usrStore.getUser.userId)
       .then(
         (res) => {
           return res;

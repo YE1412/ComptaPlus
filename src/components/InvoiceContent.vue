@@ -492,7 +492,7 @@ export default defineComponent({
               this.$i18n.t("actionTableHeadText"),
             ];
             this.invoiceStore
-              .getAllInvoices()
+              .getAllInvoices(this.userStore.getUser.userId)
               .then(
                 () => {
                   this.forceTableRerender();
@@ -662,7 +662,7 @@ export default defineComponent({
               this.$i18n.t("actionTableHeadText"),
             ];
             this.invoiceStore
-              .getAllInvoices()
+              .getAllInvoices(this.userStore.getUser.userId)
               .then(
                 () => {
                   this.forceTableRerender();
@@ -686,7 +686,7 @@ export default defineComponent({
         this.update = false;
         this.add = true;
         this.invoiceStore
-          .getAllInvoices()
+          .getAllInvoices(this.userStore.getUser.userId)
           .then(
             (res) => {
               // console.log(res);
