@@ -122,7 +122,7 @@ export default defineComponent({
     <PieChart />
   </div>
   
-  <WelcomeItem>
+  <!-- <WelcomeItem>
     <template #icon>
       <DocumentationIcon />
     </template>
@@ -231,5 +231,5 @@ export default defineComponent({
     <a href="https://vuejs.org/sponsor/" target="_blank" rel="noopener"
       >becoming a sponsor</a
     >.
-  </WelcomeItem>
+  </WelcomeItem> -->
 </template>
