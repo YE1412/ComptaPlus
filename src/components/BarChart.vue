@@ -136,7 +136,8 @@ export default defineComponent({
 		"octoberLabel": "Octobre {year}",
 		"novemberLabel": "Novembre {year}",
 		"decemberLabel": "Décembre {year}",
-		"datasetLabel": "Nombre de facture(s)"
+		"datasetLabel": "Nombre de facture(s)",
+		"heading": "Répartition du nombre de factures"
 	},
 	"en": {
 		"januaryLabel": "January {year}",
@@ -151,21 +152,25 @@ export default defineComponent({
 		"octoberLabel": "October {year}",
 		"novemberLabel": "November {year}",
 		"decemberLabel": "December {year}",
-		"datasetLabel": "Invoice(s) number"
+		"datasetLabel": "Invoice(s) number",
+		"heading": "Number of invoices dispatch"
 	}
 }
 </i18n>
 
 <template>
-	<Bar
-	    :chart-options="chartOptions"
-	    :chart-data="chartData"
-	    :chart-id="chartId"
-	    :dataset-id-key="datasetIdKey"
-	    :plugins="plugins"
-	    :css-classes="cssClasses"
-	    :styles="styles"
-	    :width="width"
-	    :height="height"
-  	/>
+	<div class="ms-lg-5 ms-xl-5 me-lg-5 me-xl-5 mt-lg-5 mt-xl-5 mb-lg-15 mb-xl-15">
+		<h2>{{ $t("heading") }}</h2>
+		<Bar
+		    :chart-options="chartOptions"
+		    :chart-data="chartData"
+		    :chart-id="chartId"
+		    :dataset-id-key="datasetIdKey"
+		    :plugins="plugins"
+		    :css-classes="cssClasses"
+		    :styles="styles"
+		    :width="width"
+		    :height="height"
+	  	/>
+  	</div>
 </template>

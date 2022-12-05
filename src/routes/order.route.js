@@ -12,6 +12,9 @@ export default () => {
   // Retrieve a single Order with id
   router.get("/find", orders.findOne);
 
+  // Retrieve number of orders
+  router.get("/nb", orders.getNbOrders);
+
   // Update a Order with id
   router.put("/:id", orders.update);
 

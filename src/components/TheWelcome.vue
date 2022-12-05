@@ -13,6 +13,8 @@ import MessagesItem from "./MessagesItem.vue";
 import BarChart from "./BarChart.vue";
 import PieChart from "./PieChart.vue";
 import HomeTable from "./HomeTable.vue";
+import { VIcon } from "vuetify/components";
+import "@mdi/font/css/materialdesignicons.css";
 
 export default defineComponent({
   name: "TheWelcome",
@@ -20,13 +22,22 @@ export default defineComponent({
     const msgStore = useMessageStore();
     const cntStore = useCounterStore();
     const usrStore = useUserStore();
+    let locale =
+      cntStore.getLanguages[cntStore.getLangDisplayedIndex].class === "fr" ? "fr-FR" : "";
+    locale =
+      cntStore.getLanguages[cntStore.getLangDisplayedIndex].class === "us" ? "en-US" : locale;
     // await cntStore.getFinancialYearIncomes(usrStore.getUser.userId);
     // await cntStore.getFinancialYearPaymentsIncomes(usrStore.getUser.userId);
     await cntStore.getFinancialYearInvoices(usrStore.getUser.userId);
+    await cntStore.getFinancialYearNbInvoices(usrStore.getUser.userId);
+    await cntStore.getNbOrdersFromDb();
+    await cntStore.getNbActorsFromDb();
+    await cntStore.getNbServicesFromDb();
     return {
       counterStore: cntStore,
       messageStore: msgStore,
       userStore: usrStore,
+      locale: locale,
     };
   },
   components: {
@@ -39,7 +50,8 @@ export default defineComponent({
     MessagesItem,
     BarChart,
     PieChart,
-    HomeTable
+    HomeTable,
+    VIcon,
   },
   data() {
     const devise = this.userStore.getUser.devise.symbole;
@@ -65,7 +77,7 @@ export default defineComponent({
     }
     return {
       head: headTableObj,
-      content: contentTableObj
+      content: contentTableObj,
     };
   },
   methods: {
@@ -74,14 +86,18 @@ export default defineComponent({
       for(const k in this.counterStore.getInvoicesFY){
         ret += this.counterStore.getInvoicesFY[k].invoiceHTPrice;
       }
-      return ret;
+      return new Intl.NumberFormat(this.locale, {
+        minimumFractionDigits: 0,
+      }).format(ret.toFixed(0));
     },
     getTtFYI() {
       let ret = 0.0;
       for(const k in this.counterStore.getInvoicesFY){
         ret += this.counterStore.getInvoicesFY[k].invoiceTTPrice;
       }
-      return ret;
+      return new Intl.NumberFormat(this.locale, {
+        minimumFractionDigits: 0,
+      }).format(ret.toFixed(0));
     },
     getPayFYI() {
       let ret = 0.0;
@@ -93,7 +109,9 @@ export default defineComponent({
           }
         }
       }
-      return ret;
+      return new Intl.NumberFormat(this.locale, {
+        minimumFractionDigits: 0,
+      }).format(ret.toFixed(0));
     },
   },
 });
@@ -105,19 +123,82 @@ export default defineComponent({
     "totalFiscalYearHTIncomes": "Revenus Hors taxes sur l'année fiscale",
     "totalFiscalYearTTIncomes": "Revenus TTC sur l'année fiscale",
     "totalFiscalYearPaymentsIncomes": "Encaissements sur l'année fiscale",
+    "invoicesLabel": "Facture(s)",
+    "ordersLabel": "Commande(s)",
+    "actorsLabel": "Acteur(s)",
+    "servicesLabel": "Service(s)",
   },
   "en": {
     "totalFiscalYearHTIncomes": "Total fiscal year incomes excl. taxes",
     "totalFiscalYearTTIncomes": "Total fiscal year incomes incl. taxes",
     "totalFiscalYearPaymentsIncomes": "Withdrawal in the fiscal year",
+    "invoicesLabel": "Invoice(s)",
+    "ordersLabel": "Order(s)",
+    "actorsLabel": "Actor(s)",
+    "servicesLabel": "Service(s)",
   }
 }
 </i18n>
 
 <template>
-  <div class="container">
+  <div class="container" style="display: flex;flex-direction: column;">
     <MessagesItem v-if="messageStore.getMessagesVisibility"></MessagesItem>
-    <HomeTable :headTableObj="head" :contentTableObj="content" />
+
+    <section class="text-center ms-lg-5 ms-xl-5 me-lg-5 me-xl-5 mt-lg-5 mt-xl-5 mb-lg-15 mb-xl-15">
+      <div class="row">
+        <div class="col-lg-3 col-md-6 mb-5 mb-md-5 mb-lg-0 position-relative">
+          <v-icon
+            size="large"
+            aria-hidden="false"
+            class="text-success"
+          >
+            mdi-receipt-text
+          </v-icon>
+          <h5 class="text-success fw-bold mb-3">{{ counterStore.getNbInvoices }}</h5>
+          <h6 class="fw-normal mb-0">{{ $t("invoicesLabel") }}</h6>
+          <div class="vr vr-blurry position-absolute my-0 h-100 d-none d-md-block top-0 end-0"></div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-5 mb-md-5 mb-lg-0 position-relative">
+          <v-icon
+            size="large"
+            aria-hidden="false"
+            class="text-danger"
+          >
+            mdi-order-bool-descending
+          </v-icon>
+          <h5 class="text-danger fw-bold mb-3">{{ counterStore.getNbOrders }}</h5>
+          <h6 class="fw-normal mb-0">{{ $t("ordersLabel") }}</h6>
+          <div class="vr vr-blurry position-absolute my-0 h-100 d-none d-md-block top-0 end-0"></div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-5 mb-md-0 position-relative">
+          <v-icon
+            size="large"
+            aria-hidden="false"
+            class="text-warning"
+          >
+            mdi-clipboard-account
+          </v-icon>
+          <h5 class="text-warning fw-bold mb-3">{{ counterStore.getNbActors }}</h5>
+          <h6 class="fw-normal mb-0">{{ $t("actorsLabel") }}</h6>
+          <div class="vr vr-blurry position-absolute my-0 h-100 d-none d-md-block top-0 end-0"></div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-5 mb-md-0 position-relative">
+          <v-icon
+            size="large"
+            aria-hidden="false"
+            class="text-secondary"
+          >
+            mdi-room-service
+          </v-icon>
+          <h5 class="text-secondary fw-bold mb-3">{{ counterStore.getNbServices }}</h5>
+          <h6 class="fw-normal mb-0">{{ $t("servicesLabel") }}</h6>
+        </div>
+      </div>
+    </section>
+    <HomeTable cssClasses="ms-lg-5 ms-xl-5 me-lg-5 me-xl-5 mt-lg-5 mt-xl-5 mb-lg-15 mb-xl-15" :headTableObj="head" :contentTableObj="content" />
     <BarChart />
     <PieChart />
   </div>

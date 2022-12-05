@@ -18,6 +18,9 @@ export default () => {
   // Retrieve a single Actor with id
   router.get("/find", actors.findOne);
 
+  // Retrieve number of actors
+  router.get("/nb", actors.getNbActors);
+
   // Update a Actor with id
   router.put("/:id", actors.update);
 

@@ -5,9 +5,9 @@ import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import path from "path";
 import vueI18n from '@intlify/vite-plugin-vue-i18n';
-import { fileURLToPath } from "node:url";
-import htmlTemplate from 'vite-plugin-html-template';
+import * as htmlTemplate from 'vite-plugin-html-template';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import vuetify from 'vite-plugin-vuetify';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // console.log(`\n\nEnvironment : - ${process.env.CTX} -\n`);
@@ -43,7 +43,8 @@ const config = defineConfig(({ command, mode }) => {
       vueI18n({
         compositionOnly: false,
         include: path.resolve(__dirname, './src/locales/**'),
-      })
+      }),
+      vuetify(),
     );
   } else {
     buildObj = {
@@ -80,7 +81,7 @@ const config = defineConfig(({ command, mode }) => {
         compositionOnly: false,
         include: path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src/locales/**'),
       }),
-      htmlTemplate.default(),
+      htmlTemplate(),
       viteStaticCopy({
         targets: [
           {
@@ -88,7 +89,8 @@ const config = defineConfig(({ command, mode }) => {
             dest: "assets/"
           }
         ]
-      })
+      }),
+      vuetify(),
     );
   }
   return {
@@ -109,7 +111,7 @@ const config = defineConfig(({ command, mode }) => {
     build: buildObj,
     plugins: pluginsObj,
     ssr: {
-      noExternal: [/vue-i18n/],
+      noExternal: [/vue-i18n/, /vuetify/],
     },
     envDir: path.join(__dirname, "envs"),
     envPrifex: "CLIENT_",

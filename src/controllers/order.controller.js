@@ -123,6 +123,25 @@ const findOne = (req, res) => {
     });
 };
 
+const getNbOrders = (req, res) => {
+  order
+    .findAll({
+      attributes: [
+        [db.sequelize.fn('COUNT', db.sequelize.col('orderId')), 'n_ord'],
+      ],
+    })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message ||
+          `Some error occured while retieving number of orders.`,
+      });
+    });
+};
+
 const update = async (req, res) => {
   const params = req.params;
   const body = req.body;
@@ -259,6 +278,7 @@ export default {
   create: create,
   findAll: findAll,
   findOne: findOne,
+  getNbOrders: getNbOrders,
   // findByTypes: findByTypes,
   // findAllTypes: findAllTypes,
   update: update,

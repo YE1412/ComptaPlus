@@ -106,6 +106,25 @@ const findOne = (req, res) => {
     });
 };
 
+const getNbActors = (req, res) => {
+  actor
+    .findAll({
+      attributes: [
+        [db.sequelize.fn('COUNT', db.sequelize.col('actorId')), 'n_act'],
+      ],
+    })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message ||
+          `Some error occured while retieving number of actors.`,
+      });
+    });
+};
+
 const update = (req, res) => {
   const params = req.params;
 
@@ -221,6 +240,7 @@ export default {
   findOne: findOne,
   findByTypes: findByTypes,
   findAllTypes: findAllTypes,
+  getNbActors: getNbActors,
   update: update,
   deleteOne: deleteOne,
   deleteAll: deleteAll,

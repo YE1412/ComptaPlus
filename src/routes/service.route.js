@@ -15,6 +15,9 @@ export default () => {
   // Retrieve a single Service with id
   router.get("/find", services.findOne);
 
+  // Retrieve number of services
+  router.get("/nb", services.getNbServices);
+
   // Update a Service with id
   router.put("/:id", services.update);
 

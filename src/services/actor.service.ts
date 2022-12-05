@@ -17,6 +17,10 @@ class ActorDataService {
     });
   }
 
+  getNbActors() {
+    return http.get("/actors/nb");
+  }
+
   create(data: any) {
     return http.post(`/actors`, data);
   }

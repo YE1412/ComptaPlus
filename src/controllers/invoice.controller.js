@@ -279,6 +279,45 @@ const findOne = (req, res) => {
 //     res.send(ret);
 // };
 
+const getNbInvoices = (req, res) => {
+  const query = req.query;
+  if (query.adminId === undefined) {
+    res.status(500).send({
+      message: `Some error occured while retrieving the number of fiscal year invoices, bad query.`,
+    });
+    return;
+  }
+  let dateStart = null;
+  const now = new Date();
+  if (now.getMonth() < 5) {
+    dateStart = new Date(`${now.getFullYear() - 1}-06-01`);
+  } else {
+    dateStart = new Date(`${now.getFullYear()}-06-01`);
+  }
+  invoice
+    .findAll({
+      attributes: [
+        [db.sequelize.fn('COUNT', db.sequelize.col('factureId')), 'n_inv'],
+      ],
+      where: {
+        administratorId: query.adminId,
+        date: {
+          [Op.gt]: dateStart,
+        }
+      },
+    })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message ||
+          `Some error occured while retieving number of fiscal year invoices with administrator id=${query.adminId}.`,
+      });
+    });
+};
+
 const getFinancialYearInvoices = (req, res) => {
   const query = req.query;
   if (query.adminId === undefined) {
@@ -287,7 +326,7 @@ const getFinancialYearInvoices = (req, res) => {
     });
     return;
   }
-  let ret = [], dateStart = null;
+  let dateStart = null;
   const now = new Date();
   if (now.getMonth() < 5) {
     dateStart = new Date(`${now.getFullYear() - 1}-06-01`);
@@ -698,6 +737,7 @@ export default {
   findOne: findOne,
   // getFinancialYearIncomes: getFinancialYearIncomes,
   // getFinancialYearPaymentsIncomes: getFinancialYearPaymentsIncomes,
+  getNbInvoices: getNbInvoices,
   getFinancialYearInvoices: getFinancialYearInvoices,
   findMore: findMore,
   findAllLanguages: findAllLanguages,

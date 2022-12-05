@@ -13,6 +13,10 @@ class ServiceDataService {
     });
   }
 
+  getNbServices() {
+    return http.get("/services/nb");
+  }
+
   create(data: any) {
     return http.post(`/services`, data);
   }

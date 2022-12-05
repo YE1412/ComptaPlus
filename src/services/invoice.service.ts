@@ -53,6 +53,14 @@ class InvoiceDataService {
   //   });
   // }
 
+  getFinancialYearNbInvoices(id: number) {
+    return http.get(`/invoices/financialYearNbInvoices`, {
+      params: {
+        adminId: id,
+      },
+    });
+  }
+
   getFinancialYearInvoices(id: number) {
     return http.get(`/invoices/financialYearInvoices`, {
       params: {

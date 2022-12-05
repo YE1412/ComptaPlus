@@ -18,6 +18,9 @@ export default () => {
   // Get Financial Year Payments Incomes of the given administrator id
   // router.get("/financialYearPaymentsIncomes", invoices.getFinancialYearPaymentsIncomes);
 
+  // Get Financial Year Number of invoices of the given administrator id
+  router.get("/financialYearNbInvoices", invoices.getNbInvoices);
+
   // Get Financial Year Invoices of the given administrator id
   router.get("/financialYearInvoices", invoices.getFinancialYearInvoices);
 

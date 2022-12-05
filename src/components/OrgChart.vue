@@ -1,12 +1,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
-import OrganizationChart from 'vue-organization-chart';
-import 'vue-organization-chart/dist/orgchart.css';
+// import OrganizationChart from 'vue-organization-chart';
+// import 'vue-organization-chart/dist/orgchart.css';
 
 export default defineComponent({
 	name: "OrgChart",
 	components: {
-		OrganizationChart,
+		// OrganizationChart,
 	},
 	data () {
       return {
@@ -38,6 +38,6 @@ export default defineComponent({
 
 <template>
 	<div>
-    	<organization-chart :datasource="ds"></organization-chart>
+    	<!-- <organization-chart :datasource="ds"></organization-chart> -->
   	</div>
 </template>

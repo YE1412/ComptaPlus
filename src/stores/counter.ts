@@ -2,6 +2,9 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import userAxiosService from "../services/user.service";
 import invoiceAxiosService from "../services/invoice.service";
+import orderAxiosService from "../services/order.service";
+import actorAxiosService from "../services/actor.service";
+import serviceAxiosService from "../services/service.service";
 import i18n from "../plugins/i18n";
 import { useStorage } from "@vueuse/core";
 import { decryptMod } from "../WasmModules";
@@ -79,6 +82,10 @@ const useCounterStore = defineStore("counter", {
     ttFYI: 0.0,
     payFYI: 0.0,
     invoicesFY: [],
+    nbInvoices: 0,
+    nbOrders: 0,
+    nbActors: 0,
+    nbServices: 0,
   }),
   getters: {
     getCount(state: any) {
@@ -119,6 +126,18 @@ const useCounterStore = defineStore("counter", {
     },
     getInvoicesFY(state: any) {
       return state.invoicesFY;
+    },
+    getNbInvoices(state: any) {
+      return state.nbInvoices;
+    },
+    getNbOrders(state: any) {
+      return state.nbOrders;
+    },
+    getNbActors(state: any) {
+      return state.nbActors;
+    },
+    getNbServices(state: any) {
+      return state.nbServices;
     },
   },
   actions: {
@@ -170,6 +189,158 @@ const useCounterStore = defineStore("counter", {
               const dataClear = await transformObject(res.data);
               this.invoicesFY = dataClear;
               resolve(dataClear);
+            } else {
+              resolve(false);
+            }
+          })
+          .catch((err) => {
+            // La requête a été faite et le code de
+            //   réponse du serveur n'est pas dans la plage 2xx
+            if (err.response) {
+              console.log(err.response.data);
+              console.log(err.response.status);
+              console.log(err.response.headers);
+            }
+            // La requête a été  faite mais aucune réponse
+            //  n'a été ruçue `error.request` est une instance de
+            //  XMLHttpRequest dans le navigateur et une instance
+            //  de http.ClientRequest avec node.js
+            else if (err.request) {
+              console.log(err.request);
+            }
+            // Quelque chose s'est passé lors de la construction de
+            //  la requête et cela a provoqué une erreur
+            else {
+              console.log("Error", err.message);
+            }
+            console.log(err.config);
+            reject(new Error(err));
+          });
+      });
+    },
+    getFinancialYearNbInvoices(adminId: number) {
+      return new Promise((resolve, reject) => {
+        invoiceAxiosService
+          .getFinancialYearNbInvoices(adminId)
+          .then(async (res) => {
+            // console.log(res.data);
+            if (res.data.length) {
+              this.nbInvoices = res.data[0].n_inv;
+              resolve(res.data);
+            } else {
+              resolve(false);
+            }
+          })
+          .catch((err) => {
+            // La requête a été faite et le code de
+            //   réponse du serveur n'est pas dans la plage 2xx
+            if (err.response) {
+              console.log(err.response.data);
+              console.log(err.response.status);
+              console.log(err.response.headers);
+            }
+            // La requête a été  faite mais aucune réponse
+            //  n'a été ruçue `error.request` est une instance de
+            //  XMLHttpRequest dans le navigateur et une instance
+            //  de http.ClientRequest avec node.js
+            else if (err.request) {
+              console.log(err.request);
+            }
+            // Quelque chose s'est passé lors de la construction de
+            //  la requête et cela a provoqué une erreur
+            else {
+              console.log("Error", err.message);
+            }
+            console.log(err.config);
+            reject(new Error(err));
+          });
+      });
+    },
+    getNbOrdersFromDb() {
+      return new Promise((resolve, reject) => {
+        orderAxiosService
+          .getNbOrders()
+          .then(async (res) => {
+            // console.log(res.data);
+            if (res.data.length) {
+              this.nbOrders = res.data[0].n_ord;
+              resolve(res.data);
+            } else {
+              resolve(false);
+            }
+          })
+          .catch((err) => {
+            // La requête a été faite et le code de
+            //   réponse du serveur n'est pas dans la plage 2xx
+            if (err.response) {
+              console.log(err.response.data);
+              console.log(err.response.status);
+              console.log(err.response.headers);
+            }
+            // La requête a été  faite mais aucune réponse
+            //  n'a été ruçue `error.request` est une instance de
+            //  XMLHttpRequest dans le navigateur et une instance
+            //  de http.ClientRequest avec node.js
+            else if (err.request) {
+              console.log(err.request);
+            }
+            // Quelque chose s'est passé lors de la construction de
+            //  la requête et cela a provoqué une erreur
+            else {
+              console.log("Error", err.message);
+            }
+            console.log(err.config);
+            reject(new Error(err));
+          });
+      });
+    },
+    getNbActorsFromDb() {
+      return new Promise((resolve, reject) => {
+        actorAxiosService
+          .getNbActors()
+          .then(async (res) => {
+            // console.log(res.data);
+            if (res.data.length) {
+              this.nbActors = res.data[0].n_act;
+              resolve(res.data);
+            } else {
+              resolve(false);
+            }
+          })
+          .catch((err) => {
+            // La requête a été faite et le code de
+            //   réponse du serveur n'est pas dans la plage 2xx
+            if (err.response) {
+              console.log(err.response.data);
+              console.log(err.response.status);
+              console.log(err.response.headers);
+            }
+            // La requête a été  faite mais aucune réponse
+            //  n'a été ruçue `error.request` est une instance de
+            //  XMLHttpRequest dans le navigateur et une instance
+            //  de http.ClientRequest avec node.js
+            else if (err.request) {
+              console.log(err.request);
+            }
+            // Quelque chose s'est passé lors de la construction de
+            //  la requête et cela a provoqué une erreur
+            else {
+              console.log("Error", err.message);
+            }
+            console.log(err.config);
+            reject(new Error(err));
+          });
+      });
+    },
+    getNbServicesFromDb() {
+      return new Promise((resolve, reject) => {
+        serviceAxiosService
+          .getNbServices()
+          .then(async (res) => {
+            // console.log(res.data);
+            if (res.data.length) {
+              this.nbServices = res.data[0].n_srv;
+              resolve(res.data);
             } else {
               resolve(false);
             }

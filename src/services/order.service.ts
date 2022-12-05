@@ -13,6 +13,10 @@ class OrderDataService {
     });
   }
 
+  getNbOrders() {
+    return http.get(`/orders/nb`);
+  }
+
   create(data: any) {
     return http.post(`/orders`, data);
   }

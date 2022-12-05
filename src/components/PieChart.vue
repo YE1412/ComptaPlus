@@ -129,25 +129,30 @@ export default defineComponent({
 		"cbLabel": "Carte bleue",
 		"cashLabel": "Espèces",
 		"chqLabel": "Chèques",
+		"heading": "Répatition du type de paiement reçu"
 	},
 	"en": {
 		"cbLabel": "Credit card",
 		"cashLabel": "Cash",
 		"chqLabel": "Check",
+		"heading": "Received payment type dispatch"
 	}
 }
 </i18n>
 
 <template>
-	<Pie
-	    :chart-options="chartOptions"
-	    :chart-data="chartData"
-	    :chart-id="chartId"
-	    :dataset-id-key="datasetIdKey"
-	    :plugins="plugins"
-	    :css-classes="cssClasses"
-	    :styles="styles"
-	    :width="width"
-	    :height="height"
-  	/>
+	<div class="ms-lg-5 ms-xl-5 me-lg-5 me-xl-5 mt-lg-5 mt-xl-5 mb-lg-15 mb-xl-15">
+		<h2>{{ $t("heading") }}</h2>
+		<Pie
+		    :chart-options="chartOptions"
+		    :chart-data="chartData"
+		    :chart-id="chartId"
+		    :dataset-id-key="datasetIdKey"
+		    :plugins="plugins"
+		    :css-classes="cssClasses"
+		    :styles="styles"
+		    :width="width"
+		    :height="height"
+	  	/>
+  	</div>
 </template>

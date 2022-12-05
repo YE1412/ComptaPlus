@@ -67,6 +67,25 @@ const findOne = (req, res) => {
     });
 };
 
+const getNbServices = (req, res) => {
+  service
+    .findAll({
+      attributes: [
+        [db.sequelize.fn('COUNT', db.sequelize.col('serviceId')), 'n_srv'],
+      ],
+    })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message ||
+          `Some error occured while retieving number of services.`,
+      });
+    });
+};
+
 const update = (req, res) => {
   const params = req.params;
 
@@ -193,6 +212,7 @@ export default {
   findAll: findAll,
   findOne: findOne,
   // checkOne: checkOne,
+  getNbServices: getNbServices,
   update: update,
   deleteOne: deleteOne,
   deleteAll: deleteAll,

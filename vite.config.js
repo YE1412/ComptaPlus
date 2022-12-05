@@ -8,6 +8,7 @@ import vueI18n from '@intlify/vite-plugin-vue-i18n';
 import { fileURLToPath } from "node:url";
 import htmlTemplate from 'vite-plugin-html-template';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import vuetify from 'vite-plugin-vuetify';
 
 // console.log(htmlPlugin);
 // console.log(`\n\nEnvironnement : - ${process.env.CTX} -\n`);
@@ -44,7 +45,8 @@ let config = defineConfig(({ command, mode }) => {
         compositionOnly: false,
         // you need to set i18n resource including paths !
         include: path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src/locales/**'),
-      })
+      }),
+      vuetify(),
     );
   } else {
     buildObj = {
@@ -85,7 +87,8 @@ let config = defineConfig(({ command, mode }) => {
             dest: 'assets/'
           }
         ]
-      })
+      }),
+      vuetify(),
       // htmlPlugin({
         // favicon: 'public/favicon.ico',
       //   scripts: [
@@ -120,7 +123,7 @@ let config = defineConfig(({ command, mode }) => {
     plugins: pluginsObj,
     ssr: {
       // SSG Vue-i18n workaround
-      noExternal: [/vue-i18n/],
+      noExternal: [/vue-i18n/, /vuetify/],
     },
     envDir: path.join(__dirname, "envs"),
     envPrefix: "CLIENT_",
