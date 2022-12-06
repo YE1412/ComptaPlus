@@ -41,7 +41,8 @@ export default defineComponent({
     "userManagement": "My profile",
     "userManagement_path": "/profile",
     "about": "About",
-    "about_path": "/about"
+    "about_path": "/about",
+    "footerParagraph": "©2022 CryptoLogique - Digital services company",
   },
   "fr": {
     "logout": "Se déconnecter",
@@ -50,7 +51,8 @@ export default defineComponent({
     "userManagement": "Mon profil",
     "userManagement_path": "/profil",
     "about": "À Propos",
-    "about_path": "/a-propos"
+    "about_path": "/a-propos",
+    "footerParagraph": "©2022 CryptoLogique - Entreprise de services du numérique (ESN)",
   }
 }
 </i18n>
@@ -73,7 +75,7 @@ export default defineComponent({
             <!-- <a href="/plan-du-site">{{footerFirstLinkTexte}}</a>
             <a href="/mentions-legales">{{footerSecondLinkTexte}}</a> -->
         </div>
-        <p>©2022 CryptoLogique - Entreprise de services du numérique (ESN)</p>
+        <p>{{ $t("footerParagraph") }}</p>
     </div>
   </div>
 </template>

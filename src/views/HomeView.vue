@@ -49,13 +49,12 @@ export default defineComponent({
   <main>
     <TheToolbarIn @language-changed-re-render="forceHomeRerender" />
     <Sidenav />
-
     <div class="content">
       <Suspense>
         <TheWelcome v-if="renderComponent" />
         <template #fallback> Loading... </template>
       </Suspense>
     </div>
+    <Footer/>
   </main>
-  <Footer/>
 </template>

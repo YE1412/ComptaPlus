@@ -12,7 +12,7 @@ import { createVuetify } from "vuetify";
 import "./assets/styles.css";
 import "./assets/main.css";
 import "./assets/style2.css";
-import 'vuetify/styles';
+// import 'vuetify/styles';
 
 const isSSR = import.meta.env.SSR;
 // const myCustomLightTheme: ThemeDefinition = {
@@ -38,7 +38,7 @@ const vuetify = createVuetify({
   //     myCustomLightTheme
   //   },
   // }
-  // theme: false,
+  theme: false,
   // ssr: true,
   // components,
   // directives,

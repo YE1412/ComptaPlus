@@ -24,7 +24,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="container">
+  <div class="container d-flex flex-column mb-lg-5 mb-xl-5">
     <OrgChart/>
   </div>
 </template>

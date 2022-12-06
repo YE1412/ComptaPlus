@@ -101,6 +101,6 @@ export default defineComponent({
         <template #fallback> Loading... </template>
       </Suspense>
     </div>
+    <Footer />
   </main>
-  <Footer />
 </template>

@@ -43,6 +43,6 @@ export default defineComponent({
         <ProfileContent v-if="renderComponent" />
       </Suspense>
     </div>
+    <Footer />
   </main>
-  <Footer />
 </template>

@@ -673,7 +673,8 @@ export default defineComponent({
 </i18n>
 
 <template>
-  <main>
+  <!-- <main> -->
+  <div class="container d-flex flex-column mb-lg-5 mb-xl-5">
     <MessagesItem v-if="messageStore.getMessagesVisibility"></MessagesItem>
     <div class="container">
       <MDBRow
@@ -844,5 +845,6 @@ export default defineComponent({
       :staticBackdrop="true"
     >
     </ModalItem>
-  </main>
+  <!-- </main> -->
+  </div>
 </template>

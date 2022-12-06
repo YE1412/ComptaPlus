@@ -47,8 +47,8 @@ export default defineComponent({
       </div>
       <AboutContent v-if="renderComponent" />
     </div>
+    <Footer />
   </main>
-  <Footer />
 </template>
 
 <style>
