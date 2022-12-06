@@ -18,7 +18,7 @@ import userAxiosService from "../services/user.service";
 import uploadImageAxiosService from "../services/upload_image.service";
 import ProfileContentItem from "./ProfileContentItem.vue";
 import "../globals";
-import vSelect from "vue-select";
+import { VSelect } from "vuetify/components";
 import ModalItem from "./ModalItem.vue";
 
 export default defineComponent({
@@ -52,7 +52,7 @@ export default defineComponent({
     MDBListGroupItem,
     MessagesItem,
     ProfileContentItem,
-    vSelect,
+    VSelect,
     MDBFile,
     MDBInput,
     ModalItem,
@@ -183,10 +183,10 @@ export default defineComponent({
       },
     };
     let mainDeviseCurrencyOpt = [];
-    mainDeviseCurrencyOpt.push({
-      text: this.$i18n.t("devisePlaceholder"),
-      value: 0,
-    });
+    // mainDeviseCurrencyOpt.push({
+    //   text: this.$i18n.t("devisePlaceholder"),
+    //   value: 0,
+    // });
     for (const k in this.devisesObj) {
       let devise = {};
       devise.text = `${this.devisesObj[k].symbole} - ${this.devisesObj[k].libelle}`;
@@ -232,6 +232,8 @@ export default defineComponent({
         })
       ],
       mainDeviseCurrencyOption: mainDeviseCurrencyOpt,
+      devisesError: false,
+      devisesErrorMsg: "",
       updateUserModal: false,
       modalTitle: "",
       modalContent: "",
@@ -340,12 +342,15 @@ export default defineComponent({
       // Devise checks
       if (this.selectedMainDeviseCurrency === null) {
         this.errors.push(this.$i18n.t("emptyDeviseErrorMsg"));
-        this.modalTitle = this.$i18n.t("modalTitleKo");
-        this.modalContent = this.$i18n.t("modalContentKo", {
-          err: this.$i18n.t("emptyDeviseErrorMsg"),
-        });
-        this.updateUserModal = true;
+        this.devisesError = true;
+        this.devisesErrorMsg = this.$i18n.t("emptyDeviseErrorMsg");
+        // this.modalTitle = this.$i18n.t("modalTitleKo");
+        // this.modalContent = this.$i18n.t("modalContentKo", {
+        //   err: this.$i18n.t("emptyDeviseErrorMsg"),
+        // });
+        // this.updateUserModal = true;
       } else {
+        this.devisesError = false;
         this.deviseId = this.selectedMainDeviseCurrency.value;
       }
       // Company Logo checks
@@ -734,7 +739,23 @@ export default defineComponent({
           <template #formDeviseSelect="{ size, ariaLabel, required }">
             <MDBCol :md="size">
               <label for="devises">{{ $t("deviseLabelText") }}</label>
-              <vSelect
+              <v-select
+                :aria-label="ariaLabel"
+                :label="$t('devisePlaceholder')"
+                item-title="text"
+                item-value="value"
+                v-model="selectedMainDeviseCurrency"
+                :multiple="false"
+                :items="mainDeviseCurrencyOption"
+                id="devises"
+                class="custom-select w-100"
+                :hide-selected="true"
+                return-object
+                :error="devisesError"
+                :error-messages="devisesErrorMsg"
+              >
+              </v-select>
+              <!-- <vSelect
                 :required="required"
                 :aria-label="ariaLabel"
                 label="text"
@@ -753,7 +774,7 @@ export default defineComponent({
                     v-on="events"
                   />
                 </template>
-              </vSelect>
+              </vSelect> -->
             </MDBCol>
           </template>
           <template #formFileInput="{ size, label }">

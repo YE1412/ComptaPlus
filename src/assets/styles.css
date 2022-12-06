@@ -445,14 +445,15 @@ main.mt-3{
 
 .content {
     display: flex;
-    margin-top: 135px;
+    margin-top: 330px;
+    margin-bottom: 100px;
     padding-left: 265px;
     flex-direction: column;
 }
 
 .fullContent {
     display: flex;
-    margin-top: 135px;
+    margin-top: 570px;
     flex-direction: column;
 }
 
@@ -784,11 +785,11 @@ i.smallIcons {
 
 /* FOOTER */
 
-/*.footer {
+.footer {
     min-height: 268px;
     background-color: #333;
     display: flex;
-    width: 100%;
+/*    width: 100%;*/
     justify-content: center;
 }
 
@@ -827,7 +828,7 @@ i.smallIcons {
 .footer > div > p {
     color: #FFF;
     margin: 1em 0 0 0;
-}*/
+}
 
 /* Button */
 button.scrollToTopButton {
@@ -1776,7 +1777,7 @@ button.scrollToTopButton:hover {
         font-size: smaller;
     }*/
     /* FOOTER */
-    /*.footer > div {
+    .footer > div {
         background-size: 100% 170px;
         padding: 0 20px;
     }
@@ -1789,5 +1790,5 @@ button.scrollToTopButton:hover {
     }
     .footer > div > p {
         font-size: 80%;      
-    }*/
+    }
 }

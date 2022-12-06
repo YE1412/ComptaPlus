@@ -11,7 +11,7 @@ import orderAxiosService from "../services/order.service";
 import ModalItem from "./ModalItem.vue";
 const renderComponent = ref(true);
 import "../globals";
-import vSelect from "vue-select";
+import { VSelect } from "vuetify/components";
 
 export default defineComponent({
   name: "OrderContent",
@@ -79,13 +79,13 @@ export default defineComponent({
           this.$i18n.t("actionTableHeadText"),
         ];
     let servicesOpt = [];
-    servicesOpt.push({
-      text: this.$i18n.t("servicesPlaceholder"),
-      value: 0,
-      montantHt: 0,
-      quantite: 0,
-      nom: "default",
-    });
+    // servicesOpt.push({
+    //   text: this.$i18n.t("servicesPlaceholder"),
+    //   value: 0,
+    //   montantHt: 0,
+    //   quantite: 0,
+    //   nom: "default",
+    // });
     for (const key in this.servicesObj) {
       let service = {};
       service.text = `${this.servicesObj[key].nom} - ${this.servicesObj[key].montantHt}`;
@@ -137,6 +137,8 @@ export default defineComponent({
       services: [],
       selectedServices: [],
       servicesOption: servicesOpt,
+      servicesError: true,
+      servicesErrorMsg: "",
       // For update
       updateInputObject: {},
       updateInputObjectId: 0,
@@ -157,18 +159,18 @@ export default defineComponent({
     MDBRow,
     ModalItem,
     MDBTextarea,
-    vSelect,
+    VSelect,
   },
   methods: {
     setSelectedServicesForUpdate() {
       let ret = [];
-      ret.push({
-        text: this.$i18n.t("servicesPlaceholder"),
-        value: 0,
-        montantHt: 0,
-        quantite: 0,
-        nom: "default",
-      });
+      // ret.push({
+      //   text: this.$i18n.t("servicesPlaceholder"),
+      //   value: 0,
+      //   montantHt: 0,
+      //   quantite: 0,
+      //   nom: "default",
+      // });
       return this.serviceStore.getAllServices().then((res) => {
         for (const key in this.serviceStore.getServices) {
           let service = {};
@@ -543,11 +545,15 @@ export default defineComponent({
 
       if (!this.selectedServices.length) {
         this.errors.push(this.$i18n.t("emptyServicesInvalidFeed"));
-        this.modalTitle = this.$i18n.t("modalTitleKo");
-        this.modalContent = this.$i18n.t("modalAddContentKo", {
-          err: this.$i18n.t("emptyServicesInvalidFeed"),
-        });
-        this.orderModal = true;
+        // this.modalTitle = this.$i18n.t("modalTitleKo");
+        // this.modalContent = this.$i18n.t("modalAddContentKo", {
+        //   err: this.$i18n.t("emptyServicesInvalidFeed"),
+        // });
+        // this.orderModal = true;
+        this.servicesError = true;
+        this.servicesErrorMsg = this.$i18n.t("emptyServicesInvalidFeed");
+      } else {
+        this.servicesError = false;
       }
     },
     async forceTableRerender() {
@@ -583,7 +589,7 @@ export default defineComponent({
     "additionalContentPlaceholder": "Contenu additionnel",
     "errorAdditionalContentInvalidFeed": "Contenu additionnel incorrect!",
     "servicesPlaceholder": "Services",
-    "emptyServicesInvalidFeed": "Les services doivent être renseignés!",
+    "emptyServicesInvalidFeed": "Les services doivent être renseignés !",
     "errorServicesInvalidFeed": "Services incorrect!",
     "validFeed": "Validé!",
 
@@ -714,15 +720,35 @@ export default defineComponent({
           </MDBCol>
         </MDBRow>
       </template>
-      <template #addFormSelect="{ size, ariaLabel, required }">
+      <template #addFormSelect="{ size, ariaLabel }">
         <MDBRow class="g-3 d-flex justify-content-center">
-          <MDBCol :md="size" class="input-group">
-            <!-- <div class="input-group-prepend">
-              <label class="input-group-text" for="services">
-                {{ label }}
-              </label>
-            </div> -->
+          <MDBCol :md="size" class="input-group flex-column">
+            <label for="services">{{ $t("servicesPlaceholder") }}</label>
             <vSelect
+              :aria-label="ariaLabel"
+              :label="$t('servicesPlaceholder')"
+              item-title="text"
+              item-value="value"
+              v-model="selectedServices"
+              :multiple="true"
+              :items="servicesOption"
+              id="services"
+              class="custom-select w-100"
+              :hide-selected="true"
+              return-object
+              :error="servicesError"
+              :error-messages="servicesErrorMsg"
+            >
+              <template #search="{ attributes, events }">
+                <input
+                  class="vs__search"
+                  :required="!selectedServices"
+                  v-bind="attributes"
+                  v-on="events"
+                />
+              </template>
+            </vSelect>
+            <!-- <vSelect
               :required="required"
               :aria-label="ariaLabel"
               label="text"
@@ -741,7 +767,7 @@ export default defineComponent({
                   v-on="events"
                 />
               </template>
-            </vSelect>
+            </vSelect> -->
           </MDBCol>
         </MDBRow>
       </template>

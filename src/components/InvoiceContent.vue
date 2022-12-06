@@ -11,7 +11,7 @@ import invoiceAxiosService from "../services/invoice.service";
 import ModalItem from "./ModalItem.vue";
 const renderComponent = ref(true);
 import "../globals";
-import vSelect from "vue-select";
+import { VSelect } from "vuetify/components";
 
 export default defineComponent({
   name: "InvoiceContent",
@@ -176,12 +176,12 @@ export default defineComponent({
       invoiceOrdersOpt = [],
       invoicePaymentsOpt = [];
     // Languages
-    invoiceLanguagesOpt.push({
-      text: this.$i18n.t("languageInputLabel"),
-      value: 0,
-      libelle: "default",
-      nom: "default",
-    });
+    // invoiceLanguagesOpt.push({
+    //   text: this.$i18n.t("languageInputLabel"),
+    //   value: 0,
+    //   libelle: "default",
+    //   nom: "default",
+    // });
     for (const key in this.languagesObj) {
       let langue = {};
       langue.text = this.languagesObj[key].libelle;
@@ -191,11 +191,11 @@ export default defineComponent({
       invoiceLanguagesOpt.push(langue);
     }
     // Devises
-    invoiceDevisesOpt.push({
-      text: this.$i18n.t("deviseInputLabel"),
-      value: 0,
-      symbole: "default",
-    });
+    // invoiceDevisesOpt.push({
+    //   text: this.$i18n.t("deviseInputLabel"),
+    //   value: 0,
+    //   symbole: "default",
+    // });
     for (const key in this.devisesObj) {
       let devise = {};
       devise.text = `${this.devisesObj[key].symbole} - ${this.devisesObj[key].libelle}`;
@@ -204,13 +204,13 @@ export default defineComponent({
       invoiceDevisesOpt.push(devise);
     }
     // Buyers
-    invoiceBuyersOpt.push({
-      text: this.$i18n.t("buyerInputLabel"),
-      value: 0,
-      email: "default",
-      nom: "default",
-      prenom: "default",
-    });
+    // invoiceBuyersOpt.push({
+    //   text: this.$i18n.t("buyerInputLabel"),
+    //   value: 0,
+    //   email: "default",
+    //   nom: "default",
+    //   prenom: "default",
+    // });
     for (const key in this.buyersObj) {
       let buyer = {};
       buyer.text = `${this.buyersObj[key].actorId} - ${this.buyersObj[key].nom}`;
@@ -221,13 +221,13 @@ export default defineComponent({
       invoiceBuyersOpt.push(buyer);
     }
     // Sellers
-    invoiceSellersOpt.push({
-      text: this.$i18n.t("sellerInputLabel"),
-      value: 0,
-      email: "default",
-      nom: "default",
-      prenom: "default",
-    });
+    // invoiceSellersOpt.push({
+    //   text: this.$i18n.t("sellerInputLabel"),
+    //   value: 0,
+    //   email: "default",
+    //   nom: "default",
+    //   prenom: "default",
+    // });
     for (const key in this.sellersObj) {
       let seller = {};
       seller.text = `${this.sellersObj[key].actorId} - ${this.sellersObj[key].nom}`;
@@ -238,12 +238,12 @@ export default defineComponent({
       invoiceSellersOpt.push(seller);
     }
     // Orders
-    invoiceOrdersOpt.push({
-      text: this.$i18n.t("orderInputLabel"),
-      value: 0,
-      contenuAdditionnel: null,
-      priceHt: 0,
-    });
+    // invoiceOrdersOpt.push({
+    //   text: this.$i18n.t("orderInputLabel"),
+    //   value: 0,
+    //   contenuAdditionnel: null,
+    //   priceHt: 0,
+    // });
     for (const key in this.ordersObj) {
       let order = {};
       order.text = `${this.ordersObj[key].orderId} - ${this.ordersObj[key].priceHt}`;
@@ -253,13 +253,13 @@ export default defineComponent({
       invoiceOrdersOpt.push(order);
     }
     // Payments
-    invoicePaymentsOpt.push({
-      text: this.$i18n.t("paymentInputLabel"),
-      value: 0,
-      etat: 0,
-      paymentValue: 0,
-      paymentType: 0,
-    });
+    // invoicePaymentsOpt.push({
+    //   text: this.$i18n.t("paymentInputLabel"),
+    //   value: 0,
+    //   etat: 0,
+    //   paymentValue: 0,
+    //   paymentType: 0,
+    // });
     for (const key in this.paymentsObj) {
       let payment = {};
       payment.text = `${this.paymentsObj[key].paymentId} - ${this.paymentsObj[key].paymentValue}`;
@@ -392,16 +392,28 @@ export default defineComponent({
       tvaValue: 0,
       selectedInvoiceLanguage: null,
       invoiceLanguageOption: invoiceLanguagesOpt,
+      invoiceLanguageError: true,
+      invoiceLanguageErrorMsg: "",
       selectedInvoiceDevise: null,
       invoiceDeviseOption: invoiceDevisesOpt,
+      invoiceDeviseError: true,
+      invoiceDeviseErrorMsg: "",
       selectedInvoiceBuyer: null,
       invoiceBuyerOption: invoiceBuyersOpt,
+      invoiceBuyerError: true,
+      invoiceBuyerErrorMsg: "",
       selectedInvoiceSeller: null,
       invoiceSellerOption: invoiceSellersOpt,
+      invoiceSellerError: true,
+      invoiceSellerErrorMsg: "",
       selectedInvoiceOrder: null,
       invoiceOrdersOption: invoiceOrdersOpt,
+      invoiceOrdersError: true,
+      invoiceOrdersErrorMsg: "",
       selectedInvoicePayment: null,
       invoicePaymentsOption: invoicePaymentsOpt,
+      invoicePaymentsError: false,
+      invoicePaymentsErrorMsg: "",
       // For update
       updateInputObject: {},
       updateInputObjectId: 0,
@@ -422,7 +434,7 @@ export default defineComponent({
     MDBRow,
     ModalItem,
     MDBInput,
-    vSelect,
+    VSelect,
   },
   methods: {
     // setSelectedServicesForUpdate() {
@@ -895,23 +907,29 @@ export default defineComponent({
       // LANGUAGE
       if (this.selectedInvoiceLanguage === null) {
         this.errors.push(this.$i18n.t("emptyLanguageInvalidFeed"));
-        this.modalTitle = this.$i18n.t("modalTitleKo");
-        this.modalContent = this.$i18n.t("modalAddContentKo", {
-          err: this.$i18n.t("emptyLanguageInvalidFeed"),
-        });
-        this.invoiceModal = true;
+        // this.modalTitle = this.$i18n.t("modalTitleKo");
+        // this.modalContent = this.$i18n.t("modalAddContentKo", {
+        //   err: this.$i18n.t("emptyLanguageInvalidFeed"),
+        // });
+        // this.invoiceModal = true;
+        this.invoiceLanguageError = true;
+        this.invoiceLanguageErrorMsg = this.$i18n.t("emptyLanguageInvalidFeed");
       } else {
+        this.invoiceLanguageError = false;
         this.languageId = this.selectedInvoiceLanguage.value;
       }
       // DEVISE
       if (this.selectedInvoiceDevise === null) {
         this.errors.push(this.$i18n.t("emptyDeviseInvalidFeed"));
-        this.modalTitle = this.$i18n.t("modalTitleKo");
-        this.modalContent = this.$i18n.t("modalAddContentKo", {
-          err: this.$i18n.t("emptyDeviseInvalidFeed"),
-        });
-        this.invoiceModal = true;
+        // this.modalTitle = this.$i18n.t("modalTitleKo");
+        // this.modalContent = this.$i18n.t("modalAddContentKo", {
+        //   err: this.$i18n.t("emptyDeviseInvalidFeed"),
+        // });
+        // this.invoiceModal = true;
+        this.invoiceDeviseError = true ;
+        this.invoiceDeviseErrorMsg = this.$i18n.t("emptyDeviseInvalidFeed") ;
       } else {
+        this.invoiceDeviseError = false ;
         this.deviseId = this.selectedInvoiceDevise.value;
       }
       // TVA
@@ -931,34 +949,43 @@ export default defineComponent({
       // BUYER
       if (this.selectedInvoiceBuyer === null) {
         this.errors.push(this.$i18n.t("emptyBuyerInvalidFeed"));
-        this.modalTitle = this.$i18n.t("modalTitleKo");
-        this.modalContent = this.$i18n.t("modalAddContentKo", {
-          err: this.$i18n.t("emptyBuyerInvalidFeed"),
-        });
-        this.invoiceModal = true;
+        // this.modalTitle = this.$i18n.t("modalTitleKo");
+        // this.modalContent = this.$i18n.t("modalAddContentKo", {
+        //   err: this.$i18n.t("emptyBuyerInvalidFeed"),
+        // });
+        // this.invoiceModal = true;
+        this.invoiceBuyerError = true ;
+        this.invoiceBuyerErrorMsg = this.$i18n.t("emptyBuyerInvalidFeed") ;
       } else {
+        this.invoiceBuyerError = false ;
         this.buyerId = this.selectedInvoiceBuyer.value;
       }
       // SELLER
       if (this.selectedInvoiceSeller === null) {
         this.errors.push(this.$i18n.t("emptySellerInvalidFeed"));
-        this.modalTitle = this.$i18n.t("modalTitleKo");
-        this.modalContent = this.$i18n.t("modalAddContentKo", {
-          err: this.$i18n.t("emptySellerInvalidFeed"),
-        });
-        this.invoiceModal = true;
+        // this.modalTitle = this.$i18n.t("modalTitleKo");
+        // this.modalContent = this.$i18n.t("modalAddContentKo", {
+        //   err: this.$i18n.t("emptySellerInvalidFeed"),
+        // });
+        // this.invoiceModal = true;
+        this.invoiceSellerError = true ;
+        this.invoiceSellerErrorMsg = this.$i18n.t("emptySellerInvalidFeed") ;
       } else {
+        this.invoiceSellerError = false ;
         this.sellerId = this.selectedInvoiceSeller.value;
       }
       // ORDERS
       if (this.selectedInvoiceOrder === null) {
         this.errors.push(this.$i18n.t("emptyOrderInvalidFeed"));
-        this.modalTitle = this.$i18n.t("modalTitleKo");
-        this.modalContent = this.$i18n.t("modalAddContentKo", {
-          err: this.$i18n.t("emptyOrderInvalidFeed"),
-        });
-        this.invoiceModal = true;
+        // this.modalTitle = this.$i18n.t("modalTitleKo");
+        // this.modalContent = this.$i18n.t("modalAddContentKo", {
+        //   err: this.$i18n.t("emptyOrderInvalidFeed"),
+        // });
+        // this.invoiceModal = true;
+        this.invoiceOrdersError = true;
+        this.invoiceOrdersErrorMsg = this.$i18n.t("emptyOrderInvalidFeed");
       } else {
+        this.invoiceOrdersError = false;
         if (this.tvaValue)
           this.invoiceTTPrice =
             parseFloat(this.invoiceHTPrice) +
@@ -1200,10 +1227,27 @@ export default defineComponent({
           </MDBCol>
         </MDBRow>
       </template>
-      <template #addFormLanguageSelect="{ size, ariaLabel, required }">
+      <template #addFormLanguageSelect="{ size, ariaLabel }">
         <MDBRow class="g-3 d-flex justify-content-center">
-          <MDBCol :md="size" class="input-group">
-            <vSelect
+          <MDBCol :md="size" class="input-group flex-column">
+            <label for="language">{{ $t("languagePlaceholder") }}</label>
+            <v-select
+              :aria-label="ariaLabel"
+              :label="$t('languagePlaceholder')"
+              v-model="selectedInvoiceLanguage"
+              :multiple="false"
+              item-title="text"
+              item-value="value"
+              :items="invoiceLanguageOption"
+              id="language"
+              class="custom-select w-100"
+              hide-selected
+              return-object
+              :error="invoiceLanguageError"
+              :error-messages="invoiceLanguageErrorMsg"
+            >
+            </v-select>
+            <!-- <vSelect
               :required="required"
               :aria-label="ariaLabel"
               label="text"
@@ -1222,14 +1266,31 @@ export default defineComponent({
                   v-on="events"
                 />
               </template>
-            </vSelect>
+            </vSelect> -->
           </MDBCol>
         </MDBRow>
       </template>
-      <template #addFormDeviseSelect="{ size, ariaLabel, required }">
+      <template #addFormDeviseSelect="{ size, ariaLabel }">
         <MDBRow class="g-3 d-flex justify-content-center">
-          <MDBCol :md="size" class="input-group">
-            <vSelect
+          <MDBCol :md="size" class="input-group flex-column">
+            <label for="devise">{{ $t("devisePlaceholder") }}</label>
+            <v-select
+              :aria-label="ariaLabel"
+              :label="$t('devisePlaceholder')"
+              v-model="selectedInvoiceDevise"
+              :multiple="false"
+              item-title="text"
+              item-value="value"
+              :items="invoiceDeviseOption"
+              id="devise"
+              class="custom-select w-100"
+              hide-selected
+              return-object
+              :error="invoiceDeviseError"
+              :error-messages="invoiceDeviseErrorMsg"
+            >
+            </v-select>
+            <!-- <vSelect
               :required="required"
               :aria-label="ariaLabel"
               label="text"
@@ -1250,14 +1311,31 @@ export default defineComponent({
                   v-on="events"
                 />
               </template>
-            </vSelect>
+            </vSelect> -->
           </MDBCol>
         </MDBRow>
       </template>
-      <template #addFormBuyerSelect="{ size, ariaLabel, required }">
+      <template #addFormBuyerSelect="{ size, ariaLabel }">
         <MDBRow class="g-3 d-flex justify-content-center">
-          <MDBCol :md="size" class="input-group">
-            <vSelect
+          <MDBCol :md="size" class="input-group flex-column">
+            <label for="buyer">{{ $t("buyerPlaceholder") }}</label>
+            <v-select
+              :aria-label="ariaLabel"
+              :label="$t('buyerPlaceholder')"
+              v-model="selectedInvoiceBuyer"
+              :multiple="false"
+              item-title="text"
+              item-value="value"
+              :items="invoiceBuyerOption"
+              id="buyer"
+              class="custom-select w-100"
+              hide-selected
+              return-object
+              :error="invoiceBuyerError"
+              :error-messages="invoiceBuyerErrorMsg"
+            >
+            </v-select>
+            <!-- <vSelect
               :required="required"
               :aria-label="ariaLabel"
               label="text"
@@ -1278,14 +1356,31 @@ export default defineComponent({
                   v-on="events"
                 />
               </template>
-            </vSelect>
+            </vSelect> -->
           </MDBCol>
         </MDBRow>
       </template>
-      <template #addFormSellerSelect="{ size, ariaLabel, required }">
+      <template #addFormSellerSelect="{ size, ariaLabel }">
         <MDBRow class="g-3 d-flex justify-content-center">
-          <MDBCol :md="size" class="input-group">
-            <vSelect
+          <MDBCol :md="size" class="input-group flex-column">
+            <label for="seller">{{ $t("sellerPlaceholder") }}</label>
+            <v-select
+              :aria-label="ariaLabel"
+              :label="$t('sellerPlaceholder')"
+              v-model="selectedInvoiceSeller"
+              :multiple="false"
+              item-title="text"
+              item-value="value"
+              :items="invoiceSellerOption"
+              id="seller"
+              class="custom-select w-100"
+              hide-selected
+              return-object
+              :error="invoiceSellerError"
+              :error-messages="invoiceSellerErrorMsg"
+            >
+            </v-select>
+            <!-- <vSelect
               :required="required"
               :aria-label="ariaLabel"
               label="text"
@@ -1306,19 +1401,31 @@ export default defineComponent({
                   v-on="events"
                 />
               </template>
-            </vSelect>
+            </vSelect> -->
           </MDBCol>
         </MDBRow>
       </template>
-      <template #addFormOrderSelect="{ size, ariaLabel, required }">
+      <template #addFormOrderSelect="{ size, ariaLabel  }">
         <MDBRow class="g-3 d-flex justify-content-center">
-          <MDBCol :md="size" class="input-group">
-            <!-- <div class="input-group-prepend">
-              <label class="input-group-text" for="services">
-                {{ label }}
-              </label>
-            </div> -->
-            <vSelect
+          <MDBCol :md="size" class="input-group flex-column">
+            <label for="orders">{{ $t("orderPlaceholder") }}</label>
+            <v-select
+              :aria-label="ariaLabel"
+              :label="$t('orderPlaceholder')"
+              v-model="selectedInvoiceOrder"
+              :multiple="true"
+              item-title="text"
+              item-value="value"
+              :items="invoiceOrdersOption"
+              id="orders"
+              class="custom-select w-100"
+              hide-selected
+              return-object
+              :error="invoiceOrdersError"
+              :error-messages="invoiceOrdersErrorMsg"
+            >
+            </v-select>
+            <!-- <vSelect
               :required="required"
               :aria-label="ariaLabel"
               label="text"
@@ -1338,33 +1445,30 @@ export default defineComponent({
                   v-on="events"
                 />
               </template>
-            </vSelect>
+            </vSelect> -->
           </MDBCol>
         </MDBRow>
       </template>
-      <template #addFormPaymentSelect="{ size, ariaLabel, required }">
+      <template #addFormPaymentSelect="{ size, ariaLabel }">
         <MDBRow class="g-3 d-flex justify-content-center">
-          <MDBCol :md="size" class="input-group">
-            <vSelect
-              :required="required"
+          <MDBCol :md="size" class="input-group flex-column">
+            <label for="payments">{{ $t("paymentPlaceholder") }}</label>
+            <v-select
               :aria-label="ariaLabel"
-              label="text"
+              :label="$t('paymentPlaceholder')"
               v-model="selectedInvoicePayment"
               :multiple="true"
-              :options="invoicePaymentsOption"
-              inputId="payments"
+              item-title="text"
+              item-value="value"
+              :items="invoicePaymentsOption"
+              id="payments"
               class="custom-select w-100"
-              :selectable="(option) => option.value !== 0"
+              hide-selected
+              return-object
+              :error="invoicePaymentsError"
+              :error-messages="invoicePaymentsErrorMsg"
             >
-              <template #search="{ attributes, events }">
-                <input
-                  class="vs__search"
-                  :required="!selectedInvoicePayment"
-                  v-bind="attributes"
-                  v-on="events"
-                />
-              </template>
-            </vSelect>
+            </v-select>
           </MDBCol>
         </MDBRow>
       </template>

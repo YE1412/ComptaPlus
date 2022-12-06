@@ -18,7 +18,7 @@ import { useMessageStore } from "@/stores/message";
 import MessagesItem from "../components/MessagesItem.vue";
 // import { MAX_SIZE } from "../../upload.js";
 import "../globals";
-import vSelect from "vue-select";
+import { VSelect } from "vuetify/components";
 
 export default defineComponent({
   name: "RegisterContent",
@@ -40,10 +40,13 @@ export default defineComponent({
   },
   data() {
     let mainDeviseCurrencyOpt = [];
-    mainDeviseCurrencyOpt.push({
-      text: this.$i18n.t("devisePlaceholder"),
-      value: 0,
-    });
+    // mainDeviseCurrencyOpt.push({
+    //   text: this.$i18n.t("devisePlaceholder"),
+    //   value: 0,
+    //   disabled: true,
+    //   divider: true,
+    //   header: this.$i18n.t("devisePlaceholder")
+    // });
     for (const k in this.devisesObj) {
       let devise = {};
       devise.text = `${this.devisesObj[k].symbole} - ${this.devisesObj[k].libelle}`;
@@ -85,7 +88,7 @@ export default defineComponent({
       companyName_validMsg: "",
       companyName_valid_errorMsg: "",
       companyLogo: null,
-      companyLogo_valid: false,
+      companyLogo_valid: true,
       companyLogo_validMsg: "",
       companyLogo_valid_errorMsg: "",
       currentImage: undefined,
@@ -95,6 +98,8 @@ export default defineComponent({
       deviseId: 0,
       selectedMainDeviseCurrency: null,
       mainDeviseCurrencyOption: mainDeviseCurrencyOpt,
+      devisesErrorMsg: "",
+      devisesError: false,
       registerModal: false,
       modalTitle: "",
       modalContent: "",
@@ -127,7 +132,7 @@ export default defineComponent({
     MDBListGroup,
     ModalItem,
     MessagesItem,
-    vSelect,
+    VSelect,
     MDBFile,
   },
   methods: {
@@ -308,12 +313,15 @@ export default defineComponent({
       // Devise checks
       if (this.selectedMainDeviseCurrency === null) {
         this.errors.push(this.$i18n.t("emptyDeviseErrorMsg"));
-        this.modalTitle = this.$i18n.t("modalTitleKo");
-        this.modalContent = this.$i18n.t("modalContentKo", {
-          err: this.$i18n.t("emptyDeviseErrorMsg"),
-        });
-        this.registerModal = true;
+        this.devisesErrorMsg = this.$i18n.t("emptyDeviseErrorMsg");
+        this.devisesError = true;
+        // this.modalTitle = this.$i18n.t("modalTitleKo");
+        // this.modalContent = this.$i18n.t("modalContentKo", {
+        //   err: this.$i18n.t("emptyDeviseErrorMsg"),
+        // });
+        // this.registerModal = true;
       } else {
+        this.devisesError = false;
         this.deviseId = this.selectedMainDeviseCurrency.value;
       }
       // Company Logo checks
@@ -494,6 +502,9 @@ export default defineComponent({
       const ret = __CRYPTAPI__.crypt(val, __KEY__);
       return ret;
     },
+    devisesChange(e: Event) {
+      console.log(e);
+    }
   },
 });
 </script>
@@ -535,7 +546,7 @@ export default defineComponent({
 		"errorPasswordConfirmMsg": "Les mots de passe ne sont pas identiques !",
     "deviseLabelText": "Devise de référence*",
     "devisePlaceholder": "Devises",
-    "emptyDeviseErrorMsg": "Devise requise ",
+    "emptyDeviseErrorMsg": "Devise requise !",
     "errorDeviseMsg": "Devise incorrecte ",
     "companyNameLabelText": "Nom de la société*",
     "companyNamePlaceholder": "Société",
@@ -811,8 +822,24 @@ export default defineComponent({
         <MDBRow class="mb-4 d-flex justify-content-center">
           <MDBCol md="6">
             <label for="devises">{{ $t("deviseLabelText") }}</label>
-            <vSelect
-              :inputGroup="true"
+            <v-select
+              aria-label="deviseId"
+              item-title="text"
+              item-value="value"
+              :label="$t('devisePlaceholder')"
+              v-model="selectedMainDeviseCurrency"
+              :multiple="false"
+              :items="mainDeviseCurrencyOption"
+              :hide-selected="true"
+              id="devises"
+              class="custom-select w-100"
+              return-object
+              :error="devisesError"
+              :error-messages="devisesErrorMsg"
+            >
+            </v-select>
+            <!-- <v-select
+              :inputGroup="false"
               :required="true"
               aria-label="deviseId"
               label="text"
@@ -831,10 +858,7 @@ export default defineComponent({
                   v-on="events"
                 />
               </template>
-              <template v-slot:prepend>
-                <span class="input-group-text" id="basic">@</span>
-              </template>
-            </vSelect>
+            </v-select> -->
           </MDBCol>
         </MDBRow>
         <MDBRow class="mb-4 d-flex justify-content-center">

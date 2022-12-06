@@ -7,6 +7,7 @@ import Sidenav from "../components/Sidenav.vue";
 // import { useSessionStore } from "@/stores/session";
 import { useCounterStore } from "@/stores/counter";
 // import { RouterLink } from "vue-router";
+import Footer from "../components/Footer.vue";
 
 export default defineComponent({
   name: "HomeView",
@@ -19,6 +20,7 @@ export default defineComponent({
     TheToolbarIn,
     Sidenav,
     Suspense,
+    Footer,
   },
   methods: {
     async forceHomeRerender() {
@@ -47,6 +49,7 @@ export default defineComponent({
   <main>
     <TheToolbarIn @language-changed-re-render="forceHomeRerender" />
     <Sidenav />
+
     <div class="content">
       <Suspense>
         <TheWelcome v-if="renderComponent" />
@@ -54,4 +57,5 @@ export default defineComponent({
       </Suspense>
     </div>
   </main>
+  <Footer/>
 </template>

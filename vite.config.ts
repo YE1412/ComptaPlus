@@ -111,7 +111,7 @@ const config = defineConfig(({ command, mode }) => {
     build: buildObj,
     plugins: pluginsObj,
     ssr: {
-      noExternal: [/vue-i18n/, /vuetify/],
+      noExternal: [/vue-i18n/, /vuetify/, /chart\.js/],
     },
     envDir: path.join(__dirname, "envs"),
     envPrifex: "CLIENT_",

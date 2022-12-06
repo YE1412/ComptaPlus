@@ -3,6 +3,8 @@ import { defineComponent } from "vue";
 import { useUserStore } from "@/stores/user";
 import TheToolbarIn from "../components/TheToolbarIn.vue";
 import AboutContent from "../components/AboutContent.vue";
+import Footer from "../components/Footer.vue";
+
 export default defineComponent({
   name: "AboutView",
   setup() {
@@ -31,6 +33,7 @@ export default defineComponent({
   components: {
     TheToolbarIn,
     AboutContent,
+    Footer,
   },
 });
 </script>
@@ -45,6 +48,7 @@ export default defineComponent({
       <AboutContent v-if="renderComponent" />
     </div>
   </main>
+  <Footer />
 </template>
 
 <style>

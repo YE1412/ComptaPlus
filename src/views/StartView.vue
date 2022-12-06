@@ -44,7 +44,7 @@ export default defineComponent({
 });
 </script>
 <template>
-  <main>
+  <main style="height: 100%;">
     <TheToolbarOut />
     <StartContent />
   </main>

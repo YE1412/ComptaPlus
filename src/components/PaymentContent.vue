@@ -10,7 +10,7 @@ import paymentAxiosService from "../services/payment.service";
 import ModalItem from "./ModalItem.vue";
 const renderComponent = ref(true);
 import "../globals";
-import vSelect from "vue-select";
+import { VSelect }from "vuetify/components";
 
 export default defineComponent({
   name: "PaymentContent",
@@ -88,10 +88,10 @@ export default defineComponent({
       paymentStatesOpt = [],
       paymentInvoicesOpt = [];
     // paymentOrdersOpt = [];
-    paymentStatesOpt.push({
-      text: this.$i18n.t("stateInputLabel"),
-      value: "default",
-    });
+    // paymentStatesOpt.push({
+    //   text: this.$i18n.t("stateInputLabel"),
+    //   value: "default",
+    // });
     paymentStatesOpt.push({
       text: this.$i18n.t("stateOkLibelle"),
       value: true,
@@ -100,13 +100,13 @@ export default defineComponent({
       text: this.$i18n.t("stateKoLibelle"),
       value: false,
     });
-    paymentTypesOpt.push({
-      text: this.$i18n.t("typeInputLabel"),
-      value: 0,
-      cb: false,
-      esp: false,
-      chq: false,
-    });
+    // paymentTypesOpt.push({
+    //   text: this.$i18n.t("typeInputLabel"),
+    //   value: 0,
+    //   cb: false,
+    //   esp: false,
+    //   chq: false,
+    // });
     for (const key in this.typesObj) {
       let type = {},
         libelle = "";
@@ -124,11 +124,11 @@ export default defineComponent({
       type.chq = this.typesObj[key].chq;
       paymentTypesOpt.push(type);
     }
-    paymentInvoicesOpt.push({
-      text: this.$i18n.t("invoiceInputLabel"),
-      value: 0,
-      invoiceTTPrice: 0,
-    });
+    // paymentInvoicesOpt.push({
+    //   text: this.$i18n.t("invoiceInputLabel"),
+    //   value: 0,
+    //   invoiceTTPrice: 0,
+    // });
     for (const key in this.invoicesObj) {
       let invoice = {};
       invoice.text = `${this.invoicesObj[key].factureId} - ${this.invoicesObj[key].invoiceTTPrice}`;
@@ -219,10 +219,16 @@ export default defineComponent({
       // orderId: 0,
       selectedPaymentType: null,
       paymentTypesOption: paymentTypesOpt,
+      paymentTypeError: true,
+      paymentTypeErrorMsg: "",
       selectedPaymentState: null,
       paymentStatesOption: paymentStatesOpt,
+      paymentStateError: true,
+      paymentStateErrorMsg: "",
       selectedPaymentInvoice: null,
       paymentInvoicesOption: paymentInvoicesOpt,
+      paymentInvoiceError: false,
+      paymentInvoiceErrorMsg: "",
       // selectedPaymentOrder: null,
       // paymentOrdersOption: paymentOrdersOpt,
       // For update
@@ -245,7 +251,7 @@ export default defineComponent({
     MDBRow,
     ModalItem,
     MDBInput,
-    vSelect,
+    VSelect,
   },
   methods: {
     // setSelectedInvoicesForUpdate() {
@@ -590,12 +596,15 @@ export default defineComponent({
         // obj["etat"].invalidFeed = this.$i18n.t(
         //   "emptyStateInvalidFeed"
         // );
-        this.modalTitle = this.$i18n.t("modalTitleKo");
-        this.modalContent = this.$i18n.t("modalAddContentKo", {
-          err: this.$i18n.t("emptyStateInvalidFeed"),
-        });
-        this.paymentModal = true;
+        // this.modalTitle = this.$i18n.t("modalTitleKo");
+        // this.modalContent = this.$i18n.t("modalAddContentKo", {
+        //   err: this.$i18n.t("emptyStateInvalidFeed"),
+        // });
+        // this.paymentModal = true;
+        this.paymentStateError = true;
+        this.paymentStateErrorMsg = this.$i18n.t("emptyStateInvalidFeed");
       } else {
+        this.paymentStateError = false;
         this.etat = this.selectedPaymentState.value;
       }
 
@@ -631,12 +640,15 @@ export default defineComponent({
 
       if (this.selectedPaymentType === null) {
         this.errors.push(this.$i18n.t("emptyTypeInvalidFeed"));
-        this.modalTitle = this.$i18n.t("modalTitleKo");
-        this.modalContent = this.$i18n.t("modalAddContentKo", {
-          err: this.$i18n.t("emptyTypeInvalidFeed"),
-        });
-        this.paymentModal = true;
+        // this.modalTitle = this.$i18n.t("modalTitleKo");
+        // this.modalContent = this.$i18n.t("modalAddContentKo", {
+        //   err: this.$i18n.t("emptyTypeInvalidFeed"),
+        // });
+        // this.paymentModal = true;
+        this.paymentTypeError = true;
+        this.paymentTypeErrorMsg = this.$i18n.t("emptyTypeInvalidFeed");
       } else {
+        this.paymentTypeError = false;
         this.paymentType = this.selectedPaymentType.value;
       }
 
@@ -858,15 +870,27 @@ export default defineComponent({
           </MDBCol>
         </MDBRow>
       </template>
-      <template #addFormStateSelect="{ size, ariaLabel, required }">
+      <template #addFormStateSelect="{ size, ariaLabel }">
         <MDBRow class="g-3 d-flex justify-content-center">
-          <MDBCol :md="size" class="input-group">
-            <!-- <div class="input-group-prepend">
-              <label class="input-group-text" for="services">
-                {{ label }}
-              </label>
-            </div> -->
-            <vSelect
+          <MDBCol :md="size" class="input-group flex-column">
+            <label for="states">{{ $t("statePlaceholder") }}</label>
+            <v-select
+              :aria-label="ariaLabel"
+              :label="$t('statePlaceholder')"
+              v-model="selectedPaymentState"
+              :multiple="false"
+              item-title="text"
+              item-value="value"
+              :items="paymentStatesOption"
+              id="states"
+              class="custom-select w-100"
+              hide-selected
+              return-object
+              :error="paymentStateError"
+              :error-messages="paymentStateErrorMsg"
+            >
+            </v-select>
+            <!-- <vSelect
               :required="required"
               :aria-label="ariaLabel"
               label="text"
@@ -885,19 +909,31 @@ export default defineComponent({
                   v-on="events"
                 />
               </template>
-            </vSelect>
+            </vSelect> -->
           </MDBCol>
         </MDBRow>
       </template>
-      <template #addFormTypeSelect="{ size, ariaLabel, required }">
+      <template #addFormTypeSelect="{ size, ariaLabel}">
         <MDBRow class="g-3 d-flex justify-content-center">
-          <MDBCol :md="size" class="input-group">
-            <!-- <div class="input-group-prepend">
-              <label class="input-group-text" for="services">
-                {{ label }}
-              </label>
-            </div> -->
-            <vSelect
+          <MDBCol :md="size" class="input-group flex-column">
+            <label for="types">{{ $t("typePlaceholder") }}</label>
+            <v-select
+              :aria-label="ariaLabel"
+              :label="$t('typePlaceholder')"
+              v-model="selectedPaymentType"
+              :multiple="false"
+              item-title="text"
+              item-value="value"
+              :items="paymentTypesOption"
+              id="types"
+              class="custom-select w-100"
+              hide-selected
+              return-object
+              :error="paymentTypeError"
+              :error-messages="paymentTypeErrorMsg"
+            >
+            </v-select>
+            <!-- <vSelect
               :required="required"
               :aria-label="ariaLabel"
               label="text"
@@ -918,19 +954,31 @@ export default defineComponent({
                   v-on="events"
                 />
               </template>
-            </vSelect>
+            </vSelect> -->
           </MDBCol>
         </MDBRow>
       </template>
-      <template #addFormInvoiceSelect="{ size, ariaLabel, required }">
+      <template #addFormInvoiceSelect="{ size, ariaLabel }">
         <MDBRow class="g-3 d-flex justify-content-center">
-          <MDBCol :md="size" class="input-group">
-            <!-- <div class="input-group-prepend">
-              <label class="input-group-text" for="services">
-                {{ label }}
-              </label>
-            </div> -->
-            <vSelect
+          <MDBCol :md="size" class="input-group flex-column">
+            <label for="invoices">{{ $t("invoicePlaceholder") }}</label>
+            <v-select
+              :aria-label="ariaLabel"
+              :label="$t('invoicePlaceholder')"
+              v-model="selectedPaymentInvoice"
+              :multiple="false"
+              item-title="text"
+              item-value="value"
+              :items="paymentInvoicesOption"
+              id="invoices"
+              class="custom-select w-100"
+              hide-selected
+              return-object
+              :error="paymentInvoiceError"
+              :error-messages="paymentInvoiceErrorMsg"
+            >
+            </v-select>
+            <!-- <vSelect
               :required="required"
               :aria-label="ariaLabel"
               label="text"
@@ -949,7 +997,7 @@ export default defineComponent({
                   v-on="events"
                 />
               </template>
-            </vSelect>
+            </vSelect> -->
           </MDBCol>
         </MDBRow>
       </template>

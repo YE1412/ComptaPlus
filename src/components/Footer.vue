@@ -5,9 +5,10 @@ import { defineComponent } from "vue";
 import { useUserStore } from "@/stores/user";
 import { useSessionStore } from "@/stores/session";
 import { useMessageStore } from "@/stores/message";
+import FooterLinkItem from "./FooterLinkItem.vue";
 
 export default defineComponent({
-  name: "ToolbarNavBarIn",
+  name: "Footer",
   setup() {
     const userStore = useUserStore();
     const sessionStore = useSessionStore();
@@ -16,6 +17,7 @@ export default defineComponent({
   },
   components: {
     RouterLink,
+    FooterLinkItem
   },
   methods: {
     logoutClick(e) {
@@ -54,36 +56,24 @@ export default defineComponent({
 </i18n>
 
 <template>
-  <div class="navBar">
-    <ul>
-      <li>
+  <div class="footer">
+    <div>
+        <h2>CryptoLogique</h2>
         <div>
-          <RouterLink :to="$t('home_path')">
-            {{ $t("home") }}
-          </RouterLink>
+          <FooterLinkItem :dest="$t('home_path')" >
+            <template #linkContent>
+              {{ $t("home") }}
+            </template>
+          </FooterLinkItem>
+          <FooterLinkItem :dest="$t('about_path')" >
+            <template #linkContent>
+              {{ $t("about") }}
+            </template>
+          </FooterLinkItem>
+            <!-- <a href="/plan-du-site">{{footerFirstLinkTexte}}</a>
+            <a href="/mentions-legales">{{footerSecondLinkTexte}}</a> -->
         </div>
-      </li>
-      <li>
-        <div>
-          <RouterLink :to="$t('userManagement_path')">
-            {{ $t("userManagement") }}
-          </RouterLink>
-        </div>
-      </li>
-      <li>
-        <div>
-          <RouterLink :to="$t('about_path')">
-            {{ $t("about") }}
-          </RouterLink>
-        </div>
-      </li>
-      <li>
-        <div>
-          <a href="/" @click="logoutClick($event)">
-            {{ $t("logout") }}
-          </a>
-        </div>
-      </li>
-    </ul>
+        <p>©2022 CryptoLogique - Entreprise de services du numérique (ESN)</p>
+    </div>
   </div>
 </template>

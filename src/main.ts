@@ -38,7 +38,7 @@ const vuetify = createVuetify({
   //     myCustomLightTheme
   //   },
   // }
-  theme: false,
+  // theme: false,
   // ssr: true,
   // components,
   // directives,

@@ -13,7 +13,7 @@ import MessagesItem from "./MessagesItem.vue";
 import BarChart from "./BarChart.vue";
 import PieChart from "./PieChart.vue";
 import HomeTable from "./HomeTable.vue";
-import { VIcon } from "vuetify/components";
+// import { VIcon } from "vuetify/components";
 import "@mdi/font/css/materialdesignicons.css";
 
 export default defineComponent({
@@ -51,7 +51,7 @@ export default defineComponent({
     BarChart,
     PieChart,
     HomeTable,
-    VIcon,
+    // VIcon,
   },
   data() {
     const devise = this.userStore.getUser.devise.symbole;
@@ -147,52 +147,52 @@ export default defineComponent({
     <section class="text-center ms-lg-5 ms-xl-5 me-lg-5 me-xl-5 mt-lg-5 mt-xl-5 mb-lg-15 mb-xl-15">
       <div class="row">
         <div class="col-lg-3 col-md-6 mb-5 mb-md-5 mb-lg-0 position-relative">
-          <v-icon
+          <!-- <v-icon
             size="large"
             aria-hidden="false"
             class="text-success"
           >
             mdi-receipt-text
-          </v-icon>
+          </v-icon> -->
           <h5 class="text-success fw-bold mb-3">{{ counterStore.getNbInvoices }}</h5>
           <h6 class="fw-normal mb-0">{{ $t("invoicesLabel") }}</h6>
           <div class="vr vr-blurry position-absolute my-0 h-100 d-none d-md-block top-0 end-0"></div>
         </div>
 
         <div class="col-lg-3 col-md-6 mb-5 mb-md-5 mb-lg-0 position-relative">
-          <v-icon
+          <!-- <v-icon
             size="large"
             aria-hidden="false"
             class="text-danger"
           >
             mdi-order-bool-descending
-          </v-icon>
+          </v-icon> -->
           <h5 class="text-danger fw-bold mb-3">{{ counterStore.getNbOrders }}</h5>
           <h6 class="fw-normal mb-0">{{ $t("ordersLabel") }}</h6>
           <div class="vr vr-blurry position-absolute my-0 h-100 d-none d-md-block top-0 end-0"></div>
         </div>
 
         <div class="col-lg-3 col-md-6 mb-5 mb-md-0 position-relative">
-          <v-icon
+          <!-- <v-icon
             size="large"
             aria-hidden="false"
             class="text-warning"
           >
             mdi-clipboard-account
-          </v-icon>
+          </v-icon> -->
           <h5 class="text-warning fw-bold mb-3">{{ counterStore.getNbActors }}</h5>
           <h6 class="fw-normal mb-0">{{ $t("actorsLabel") }}</h6>
           <div class="vr vr-blurry position-absolute my-0 h-100 d-none d-md-block top-0 end-0"></div>
         </div>
 
         <div class="col-lg-3 col-md-6 mb-5 mb-md-0 position-relative">
-          <v-icon
+          <!-- <v-icon
             size="large"
             aria-hidden="false"
             class="text-secondary"
           >
             mdi-room-service
-          </v-icon>
+          </v-icon> -->
           <h5 class="text-secondary fw-bold mb-3">{{ counterStore.getNbServices }}</h5>
           <h6 class="fw-normal mb-0">{{ $t("servicesLabel") }}</h6>
         </div>

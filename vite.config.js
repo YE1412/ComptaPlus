@@ -123,7 +123,7 @@ let config = defineConfig(({ command, mode }) => {
     plugins: pluginsObj,
     ssr: {
       // SSG Vue-i18n workaround
-      noExternal: [/vue-i18n/, /vuetify/],
+      noExternal: [/vue-i18n/, /vuetify/, /chart\.js/],
     },
     envDir: path.join(__dirname, "envs"),
     envPrefix: "CLIENT_",

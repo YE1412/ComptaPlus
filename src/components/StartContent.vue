@@ -11,7 +11,9 @@ import StartContentLoginItem from "./StartContentLoginItem.vue";
 import UserIcon from "./icons/IconUser.vue";
 import LockIcon from "./icons/IconLock.vue";
 // import ModalItem from "./ModalItem.vue";
-import ClientOnly from 'vue-client-only';
+// import ClientOnly from 'vue-client-only';
+import { VNoSsr } from "vuetify/components";
+
 if (!import.meta.env.SSR){
   import("../globals");
 }
@@ -35,19 +37,20 @@ export default defineComponent({
     StartContentLoginItem,
     UserIcon,
     LockIcon,
-    ClientOnly,
+    // ClientOnly,
     ModalItem: defineAsyncComponent(() => {
       // if (!import.meta.env.SSR)
       return import('./ModalItem.vue')
     }),
     MessagesItem,
+    VNoSsr,
   },
   data() {
     return {
       login: "",
       password: "",
       loginModal: false,
-      isServer: import.meta.env.SSR
+      // isServer: import.meta.env.SSR
     };
   },
   methods: {
@@ -185,8 +188,8 @@ export default defineComponent({
       </div>
     </div>
   </div>
-  <!-- <ClientOnly> -->
-    <ModalItem v-if="!isServer"
+  <v-no-ssr>
+    <ModalItem
       @loginModal="modalChange"
       input="loginModal"
       id="loginModal"
@@ -200,5 +203,5 @@ export default defineComponent({
       :staticBackdrop="true"
     >
     </ModalItem>
-  <!-- </ClientOnly> -->
+  </v-no-ssr>
 </template>

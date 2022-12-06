@@ -5,6 +5,7 @@ import Sidenav from "../components/Sidenav.vue";
 import { useUserStore } from "@/stores/user";
 import { useSessionStore } from "@/stores/session";
 import ActorContent from "../components/ActorContent.vue";
+import Footer from "../components/Footer.vue";
 
 const renderComponent = ref(true);
 
@@ -20,6 +21,7 @@ export default defineComponent({
     Sidenav,
     Suspense,
     ActorContent,
+    Footer,
   },
   data() {
     return {
@@ -100,4 +102,5 @@ export default defineComponent({
       </Suspense>
     </div>
   </main>
+  <Footer />
 </template>
