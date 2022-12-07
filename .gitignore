@@ -28,5 +28,4 @@ coverage
 *.sw?
 *.sublime-*
 
-server.js
 *.tsbuildinfo
