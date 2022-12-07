@@ -3,7 +3,7 @@ import { defineComponent, Suspense } from "vue";
 import TheToolbarIn from "../components/TheToolbarIn.vue";
 import { useUserStore } from "@/stores/user";
 import ProfileContent from "../components/ProfileContent.vue";
-import Footer from "../components/Footer.vue";
+import FooterIn from "../components/Footer.vue";
 
 export default defineComponent({
   name: "ProfileView",
@@ -31,7 +31,7 @@ export default defineComponent({
   components: {
     TheToolbarIn,
     ProfileContent,
-    Footer,
+    FooterIn,
   },
 });
 </script>
@@ -43,6 +43,6 @@ export default defineComponent({
         <ProfileContent v-if="renderComponent" />
       </Suspense>
     </div>
-    <Footer />
+    <FooterIn />
   </main>
 </template>

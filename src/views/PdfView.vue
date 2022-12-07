@@ -8,7 +8,7 @@ import { useInvoiceStore } from "@/stores/invoice";
 import { useCounterStore } from "@/stores/counter";
 // Requiring the lodash library
 import _ from "lodash";
-import { Canvg } from 'canvg';
+import { Canvg } from "canvg";
 
 export default defineComponent({
   name: "PdfView",
@@ -128,7 +128,7 @@ export default defineComponent({
         ret[m]["orderId"] = this.invoicesDetails[ind]["commandes"][m].orderId;
         ret[m]["contenuAdditionnel"] =
           this.invoicesDetails[ind]["commandes"][m].contenuAdditionnel;
-        ret[m]["totalTTLibelle"] = totalTTLibelle.replaceAll(/\s/ig, "");
+        ret[m]["totalTTLibelle"] = totalTTLibelle.replaceAll(/\s/gi, "");
         ret[m]["Services"] = [];
         for (const n in this.invoicesDetails[ind]["commandes"][m]["Services"]) {
           let priceUnitTTLibelle = "",
@@ -158,8 +158,10 @@ export default defineComponent({
           ret[m]["Services"][n].quantite = quantity;
           ret[m]["Services"][n].nom =
             this.invoicesDetails[ind]["commandes"][m]["Services"][n].nom;
-          ret[m]["Services"][n].montantNetTTLibelle = montantNetTTLibelle.replaceAll(/\s/ig, "");
-          ret[m]["Services"][n].priceUnitTTLibelle = priceUnitTTLibelle.replaceAll(/\s/ig, "");
+          ret[m]["Services"][n].montantNetTTLibelle =
+            montantNetTTLibelle.replaceAll(/\s/gi, "");
+          ret[m]["Services"][n].priceUnitTTLibelle =
+            priceUnitTTLibelle.replaceAll(/\s/gi, "");
         }
       }
       return ret;
@@ -252,8 +254,8 @@ export default defineComponent({
         minimumFractionDigits: 2,
       }).format(tvaBase.toFixed(2));
       ret.tvaValueLibelle = `${tvaValueLibelle} %`;
-      ret.tvaBaseLibelle = tvaBaseLibelle.replaceAll(/\s/ig, "");
-      ret.tvaMontantLibelle = tvaMontantLibelle.replaceAll(/\s/ig, "");
+      ret.tvaBaseLibelle = tvaBaseLibelle.replaceAll(/\s/gi, "");
+      ret.tvaMontantLibelle = tvaMontantLibelle.replaceAll(/\s/gi, "");
       return ret;
     },
     tableInvoicesDateLibelle(ind: number) {
@@ -290,7 +292,7 @@ export default defineComponent({
       ttPriceLibelle = new Intl.NumberFormat(locale, {
         minimumFractionDigits: 2,
       }).format(ttPrice.toFixed(2));
-      ret = ttPriceLibelle.replaceAll(/\s/ig, "");
+      ret = ttPriceLibelle.replaceAll(/\s/gi, "");
       return ret;
     },
     tableInvoicesBillingLibelle(ind: number) {
@@ -318,8 +320,7 @@ export default defineComponent({
         format: "a4",
       });
       let yPos = this.insertHead(inv);
-      if (this.userStore.getUser.companyLogo !== null)
-        await this.insertLogo()
+      if (this.userStore.getUser.companyLogo !== null) await this.insertLogo();
       for (const k in inv.commandes) {
         yPos = this.insertOrder(inv, yPos, k);
       }
@@ -417,18 +418,30 @@ export default defineComponent({
       return ret;
     },
     async insertLogo() {
-      var canvas = document.createElement('canvas');
-      var context = canvas.getContext('2d');
-
+      var canvas = document.createElement("canvas");
+      var context = canvas.getContext("2d");
 
       context.clearRect(0, 0, canvas.width, canvas.height);
-      const v = await Canvg.from(context, `${window.location.origin}/dist/assets/uploads/${this.userStore.getUser.companyLogo}`);
+      const v = await Canvg.from(
+        context,
+        `${window.location.origin}/dist/assets/uploads/${this.userStore.getUser.companyLogo}`
+      );
 
       // Start SVG rendering with animations and mouse handling.
       v.start();
 
-      var imgData = canvas.toDataURL('image/png');
-      this.doc.addImage(imgData, "PNG", this.tableXPos + (this.footerCellTableWidth * 4), this.headerYPos * (1 - 1 / 2), this.footerCellTableWidth, 48, "CompanyLogo", "MEDIUM", 0);
+      var imgData = canvas.toDataURL("image/png");
+      this.doc.addImage(
+        imgData,
+        "PNG",
+        this.tableXPos + this.footerCellTableWidth * 4,
+        this.headerYPos * (1 - 1 / 2),
+        this.footerCellTableWidth,
+        48,
+        "CompanyLogo",
+        "MEDIUM",
+        0
+      );
     },
     insertOrder(inv: any, yPos: number, ind: number): number {
       let ret = yPos;

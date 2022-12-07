@@ -4,10 +4,10 @@ import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import path from "path";
-import vueI18n from '@intlify/vite-plugin-vue-i18n';
-import * as htmlTemplate from 'vite-plugin-html-template';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
-import vuetify from 'vite-plugin-vuetify';
+import vueI18n from "@intlify/vite-plugin-vue-i18n";
+import * as htmlTemplate from "vite-plugin-html-template";
+import { viteStaticCopy } from "vite-plugin-static-copy";
+import vuetify from "vite-plugin-vuetify";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // console.log(`\n\nEnvironment : - ${process.env.CTX} -\n`);
@@ -15,7 +15,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // https://vitejs.dev/config/
 const config = defineConfig(({ command, mode }) => {
   console.log(`mode - ${mode}\n`);
-  let [buildObj, cssObj, serverObj]: object[] = [{}, {}, {}];
+  let [buildObj, cssObj]: object[] = [{}, {}, {}];
   const pluginsObj: any[] = [];
   if (mode === "development") {
     buildObj = {
@@ -42,9 +42,9 @@ const config = defineConfig(({ command, mode }) => {
       vueJsx(),
       vueI18n({
         compositionOnly: false,
-        include: path.resolve(__dirname, './src/locales/**'),
+        include: path.resolve(__dirname, "./src/locales/**"),
       }),
-      vuetify(),
+      vuetify()
     );
   } else {
     buildObj = {
@@ -79,18 +79,21 @@ const config = defineConfig(({ command, mode }) => {
       vueJsx(),
       vueI18n({
         compositionOnly: false,
-        include: path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src/locales/**'),
+        include: path.resolve(
+          path.dirname(fileURLToPath(import.meta.url)),
+          "./src/locales/**"
+        ),
       }),
-      htmlTemplate(),
+      htmlTemplate.default(),
       viteStaticCopy({
         targets: [
           {
             src: "src/assets/uploads",
-            dest: "assets/"
-          }
-        ]
+            dest: "assets/",
+          },
+        ],
       }),
-      vuetify(),
+      vuetify()
     );
   }
   return {
@@ -102,12 +105,12 @@ const config = defineConfig(({ command, mode }) => {
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
         "~": fileURLToPath(new URL("./node_modules", import.meta.url)),
-        "Utilities": path.join(__dirname, "src/plugins/modules/"),
+        Utilities: path.join(__dirname, "src/plugins/modules/"),
       },
       extensions: [".mjs", ".ts", ".js", ".jsx", ".tsx", ".json"],
     },
     css: cssObj,
-    server: serverObj,
+    // server: serverObj,
     build: buildObj,
     plugins: pluginsObj,
     ssr: {

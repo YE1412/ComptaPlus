@@ -67,7 +67,7 @@ class InvoiceDataService {
         adminId: id,
       },
     });
-  }  
+  }
 
   getMore(ids: number[]) {
     return http.get(`/invoices/find/${ids}`);

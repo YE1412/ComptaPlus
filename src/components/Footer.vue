@@ -1,5 +1,5 @@
 <script lang="ts">
-import { RouterLink } from "vue-router";
+// import { RouterLink } from "vue-router";
 // import router from "@/router/index";
 import { defineComponent } from "vue";
 import { useUserStore } from "@/stores/user";
@@ -8,7 +8,7 @@ import { useMessageStore } from "@/stores/message";
 import FooterLinkItem from "./FooterLinkItem.vue";
 
 export default defineComponent({
-  name: "Footer",
+  name: "Footer-In",
   setup() {
     const userStore = useUserStore();
     const sessionStore = useSessionStore();
@@ -16,8 +16,8 @@ export default defineComponent({
     return { userStore, sessionStore, messageStore };
   },
   components: {
-    RouterLink,
-    FooterLinkItem
+    // RouterLink,
+    FooterLinkItem,
   },
   methods: {
     logoutClick(e) {
@@ -60,22 +60,22 @@ export default defineComponent({
 <template>
   <div class="footer">
     <div>
-        <h2>CryptoLogique</h2>
-        <div>
-          <FooterLinkItem :dest="$t('home_path')" >
-            <template #linkContent>
-              {{ $t("home") }}
-            </template>
-          </FooterLinkItem>
-          <FooterLinkItem :dest="$t('about_path')" >
-            <template #linkContent>
-              {{ $t("about") }}
-            </template>
-          </FooterLinkItem>
-            <!-- <a href="/plan-du-site">{{footerFirstLinkTexte}}</a>
+      <h2>CryptoLogique</h2>
+      <div>
+        <FooterLinkItem :dest="$t('home_path')">
+          <template #linkContent>
+            {{ $t("home") }}
+          </template>
+        </FooterLinkItem>
+        <FooterLinkItem :dest="$t('about_path')">
+          <template #linkContent>
+            {{ $t("about") }}
+          </template>
+        </FooterLinkItem>
+        <!-- <a href="/plan-du-site">{{footerFirstLinkTexte}}</a>
             <a href="/mentions-legales">{{footerSecondLinkTexte}}</a> -->
-        </div>
-        <p>{{ $t("footerParagraph") }}</p>
+      </div>
+      <p>{{ $t("footerParagraph") }}</p>
     </div>
   </div>
 </template>

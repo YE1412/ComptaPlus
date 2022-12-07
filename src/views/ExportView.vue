@@ -6,7 +6,7 @@ import Sidenav from "../components/Sidenav.vue";
 import { useUserStore } from "@/stores/user";
 import { useCounterStore } from "@/stores/counter";
 import ExportContent from "../components/ExportContent.vue";
-import Footer from "../components/Footer.vue";
+import FooterIn from "../components/Footer.vue";
 
 export default defineComponent({
   name: "ExportView",
@@ -21,7 +21,7 @@ export default defineComponent({
     ExportContent,
     RouterView,
     Suspense,
-    Footer,
+    FooterIn,
   },
 });
 </script>
@@ -37,6 +37,6 @@ export default defineComponent({
         <RouterView />
       </Suspense>
     </div>
-    <Footer />
+    <FooterIn />
   </main>
 </template>

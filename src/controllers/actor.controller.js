@@ -110,7 +110,7 @@ const getNbActors = (req, res) => {
   actor
     .findAll({
       attributes: [
-        [db.sequelize.fn('COUNT', db.sequelize.col('actorId')), 'n_act'],
+        [db.sequelize.fn("COUNT", db.sequelize.col("actorId")), "n_act"],
       ],
     })
     .then((data) => {
@@ -119,8 +119,7 @@ const getNbActors = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message ||
-          `Some error occured while retieving number of actors.`,
+          err.message || `Some error occured while retieving number of actors.`,
       });
     });
 };

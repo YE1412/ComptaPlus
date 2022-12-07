@@ -138,7 +138,7 @@ const findAll = (req, res) => {
         "payments.paymentId",
       ],
       where: {
-        administratorId: params.userId
+        administratorId: params.userId,
       },
       include: [
         invoice.langue,
@@ -297,13 +297,13 @@ const getNbInvoices = (req, res) => {
   invoice
     .findAll({
       attributes: [
-        [db.sequelize.fn('COUNT', db.sequelize.col('factureId')), 'n_inv'],
+        [db.sequelize.fn("COUNT", db.sequelize.col("factureId")), "n_inv"],
       ],
       where: {
         administratorId: query.adminId,
         date: {
           [Op.gt]: dateStart,
-        }
+        },
       },
     })
     .then((data) => {
@@ -352,7 +352,7 @@ const getFinancialYearInvoices = (req, res) => {
         administratorId: query.adminId,
         date: {
           [Op.gt]: dateStart,
-        }
+        },
       },
       include: [
         invoice.langue,
@@ -364,7 +364,7 @@ const getFinancialYearInvoices = (req, res) => {
         {
           model: payment,
         },
-      ]
+      ],
     })
     .then((data) => {
       res.send(data);

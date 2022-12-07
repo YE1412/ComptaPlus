@@ -14,7 +14,7 @@ import LockIcon from "./icons/IconLock.vue";
 // import ClientOnly from 'vue-client-only';
 import { VNoSsr } from "vuetify/components";
 
-if (!import.meta.env.SSR){
+if (!import.meta.env.SSR) {
   import("../globals");
 }
 
@@ -40,7 +40,7 @@ export default defineComponent({
     // ClientOnly,
     ModalItem: defineAsyncComponent(() => {
       // if (!import.meta.env.SSR)
-      return import('./ModalItem.vue')
+      return import("./ModalItem.vue");
     }),
     MessagesItem,
     VNoSsr,

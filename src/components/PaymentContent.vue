@@ -10,7 +10,7 @@ import paymentAxiosService from "../services/payment.service";
 import ModalItem from "./ModalItem.vue";
 const renderComponent = ref(true);
 import "../globals";
-import { VSelect }from "vuetify/components";
+import { VSelect } from "vuetify/components";
 
 export default defineComponent({
   name: "PaymentContent",
@@ -913,7 +913,7 @@ export default defineComponent({
           </MDBCol>
         </MDBRow>
       </template>
-      <template #addFormTypeSelect="{ size, ariaLabel}">
+      <template #addFormTypeSelect="{ size, ariaLabel }">
         <MDBRow class="g-3 d-flex justify-content-center">
           <MDBCol :md="size" class="input-group flex-column">
             <label for="types">{{ $t("typePlaceholder") }}</label>

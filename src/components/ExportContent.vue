@@ -301,20 +301,40 @@ export default defineComponent({
         </tbody>
         <tbody v-if="contentsForDisp.length">
           <tr v-for="(fac, i) in contentsForDisp" v-bind:key="i">
-            <th scope="row" class="text-center" style="vertical-align: middle;">
+            <th scope="row" class="text-center" style="vertical-align: middle">
               <MDBCheckbox v-model="checkbox[fac.factureId]" />
             </th>
-            <td class="text-center" style="vertical-align: middle;">{{ fac.date }}</td>
-            <td class="text-center" style="vertical-align: middle;">{{ fac.invoiceHTPrice }}</td>
-            <td class="text-center" style="vertical-align: middle;">{{ fac.invoiceTTPrice }}</td>
-            <td class="text-center" style="vertical-align: middle;">{{ fac.tvaValue }}</td>
-            <td class="text-center" style="vertical-align: middle;">{{ fac.langue }}</td>
-            <td class="text-center" style="vertical-align: middle;">{{ fac.devise }}</td>
-            <td class="text-center" style="vertical-align: middle;">{{ fac.buyer }}</td>
-            <td class="text-center" style="vertical-align: middle;">{{ fac.seller }}</td>
-            <td class="text-center" style="vertical-align: middle;">{{ fac.commandes }}</td>
-            <td class="text-center" style="vertical-align: middle;">{{ fac.payments }}</td>
-            <td class="text-center" style="vertical-align: middle;">
+            <td class="text-center" style="vertical-align: middle">
+              {{ fac.date }}
+            </td>
+            <td class="text-center" style="vertical-align: middle">
+              {{ fac.invoiceHTPrice }}
+            </td>
+            <td class="text-center" style="vertical-align: middle">
+              {{ fac.invoiceTTPrice }}
+            </td>
+            <td class="text-center" style="vertical-align: middle">
+              {{ fac.tvaValue }}
+            </td>
+            <td class="text-center" style="vertical-align: middle">
+              {{ fac.langue }}
+            </td>
+            <td class="text-center" style="vertical-align: middle">
+              {{ fac.devise }}
+            </td>
+            <td class="text-center" style="vertical-align: middle">
+              {{ fac.buyer }}
+            </td>
+            <td class="text-center" style="vertical-align: middle">
+              {{ fac.seller }}
+            </td>
+            <td class="text-center" style="vertical-align: middle">
+              {{ fac.commandes }}
+            </td>
+            <td class="text-center" style="vertical-align: middle">
+              {{ fac.payments }}
+            </td>
+            <td class="text-center" style="vertical-align: middle">
               <RouterLink
                 :to="{
                   name: $t('pdfViewLinkName'),

@@ -71,7 +71,7 @@ const getNbServices = (req, res) => {
   service
     .findAll({
       attributes: [
-        [db.sequelize.fn('COUNT', db.sequelize.col('serviceId')), 'n_srv'],
+        [db.sequelize.fn("COUNT", db.sequelize.col("serviceId")), "n_srv"],
       ],
     })
     .then((data) => {

@@ -5,7 +5,7 @@ import Sidenav from "../components/Sidenav.vue";
 import ServiceContent from "../components/ServiceContent.vue";
 import { useUserStore } from "@/stores/user";
 import { useSessionStore } from "@/stores/session";
-import Footer from "../components/Footer.vue";
+import FooterIn from "../components/Footer.vue";
 
 const renderComponent = ref(true);
 export default defineComponent({
@@ -20,7 +20,7 @@ export default defineComponent({
     Sidenav,
     ServiceContent,
     Suspense,
-    Footer,
+    FooterIn,
   },
   mounted() {
     // console.log(this.sessionStore.getSessionId);
@@ -102,7 +102,7 @@ export default defineComponent({
 });
 </script>
 <template>
-  <main class= "">
+  <main class="">
     <TheToolbarIn @language-changed-re-render="forceServiceRerender" />
     <Sidenav
       :servicesState="true"
@@ -120,6 +120,6 @@ export default defineComponent({
         <template #fallback> Loading... </template>
       </Suspense>
     </div>
-    <Footer />
+    <FooterIn />
   </main>
 </template>

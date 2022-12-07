@@ -127,7 +127,7 @@ const getNbOrders = (req, res) => {
   order
     .findAll({
       attributes: [
-        [db.sequelize.fn('COUNT', db.sequelize.col('orderId')), 'n_ord'],
+        [db.sequelize.fn("COUNT", db.sequelize.col("orderId")), "n_ord"],
       ],
     })
     .then((data) => {
@@ -136,8 +136,7 @@ const getNbOrders = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message ||
-          `Some error occured while retieving number of orders.`,
+          err.message || `Some error occured while retieving number of orders.`,
       });
     });
 };

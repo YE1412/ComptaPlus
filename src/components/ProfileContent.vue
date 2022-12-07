@@ -157,7 +157,7 @@ export default defineComponent({
         required: "",
         value: "",
         state: false,
-        label: this.$i18n.t('companyLogoLabelText', { size: 2 }),
+        label: this.$i18n.t("companyLogoLabelText", { size: 2 }),
         invalidFeedback: "",
         validFeedback: "",
         isValidated: true,
@@ -229,7 +229,7 @@ export default defineComponent({
       selectedMainDeviseCurrency: [
         mainDeviseCurrencyOpt.find((dev) => {
           return dev.value === usrDetails.devise.deviseId;
-        })
+        }),
       ],
       mainDeviseCurrencyOption: mainDeviseCurrencyOpt,
       devisesError: false,
@@ -467,9 +467,7 @@ export default defineComponent({
         firstname: this.firstname,
         companyName: this.companyname,
         companyLogo:
-          this.companylogo !== null
-            ? this.currentImage.name
-            : this.companylogo,
+          this.companylogo !== null ? this.currentImage.name : this.companylogo,
         pass: this.password,
         deviseId: this.deviseId,
         userTypeId: 1,
@@ -714,7 +712,7 @@ export default defineComponent({
               isValid,
               type,
               counter,
-              maxlength
+              maxlength,
             }"
           >
             <MDBCol :md="size">
@@ -737,7 +735,7 @@ export default defineComponent({
               </MDBInput>
             </MDBCol>
           </template>
-          <template #formDeviseSelect="{ size, ariaLabel, required }">
+          <template #formDeviseSelect="{ size, ariaLabel }">
             <MDBCol :md="size">
               <label for="devises">{{ $t("deviseLabelText") }}</label>
               <v-select
@@ -845,6 +843,6 @@ export default defineComponent({
       :staticBackdrop="true"
     >
     </ModalItem>
-  <!-- </main> -->
+    <!-- </main> -->
   </div>
 </template>

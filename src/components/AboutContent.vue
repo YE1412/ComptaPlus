@@ -25,6 +25,6 @@ export default defineComponent({
 
 <template>
   <div class="container d-flex flex-column mb-lg-5 mb-xl-5">
-    <OrgChart/>
+    <OrgChart />
   </div>
 </template>

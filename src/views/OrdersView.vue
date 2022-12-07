@@ -5,7 +5,7 @@ import Sidenav from "../components/Sidenav.vue";
 import { useUserStore } from "@/stores/user";
 import { useSessionStore } from "@/stores/session";
 import OrderContent from "../components/OrderContent.vue";
-import Footer from "../components/Footer.vue";
+import FooterIn from "../components/Footer.vue";
 
 const renderComponent = ref(true);
 
@@ -66,7 +66,7 @@ export default defineComponent({
     Sidenav,
     OrderContent,
     Suspense,
-    Footer,
+    FooterIn,
   },
   watch: {
     $route: {
@@ -101,6 +101,6 @@ export default defineComponent({
         <template #fallback> Loading... </template>
       </Suspense>
     </div>
-    <Footer />
+    <FooterIn />
   </main>
 </template>

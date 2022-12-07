@@ -504,7 +504,7 @@ export default defineComponent({
     },
     devisesChange(e: Event) {
       console.log(e);
-    }
+    },
   },
 });
 </script>

@@ -16,7 +16,7 @@ let config = defineConfig(({ command, mode }) => {
   console.log(`mode - ${mode}`);
   var buildObj = {},
     cssObj = {},
-    serverObj = {},
+    // serverObj = {},
     pluginsObj = [];
   if (mode === "development") {
     buildObj = {
@@ -118,7 +118,7 @@ let config = defineConfig(({ command, mode }) => {
       ]
     },
     css: cssObj,
-    server: serverObj,
+    // server: serverObj,
     build: buildObj,
     plugins: pluginsObj,
     ssr: {

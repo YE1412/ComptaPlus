@@ -132,7 +132,7 @@ export default defineComponent({
       buyersObj,
       paymentsObj,
       ordersObj,
-      userStore
+      userStore,
     };
   },
   beforeCreate() {
@@ -926,10 +926,10 @@ export default defineComponent({
         //   err: this.$i18n.t("emptyDeviseInvalidFeed"),
         // });
         // this.invoiceModal = true;
-        this.invoiceDeviseError = true ;
-        this.invoiceDeviseErrorMsg = this.$i18n.t("emptyDeviseInvalidFeed") ;
+        this.invoiceDeviseError = true;
+        this.invoiceDeviseErrorMsg = this.$i18n.t("emptyDeviseInvalidFeed");
       } else {
-        this.invoiceDeviseError = false ;
+        this.invoiceDeviseError = false;
         this.deviseId = this.selectedInvoiceDevise.value;
       }
       // TVA
@@ -954,10 +954,10 @@ export default defineComponent({
         //   err: this.$i18n.t("emptyBuyerInvalidFeed"),
         // });
         // this.invoiceModal = true;
-        this.invoiceBuyerError = true ;
-        this.invoiceBuyerErrorMsg = this.$i18n.t("emptyBuyerInvalidFeed") ;
+        this.invoiceBuyerError = true;
+        this.invoiceBuyerErrorMsg = this.$i18n.t("emptyBuyerInvalidFeed");
       } else {
-        this.invoiceBuyerError = false ;
+        this.invoiceBuyerError = false;
         this.buyerId = this.selectedInvoiceBuyer.value;
       }
       // SELLER
@@ -968,10 +968,10 @@ export default defineComponent({
         //   err: this.$i18n.t("emptySellerInvalidFeed"),
         // });
         // this.invoiceModal = true;
-        this.invoiceSellerError = true ;
-        this.invoiceSellerErrorMsg = this.$i18n.t("emptySellerInvalidFeed") ;
+        this.invoiceSellerError = true;
+        this.invoiceSellerErrorMsg = this.$i18n.t("emptySellerInvalidFeed");
       } else {
-        this.invoiceSellerError = false ;
+        this.invoiceSellerError = false;
         this.sellerId = this.selectedInvoiceSeller.value;
       }
       // ORDERS
@@ -1405,7 +1405,7 @@ export default defineComponent({
           </MDBCol>
         </MDBRow>
       </template>
-      <template #addFormOrderSelect="{ size, ariaLabel  }">
+      <template #addFormOrderSelect="{ size, ariaLabel }">
         <MDBRow class="g-3 d-flex justify-content-center">
           <MDBCol :md="size" class="input-group flex-column">
             <label for="orders">{{ $t("orderPlaceholder") }}</label>

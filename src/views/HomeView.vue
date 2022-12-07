@@ -7,7 +7,7 @@ import Sidenav from "../components/Sidenav.vue";
 // import { useSessionStore } from "@/stores/session";
 import { useCounterStore } from "@/stores/counter";
 // import { RouterLink } from "vue-router";
-import Footer from "../components/Footer.vue";
+import FooterIn from "../components/Footer.vue";
 
 export default defineComponent({
   name: "HomeView",
@@ -20,7 +20,7 @@ export default defineComponent({
     TheToolbarIn,
     Sidenav,
     Suspense,
-    Footer,
+    FooterIn,
   },
   methods: {
     async forceHomeRerender() {
@@ -36,7 +36,8 @@ export default defineComponent({
   },
   mounted() {},
   data() {
-    this.$i18n.locale = this.counterStore.getLanguages[
+    this.$i18n.locale =
+      this.counterStore.getLanguages[
         this.counterStore.getLangDisplayedIndex
       ].lang;
     return {
@@ -55,6 +56,6 @@ export default defineComponent({
         <template #fallback> Loading... </template>
       </Suspense>
     </div>
-    <Footer/>
+    <FooterIn />
   </main>
 </template>
