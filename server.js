@@ -33,7 +33,7 @@ async function createViteServer() {
     ? JSON.parse(fs.readFileSync(resolve('dist/prod/client/ssr-manifest.json'), 'utf-8'))
     : {}
   // Testing db connection
-  let opt = {};
+  let opt = {force:true};
   if (env === "production") opt.logging = false;
   let ret = await db.sequelize
     .authenticate()
@@ -42,7 +42,7 @@ async function createViteServer() {
         .query("SET FOREIGN_KEY_CHECKS = 0", { raw: true })
         .then(async () => {
           await db.sequelize.sync(opt);
-          // initDB();
+          initDB();
         });
       console.log("Database connection has been established !");
       return true;
@@ -223,110 +223,110 @@ async function createViteServer() {
   });
 }
 
-// function initDB() {
-//   const userType = db.userType;
-//   const actorType = db.actorType;
-//   const lang = db.langue;
-//   const paymentType = db.paymentType;
-//   const devise = db.devise;
-//   const price = db.price;
+function initDB() {
+  const userType = db.userType;
+  const actorType = db.actorType;
+  const lang = db.langue;
+  const paymentType = db.paymentType;
+  const devise = db.devise;
+  const price = db.price;
 
-//   price.create({
-//     stockPricesId: 1,
-//     euro: 1.00,
-//     dollar: 1.04,
-//     livre: 0.86
-//   });
-//   price.create({
-//     stockPricesId: 2,
-//     euro: 0.96,
-//     dollar: 1.00,
-//     livre: 0.83
-//   });
-//   price.create({
-//     stockPricesId: 3,
-//     euro: 1.16,
-//     dollar: 1.21,
-//     livre: 1.00
-//   });
+  price.create({
+    stockPricesId: 1,
+    euro: 1.00,
+    dollar: 1.04,
+    livre: 0.86
+  });
+  price.create({
+    stockPricesId: 2,
+    euro: 0.96,
+    dollar: 1.00,
+    livre: 0.83
+  });
+  price.create({
+    stockPricesId: 3,
+    euro: 1.16,
+    dollar: 1.21,
+    livre: 1.00
+  });
 
-//   userType.create({
-//     userTypeId: 1,
-//     regular: true,
-//     admin: false,
-//   });
-//   userType.create({
-//     userTypeId: 2,
-//     regular: false,
-//     admin: true,
-//   });
-//   userType.create({
-//     userTypeId: 3,
-//     regular: true,
-//     admin: true,
-//   });
+  userType.create({
+    userTypeId: 1,
+    regular: true,
+    admin: false,
+  });
+  userType.create({
+    userTypeId: 2,
+    regular: false,
+    admin: true,
+  });
+  userType.create({
+    userTypeId: 3,
+    regular: true,
+    admin: true,
+  });
 
-//   actorType.create({
-//     actorTypeId: 2,
-//     seller: true,
-//     buyer: false,
-//   });
-//   actorType.create({
-//     actorTypeId: 3,
-//     seller: false,
-//     buyer: true,
-//   });
-//   actorType.create({
-//     actorTypeId: 1,
-//     seller: true,
-//     buyer: true,
-//   });
+  actorType.create({
+    actorTypeId: 2,
+    seller: true,
+    buyer: false,
+  });
+  actorType.create({
+    actorTypeId: 3,
+    seller: false,
+    buyer: true,
+  });
+  actorType.create({
+    actorTypeId: 1,
+    seller: true,
+    buyer: true,
+  });
 
-//   lang.create({
-//     langueId: 2,
-//     libelle: "Français",
-//     nom: "fr",
-//   });
-//   lang.create({
-//     langueId: 1,
-//     libelle: "English",
-//     nom: "us",
-//   });
+  lang.create({
+    langueId: 2,
+    libelle: "Français",
+    nom: "fr",
+  });
+  lang.create({
+    langueId: 1,
+    libelle: "English",
+    nom: "us",
+  });
 
-//   paymentType.create({
-//     paymentTypeId: 1,
-//     cb: true,
-//     esp: false,
-//     chq: false,
-//   });
-//   paymentType.create({
-//     paymentTypeId: 2,
-//     cb: false,
-//     esp: true,
-//     chq: false,
-//   });
-//   paymentType.create({
-//     paymentTypeId: 3,
-//     cb: false,
-//     esp: false,
-//     chq: true,
-//   });
+  paymentType.create({
+    paymentTypeId: 1,
+    cb: true,
+    esp: false,
+    chq: false,
+  });
+  paymentType.create({
+    paymentTypeId: 2,
+    cb: false,
+    esp: true,
+    chq: false,
+  });
+  paymentType.create({
+    paymentTypeId: 3,
+    cb: false,
+    esp: false,
+    chq: true,
+  });
 
-//   devise.create({
-//     deviseId: 3,
-//     symbole: "€",
-//     libelle: "euro"
-//   });
-//   devise.create({
-//     deviseId: 1,
-//     symbole: "$",
-//     libelle: "dollar"
-//   });
-//   devise.create({
-//     deviseId: 2,
-//     symbole: "£",
-//     libelle: "livre"
-//   });
-// }
+  devise.create({
+    deviseId: 3,
+    symbole: "€",
+    libelle: "euro"
+  });
+  devise.create({
+    deviseId: 1,
+    symbole: "$",
+    libelle: "dollar"
+  });
+  devise.create({
+    deviseId: 2,
+    symbole: "£",
+    libelle: "livre"
+  });
+}
 
 createViteServer();
