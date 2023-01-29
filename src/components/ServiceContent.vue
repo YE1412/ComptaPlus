@@ -160,7 +160,8 @@ export default defineComponent({
                 () => {
                   this.forceTableRerender();
                 },
-                () => {}
+                () => {
+                }
               )
               .catch((err) => {
                 console.log(err);

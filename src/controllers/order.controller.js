@@ -243,7 +243,7 @@ const deleteOne = (req, res) => {
           message: "Order was deleted successfully !",
         });
       } else {
-        res.send({
+        res.status(500).send({
           message: `Cannot delete actor with id=${params.id}. Maybe Order was not found or req.body is empty !`,
         });
       }

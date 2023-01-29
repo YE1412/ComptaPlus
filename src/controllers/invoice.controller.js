@@ -572,7 +572,7 @@ const deleteOne = (req, res) => {
           message: "Invoice was deleted successfully !",
         });
       } else {
-        res.send({
+        res.status(500).send({
           message: `Cannot delete invoice with id=${params.id}. Maybe Payment was not found or req.body is empty !`,
         });
       }

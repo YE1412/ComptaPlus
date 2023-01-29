@@ -95,7 +95,18 @@ const update = async (req, res) => {
       },
     })
     .then(async (data) => {
-      res.send(data);
+      if (data[0] === 1){
+        res.send({
+          message: "Payment was updated successfully !",
+        });
+      } else {
+        res.status(500).send({
+          message:
+            err.message ||
+            `Some error occured while updating payment with id=${params.id}. Maybe Payment was not found or req.body is empty !`,
+          error: err,
+        });
+      }
     })
     .catch((err) => {
       res.status(500).send({
@@ -122,7 +133,7 @@ const deleteOne = (req, res) => {
           message: "Payment was deleted successfully !",
         });
       } else {
-        res.send({
+        res.status(500).send({
           message: `Cannot delete payment with id=${params.id}. Maybe Payment was not found or req.body is empty !`,
         });
       }

@@ -237,7 +237,7 @@ const update = (req, res) => {
           message: "User was updated successfully !",
         });
       } else {
-        res.send({
+        res.status(500).send({
           message: `Cannot update user with id=${params.id}. Maybe User was not found or req.body is empty !`,
         });
       }
@@ -264,7 +264,7 @@ const deleteOne = (req, res) => {
           message: "User was deleted successfully !",
         });
       } else {
-        res.send({
+        res.status(500).send({
           message: `Cannot delete user with id=${params.id}. Maybe User was not found or req.body is empty !`,
         });
       }

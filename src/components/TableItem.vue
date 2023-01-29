@@ -70,7 +70,7 @@ export default defineComponent({
     display: {
       type: Boolean,
       required: true,
-      default: () => true,
+      default: () => false,
     },
     colSpan: {
       type: String,

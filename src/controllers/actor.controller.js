@@ -140,7 +140,7 @@ const update = (req, res) => {
           message: "Actor was updated successfully !",
         });
       } else {
-        res.send({
+        res.status(500).send({
           message: `Cannot update actor with id=${params.id}. Maybe Actor was not found or req.body is empty !`,
         });
       }
@@ -167,7 +167,7 @@ const deleteOne = (req, res) => {
           message: "Actor was deleted successfully !",
         });
       } else {
-        res.send({
+        res.status(500).send({
           message: `Cannot delete actor with id=${params.id}. Maybe Actor was not found or req.body is empty !`,
         });
       }
